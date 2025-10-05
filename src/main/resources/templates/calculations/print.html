@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${calculation.name} + ' - ' + #{app.name}">Calculation - Cost Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        @media print {
+            .no-print {
+                display: none;
+            }
+            body {
+                padding: 0;
+                margin: 0;
+            }
+            .container {
+                max-width: 100%;
+                width: 100%;
+                padding: 0;
+                margin: 0;
+            }
+            .table {
+                font-size: 12px;
+            }
+            .stage-total {
+                font-weight: bold;
+                background-color: #f8f9fa !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+        .logo {
+            max-width: 200px;
+            height: auto;
+            margin-bottom: 1rem;
+        }
+        .calculation-header {
+            margin-bottom: 2rem;
+        }
+        .stage {
+            margin-bottom: 2rem;
+        }
+        .stage-title {
+            color: #198754;
+            border-bottom: 2px solid #198754;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+        }
+        .table th {
+            background-color: #e9ecef;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .total {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 2rem;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container my-4">
+        <!-- Print button -->
+        <div class="no-print mb-4">
+            <button onclick="window.print()" class="btn btn-primary">
+                <i class="bi bi-printer"></i> <span th:text="#{common.print}">Print</span>
+            </button>
+            <a th:href="@{/calculations}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> <span th:text="#{common.back}">Back</span>
+            </a>
+        </div>
+
+        <!-- Calculation header -->
+        <div class="calculation-header">
+            <h1 th:text="${calculation.name}">Project Name</h1>
+            <p class="text-muted" th:text="${calculation.description}">Project description</p>
+        </div>
+
+        <!-- Stages -->
+        <div th:each="stage : ${calculation.stages}" class="stage">
+            <h2 class="stage-title" th:text="${stage.name}">Stage Name</h2>
+
+            <!-- Services -->
+            <div th:if="${!stage.services.empty}" class="mb-4">
+                <h3 th:text="#{calculations.form.services}">Services</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th th:text="#{calculations.print.item}">Item</th>
+                            <th th:text="#{calculations.print.quantity}">Quantity</th>
+                            <th th:text="#{calculations.print.unit}">Unit</th>
+                            <th th:text="#{calculations.print.unit.price}">Unit Price</th>
+                            <th th:text="#{calculations.print.total}">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="service : ${stage.services}">
+                            <td th:text="${service.name}">Service name</td>
+                            <td th:text="${service.quantity}">1</td>
+                            <td>
+                                <span th:text="${#messages.msg('service.unit.' + service.unit.toLowerCase() + '.symbol', service.unit)}">h</span>
+                            </td>
+                            <td>
+                                <span th:text="${#numbers.formatDecimal(service.unitPrice, 1, 'DEFAULT', 2, 'DEFAULT')}">100.00</span>
+                                <span th:text="${' ' + calculation.currency}">USD</span>
+                            </td>
+                            <td>
+                                <span th:text="${#numbers.formatDecimal(service.quantity * service.unitPrice, 1, 'DEFAULT', 2, 'DEFAULT')}">100.00</span>
+                                <span th:text="${' ' + calculation.currency}">USD</span>
+                            </td>
+                        </tr>
+                        <tr class="stage-total">
+                            <td colspan="4" th:text="#{calculations.print.stage.total}">Stage Total</td>
+                            <td>
+                                <span th:text="${#numbers.formatDecimal(stage.getServicesTotal(), 1, 'DEFAULT', 2, 'DEFAULT')}">300.00</span>
+                                <span th:text="${' ' + calculation.currency}">USD</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Materials -->
+            <div th:if="${!stage.materials.empty}" class="mb-4">
+                <h3 th:text="#{calculations.form.materials}">Materials</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th th:text="#{calculations.print.item}">Item</th>
+                            <th th:text="#{calculations.print.quantity}">Quantity</th>
+                            <th th:text="#{calculations.print.unit}">Unit</th>
+                            <th th:text="#{calculations.print.unit.price}">Unit Price</th>
+                            <th th:text="#{calculations.print.total}">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="material : ${stage.materials}">
+                            <td th:text="${material.name}">Material name</td>
+                            <td th:text="${material.quantity}">1</td>
+                            <td>
+                                <span th:text="${#messages.msg('material.unit.' + material.unit.toLowerCase() + '.symbol', material.unit)}">pc</span>
+                            </td>
+                            <td>
+                                <span th:text="${#numbers.formatDecimal(material.unitPrice, 1, 'DEFAULT', 2, 'DEFAULT')}">100.00</span>
+                                <span th:text="${' ' + calculation.currency}">USD</span>
+                            </td>
+                            <td>
+                                <span th:text="${#numbers.formatDecimal(material.quantity * material.unitPrice, 1, 'DEFAULT', 2, 'DEFAULT')}">100.00</span>
+                                <span th:text="${' ' + calculation.currency}">USD</span>
+                            </td>
+                        </tr>
+                        <tr class="stage-total">
+                            <td colspan="4" th:text="#{calculations.print.stage.total}">Stage Total</td>
+                            <td>
+                                <span th:text="${#numbers.formatDecimal(stage.getMaterialsTotal(), 1, 'DEFAULT', 2, 'DEFAULT')}">300.00</span>
+                                <span th:text="${' ' + calculation.currency}">USD</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Stage total -->
+            <div class="stage-total p-2 mb-4">
+                <strong th:text="#{calculations.form.stage.total}">Stage Total</strong>:
+                <span th:text="${#numbers.formatDecimal(stage.getTotal(), 1, 'DEFAULT', 2, 'DEFAULT')}">600.00</span>
+                <span th:text="${' ' + calculation.currency}">USD</span>
+            </div>
+        </div>
+
+        <!-- Calculation total -->
+        <div class="total">
+            <span th:text="#{calculations.form.total}">Total</span>:
+            <span th:text="${#numbers.formatDecimal(calculation.total, 1, 'DEFAULT', 2, 'DEFAULT')}">1500.00</span>
+            <span th:text="${' ' + calculation.currency}">USD</span>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-5 pt-4 border-top">
+            <div class="text-muted small">
+                <pre th:utext="${userSettings.footerText}"></pre>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

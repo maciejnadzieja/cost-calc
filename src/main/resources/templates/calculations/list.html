@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/default.html}">
+<head>
+    <title th:text="#{calculations.title}">Calculations</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 th:text="#{calculations.title}">Calculations</h2>
+            <a href="/calculations/new" class="btn btn-primary">
+                <i class="bi bi-plus"></i> <span th:text="#{calculations.new}">New Calculation</span>
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div th:if="${calculations.empty}" class="alert alert-info" th:text="#{calculations.list.empty}">
+                    No calculations found. Click "New Calculation" to create one.
+                </div>
+
+                <div th:if="${!calculations.empty}" class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th th:text="#{calculations.form.name}">Name</th>
+                                <th th:text="#{calculations.form.description}">Description</th>
+                                <th th:text="#{calculations.form.currency}">Currency</th>
+                                <th th:text="#{calculations.form.total}">Total</th>
+                                <th th:text="#{common.actions}">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="calculation : ${calculations}">
+                                <td th:text="${calculation.name}">Calculation Name</td>
+                                <td th:text="${calculation.description}">Calculation Description</td>
+                                <td th:text="${calculation.currency}">USD</td>
+                                <td>
+                                    <span th:text="${calculation.total}">1000.00</span>
+                                    <span th:text="${calculation.currency}">USD</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a th:href="@{/calculations/{id}/print(id=${calculation.id})}"
+                                           class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-printer"></i>
+                                            <span th:text="#{common.print}">Print</span>
+                                        </a>
+                                        <a th:href="@{/calculations/{id}/edit(id=${calculation.id})}"
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-pencil"></i>
+                                            <span th:text="#{common.edit}">Edit</span>
+                                        </a>
+                                        <form th:action="@{/calculations/{id}/duplicate(id=${calculation.id})}" 
+                                              method="post" 
+                                              class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-outline-info">
+                                                <i class="bi bi-copy"></i>
+                                                <span th:text="#{common.duplicate}">Duplicate</span>
+                                            </button>
+                                        </form>
+                                        <form th:action="@{/calculations/{id}/delete(id=${calculation.id})}" 
+                                              method="post" 
+                                              class="d-inline"
+                                              th:onsubmit="return confirm([[#{calculations.delete.confirm}]]);">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash"></i>
+                                                <span th:text="#{common.delete}">Delete</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

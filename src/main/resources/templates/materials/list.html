@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/default.html}">
+<head>
+    <title th:text="#{materials.title}">Materials</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 th:text="#{materials.title}">Materials</h2>
+            <div>
+                <a href="/materials/new" class="btn btn-primary">
+                    <i class="bi bi-plus"></i> <span th:text="#{materials.new}">Add New Material</span>
+                </a>
+                <a href="/materials/import" class="btn btn-secondary">
+                    <i class="bi bi-upload"></i> Batch Import
+                </a>
+                <a href="#" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#categoriesModal">
+                    <i class="bi bi-tags"></i> <span th:text="#{materials.form.categories}">Categories</span>
+                </a>
+            </div>
+        </div>
+
+        <form class="mb-3" method="get" th:action="@{/materials}">
+            <div class="input-group">
+                <input type="text" class="form-control" name="query" th:value="${query}" placeholder="Search by name...">
+                <input type="hidden" name="size" th:value="${pageSize}" />
+                <button class="btn btn-outline-secondary" type="submit">
+                    <i class="bi bi-search"></i> Search
+                </button>
+            </div>
+        </form>
+
+        <div class="card">
+            <div class="card-body">
+                <div th:if="${materials.empty}" class="alert alert-info" th:text="#{materials.list.empty}">
+                    No materials found. Click "Add New Material" to create one.
+                </div>
+
+                <div th:if="${!materials.empty}" class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th th:text="#{materials.form.name}">Name</th>
+                                <th th:text="#{materials.form.description}">Description</th>
+                                <th th:text="#{materials.form.price}">Price</th>
+                                <th th:text="#{materials.form.unit}">Unit</th>
+                                <th th:text="#{materials.form.category}">Category</th>
+                                <th th:text="#{common.actions}">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="material : ${materials}">
+                                <td th:text="${material.name}">Material Name</td>
+                                <td th:text="${#strings.length(material.description) > 200 ? material.description.substring(0, 200) + '…' : material.description}">Material Description</td>
+                                <td>
+                                    <span th:text="${#numbers.formatDecimal(material.price, 1, 2)}">100.00</span>
+                                    <span th:text="${' ' + currency}">USD</span>
+                                    <span>/</span>
+                                    <span th:text="${#messages.msg('material.unit.' + material.unit.name().toLowerCase() + '.symbol', material.unit.name())}">pc</span>
+                                </td>
+                                <td>
+                                    <span th:text="${#messages.msg('material.unit.' + material.unit.name().toLowerCase() + '.label', material.unit.name())}">Piece</span>
+                                </td>
+                                <td th:text="${material.category}">Category</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a th:href="@{/materials/{id}/edit(id=${material.id})}" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form th:action="@{/materials/{id}/delete(id=${material.id})}" 
+                                              method="post" 
+                                              class="d-inline"
+                                              th:onsubmit="return confirm([[#{materials.delete.confirm}]])">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <nav th:if="${materialsPage.totalPages > 1}">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item" th:classappend="${materialsPage.first} ? 'disabled'">
+                                <a class="page-link" th:href="@{'/materials'(page=${materialsPage.number - 1},size=${materialsPage.size},query=${query})}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <!-- First page -->
+                            <li class="page-item" th:classappend="${0 == materialsPage.number} ? 'active'">
+                                <a class="page-link" th:href="@{'/materials'(page=0,size=${materialsPage.size},query=${query})}">1</a>
+                            </li>
+                            <!-- Ellipsis before current range -->
+                            <li class="page-item disabled" th:if="${materialsPage.number > 3}"><span class="page-link">...</span></li>
+                            <!-- Pages around current -->
+                            <li th:each="i : ${#numbers.sequence((materialsPage.number > 2 ? materialsPage.number - 2 : 1), (materialsPage.number < materialsPage.totalPages - 3 ? materialsPage.number + 2 : materialsPage.totalPages - 2))}"
+                                th:if="${i > 0 && i < materialsPage.totalPages - 1}"
+                                class="page-item"
+                                th:classappend="${i == materialsPage.number} ? 'active'">
+                                <a class="page-link" th:href="@{'/materials'(page=${i},size=${materialsPage.size},query=${query})}" th:text="${i + 1}"></a>
+                            </li>
+                            <!-- Ellipsis after current range -->
+                            <li class="page-item disabled" th:if="${materialsPage.number < materialsPage.totalPages - 4}"><span class="page-link">...</span></li>
+                            <!-- Last page -->
+                            <li class="page-item" th:if="${materialsPage.totalPages > 1}"
+                                th:classappend="${materialsPage.number == materialsPage.totalPages - 1} ? 'active'">
+                                <a class="page-link" th:href="@{'/materials'(page=${materialsPage.totalPages - 1},size=${materialsPage.size},query=${query})}" th:text="${materialsPage.totalPages}"></a>
+                            </li>
+                            <li class="page-item" th:classappend="${materialsPage.last} ? 'disabled'">
+                                <a class="page-link" th:href="@{'/materials'(page=${materialsPage.number + 1},size=${materialsPage.size},query=${query})}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        <div th:replace="~{materials/fragments/categories-modal :: categories-modal}"></div>
+    </div>
+</body>
+</html>

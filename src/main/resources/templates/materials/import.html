@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/default.html}">
+<head>
+    <title th:text="#{materials.import.title}">Batch Import Materials</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title mb-0" th:text="#{materials.import.title}">Batch Import Materials</h3>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/materials/import/csv}" method="post" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="category" class="form-label" th:text="#{materials.import.category}">Category</label>
+                                <input type="text" class="form-control" id="category" name="category">
+                            </div>
+                            <div class="mb-3">
+                                <label for="file" class="form-label">CSV File</label>
+                                <input type="file" class="form-control" id="file" name="file" accept=".csv,text/csv" required>
+                                <div class="form-text">Upload a CSV file with columns: name;price;description</div>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">Import from File</button>
+                                <a href="/materials" class="btn btn-secondary" th:text="#{materials.import.cancel}">Cancel</a>
+                            </div>
+                        </form>
+                        <hr/>
+                        <form th:action="@{/materials/import}" method="post">
+                            <div class="mb-3">
+                                <label for="category" class="form-label" th:text="#{materials.import.category}">Category</label>
+                                <input type="text" class="form-control" id="category" name="category" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="csv" class="form-label" th:text="#{materials.import.csv.label}">CSV Data (name;price;description per line)</label>
+                                <textarea class="form-control" id="csv" name="csv" rows="8" required></textarea>
+                                <div class="form-text" th:text="#{materials.import.csv.example}">Example: Budleja Dawida African Queen;17 PLN;Buddleja davidii African Queen%0AC2%0A%0A2025-05-17</div>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary" th:text="#{materials.import.submit}">Import</button>
+                                <a href="/materials" class="btn btn-secondary" th:text="#{materials.import.cancel}">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
