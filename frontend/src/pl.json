@@ -1,0 +1,237 @@
+{
+  "app": {
+    "name": "Kalkulator Kosztów"
+  },
+  "nav": {
+    "dashboard": "Panel główny",
+    "services": "Usługi",
+    "materials": "Materiały",
+    "calculations": "Kalkulacje",
+    "settings": "Ustawienia",
+    "logout": "Wyloguj",
+    "login": "Zaloguj"
+  },
+  "common": {
+    "actions": "Akcje",
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "remove": "Usuń",
+    "back": "Wstecz",
+    "edit": "Edytuj",
+    "delete": "Usuń",
+    "view": "Podgląd",
+    "print": "Drukuj",
+    "duplicate": "Duplikuj"
+  },
+  "lang": {
+    "english": "Angielski",
+    "polish": "Polski"
+  },
+  "units": {
+    "service": {
+      "hour": {
+        "symbol": "h",
+        "label": "Godzina"
+      },
+      "square_meter": {
+        "symbol": "m²",
+        "label": "Metr kwadratowy"
+      },
+      "piece": {
+        "symbol": "szt",
+        "label": "Sztuka"
+      },
+      "linear_meter": {
+        "symbol": "m",
+        "label": "Metr"
+      },
+      "day": {
+        "symbol": "d",
+        "label": "Dzień"
+      },
+      "kilogram": {
+        "symbol": "kg",
+        "label": "Kilogram"
+      }
+    },
+    "material": {
+      "piece": {
+        "label": "Sztuka",
+        "symbol": "szt"
+      },
+      "kilogram": {
+        "label": "Kilogram",
+        "symbol": "kg"
+      },
+      "gram": {
+        "label": "Gram",
+        "symbol": "g"
+      },
+      "meter": {
+        "label": "Metr",
+        "symbol": "m"
+      },
+      "centimeter": {
+        "label": "Centymetr",
+        "symbol": "cm"
+      },
+      "square_meter": {
+        "label": "Metr kwadratowy",
+        "symbol": "m²"
+      },
+      "liter": {
+        "label": "Litr",
+        "symbol": "L"
+      },
+      "milliliter": {
+        "label": "Mililitr",
+        "symbol": "mL"
+      },
+      "pack": {
+        "label": "Paczka",
+        "symbol": "pacz"
+      },
+      "roll": {
+        "label": "Rolka",
+        "symbol": "rol"
+      },
+      "ton": {
+        "label": "Tona",
+        "symbol": "t"
+      }
+    }
+  },
+  "dashboard": {
+    "welcome": "Witaj w Kalkulatorze Kosztów",
+    "subtitle": "Zarządzaj usługami, materiałami i twórz profesjonalne wyceny",
+    "quick_actions": "Szybkie akcje",
+    "create_calculation": "Utwórz nową kalkulację",
+    "add_service": "Dodaj nową usługę",
+    "add_material": "Dodaj nowy materiał",
+    "recent_activity": "Ostatnia aktywność",
+    "recent_activity.empty": "Tutaj pojawią się Twoje ostatnie kalkulacje i wyceny"
+  },
+  "settings": {
+    "title": "Ustawienia użytkownika",
+    "currency": "Preferowana waluta",
+    "theme_color": "Kolor motywu",
+    "theme_color.help": "Wybierz kolor, aby dostosować interfejs",
+    "footer_text": "Tekst stopki",
+    "footer_text.help": "Ten tekst pojawi się na dole wszystkich widoków do druku",
+    "save": "Zapisz ustawienia",
+    "cancel": "Anuluj"
+  },
+  "login": {
+    "title": "Logowanie",
+    "error": "Nieprawidłowy email lub hasło",
+    "logout": "Zostałeś wylogowany",
+    "email": "Email",
+    "password": "Hasło",
+    "remember_me": "Zapamiętaj mnie",
+    "submit": "Zaloguj się",
+    "register": "Utwórz konto",
+    "forgot_password": "Zapomniałeś hasła?",
+    "or": "lub",
+    "google": "Zaloguj się przez Google"
+  },
+  "services": {
+    "title": "Usługi",
+    "new": "Nowa usługa",
+    "edit": "Edytuj usługę",
+    "list.empty": "Brak usług. Kliknij \"Nowa usługa\", aby utworzyć.",
+    "form": {
+      "name": "Nazwa usługi",
+      "description": "Opis",
+      "price": "Cena",
+      "unit": "Jednostka",
+      "save": "Zapisz usługę",
+      "cancel": "Anuluj"
+    },
+    "delete.confirm": "Czy na pewno chcesz usunąć tę usługę?",
+    "name": "Nazwa usługi"
+  },
+  "materials": {
+    "title": "Materiały",
+    "new": "Nowy materiał",
+    "edit": "Edytuj materiał",
+    "list.empty": "Brak materiałów. Kliknij \"Nowy materiał\", aby utworzyć.",
+    "form": {
+      "name": "Nazwa materiału",
+      "description": "Opis",
+      "price": "Cena",
+      "unit": "Jednostka",
+      "category": "Kategoria",
+      "categories": "Kategorie",
+      "save": "Zapisz materiał",
+      "cancel": "Anuluj"
+    },
+    "delete.confirm": "Czy na pewno chcesz usunąć ten materiał?",
+    "delete.category": "Usunąć wszystkie materiały z tej kategorii?",
+    "name": "Nazwa materiału"
+  },
+  "calculations": {
+    "title": "Kalkulacje",
+    "new": "Nowa kalkulacja",
+    "edit.title": "Edytuj kalkulację",
+    "new.title": "Nowa kalkulacja",
+    "list.empty": "Brak kalkulacji",
+    "list.name": "Nazwa",
+    "list.description": "Opis",
+    "list.currency": "Waluta",
+    "list.total": "Suma",
+    "list.actions": "Akcje",
+    "delete.confirm": "Czy na pewno chcesz usunąć tę kalkulację?",
+    "form": {
+      "title": "Formularz kalkulacji",
+      "name": "Nazwa",
+      "description": "Opis",
+      "currency": "Waluta",
+      "stage": "Etap",
+      "stage.name": "Nazwa etapu",
+      "defaultStageName": "Etap",
+      "services": "Usługi",
+      "materials": "Materiały",
+      "add.stage": "Dodaj etap",
+      "add.service": "Dodaj usługę",
+      "add.material": "Dodaj materiał",
+      "add": "Dodaj",
+      "remove.stage": "Usuń etap",
+      "unit": "Jednostka",
+      "price": "Cena",
+      "quantity": "Ilość",
+      "total": "Suma",
+      "stage.total": "Suma etapu",
+      "services.total": "Suma usług",
+      "materials.total": "Suma materiałów",
+      "submit": "Zapisz kalkulację",
+      "saved": "Kalkulacja została pomyślnie zapisana!",
+      "error": {
+        "emptyQuantity": "Ilość jest wymagana dla wszystkich pozycji",
+        "invalidQuantity": "Ilość musi być dodatnią liczbą",
+        "emptyName": "Nazwa jest wymagana dla wszystkich pozycji",
+        "emptyUnit": "Jednostka jest wymagana dla wszystkich pozycji",
+        "emptyPrice": "Cena jest wymagana dla wszystkich pozycji",
+        "invalidPrice": "Cena musi być dodatnią liczbą"
+      }
+    },
+    "print": {
+      "item": "Pozycja",
+      "quantity": "Ilość",
+      "unit": "Jednostka",
+      "unit.price": "Cena jedn.",
+      "total": "Suma",
+      "stage.total": "Suma etapu"
+    }
+  },
+  "materials.import": {
+    "title": "Import zbiorczy materiałów",
+    "category": "Kategoria",
+    "csv.label": "Dane CSV (nazwa;cena;opis w każdym wierszu)",
+    "csv.example": "Przykład: Budleja Dawida African Queen;17 PLN;Buddleja davidii African Queen C2  2025-05-17",
+    "submit": "Importuj",
+    "cancel": "Anuluj"
+  },
+  "main": {
+    "description": "Witaj w Kalkulatorze Kosztów, narzędziu stworzonym, aby pomóc małym firmom w tworzeniu szczegółowych kalkulacji kosztów. Nasza aplikacja pomoże Ci zarządzać Twoimi usługami i materiałami oraz generować profesjonalne wyceny dla Twoich klientów."
+  }
+}
