@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import DefaultLayout from '../layouts/DefaultLayout.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,6 +13,17 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: () => import('../views/LoginView.vue'),
+    },
+    {
+      path: '/dashboard',
+      component: DefaultLayout,
+      children: [
+        {
+          path: '',
+          name: 'dashboard',
+          component: () => import('../views/DashboardView.vue'),
+        },
+      ],
     },
   ],
 })
