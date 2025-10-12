@@ -27,7 +27,7 @@
           </ul>
           <ul class="navbar-nav">
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" 
+              <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button"
                  data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-globe"></i>
                 <span>{{ $i18n.locale.toUpperCase() }}</span>
@@ -37,15 +37,16 @@
                 <li><a class="dropdown-item" href="#" @click.prevent="setLocale('pl')">{{ $t('lang.polish') }}</a></li>
               </ul>
             </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/settings">
-                <i class="bi bi-gear"></i> <span>{{ $t('nav.settings') }}</span>
-              </router-link>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#" @click.prevent="logout">
-                <i class="bi bi-box-arrow-right"></i> <span>{{ $t('nav.logout') }}</span>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person-circle"></i>
+                <span>{{ username }}</span>
               </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#" @click.prevent="accountManagement">{{ $t('nav.account') }}</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#" @click.prevent="logout">{{ $t('nav.logout') }}</a></li>
+              </ul>
             </li>
           </ul>
         </div>
@@ -59,16 +60,29 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import { onMounted, ref } from 'vue';
+import keycloak from '../services/keycloak';
 
 const { locale } = useI18n();
+const username = ref('');
+
+onMounted(() => {
+  keycloak.loadUserProfile().then((profile) => {
+    username.value = profile.username || '';
+  });
+});
 
 const setLocale = (newLocale: string) => {
   locale.value = newLocale;
 };
 
 const logout = () => {
-  // Handle logout logic here
+  keycloak.logout({ redirectUri: window.location.origin });
 };
+
+const accountManagement = () => {
+  keycloak.accountManagement();
+}
 </script>
 
 <style scoped>

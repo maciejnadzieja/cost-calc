@@ -2,10 +2,17 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import i18n from './i18n'
+import keycloak from './services/keycloak'
 
-const app = createApp(App)
+keycloak.init({ onLoad: 'check-sso' }).then(() => {
+  const app = createApp(App)
 
-app.use(router)
-app.use(i18n)
+  app.use(router)
+  app.use(i18n)
 
-app.mount('#app')
+  app.config.globalProperties.$keycloak = keycloak
+
+  app.mount('#app')
+}).catch((e) => {
+    console.error('Failed to initialize Keycloak', e)
+})
