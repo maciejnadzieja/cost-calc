@@ -40,6 +40,7 @@
   },
   "settings": {
     "title": "User Settings",
+    "description": "This is a placeholder for the user settings page.",
     "currency": "Preferred Currency",
     "theme_color": "Theme Color",
     "theme_color.help": "Choose a color to customize your interface",

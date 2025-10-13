@@ -62,9 +62,11 @@
 import { useI18n } from 'vue-i18n';
 import { onMounted, ref } from 'vue';
 import keycloak from '../services/keycloak';
+import { useRouter } from 'vue-router';
 
 const { locale } = useI18n();
 const username = ref('');
+const router = useRouter();
 
 onMounted(() => {
   keycloak.loadUserProfile().then((profile) => {
@@ -81,7 +83,7 @@ const logout = () => {
 };
 
 const accountManagement = () => {
-  keycloak.accountManagement();
+  router.push('/settings');
 }
 </script>
 

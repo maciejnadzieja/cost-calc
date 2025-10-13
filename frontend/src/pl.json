@@ -114,6 +114,7 @@
   },
   "settings": {
     "title": "Ustawienia użytkownika",
+    "description": "To jest placeholder dla strony ustawień użytkownika.",
     "currency": "Preferowana waluta",
     "theme_color": "Kolor motywu",
     "theme_color.help": "Wybierz kolor, aby dostosować interfejs",
