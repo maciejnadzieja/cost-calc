@@ -3,6 +3,8 @@ import App from './App.vue'
 import router from './router'
 import i18n from './i18n'
 import keycloak from './services/keycloak'
+import './main.scss'
+import 'bootstrap'
 
 keycloak.init({ onLoad: 'check-sso' }).then(() => {
   const app = createApp(App)
