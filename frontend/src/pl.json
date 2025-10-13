@@ -116,10 +116,14 @@
     "title": "Ustawienia użytkownika",
     "description": "To jest placeholder dla strony ustawień użytkownika.",
     "currency": "Preferowana waluta",
-    "theme_color": "Kolor motywu",
-    "theme_color.help": "Wybierz kolor, aby dostosować interfejs",
-    "footer_text": "Tekst stopki",
-    "footer_text.help": "Ten tekst pojawi się na dole wszystkich widoków do druku",
+    "theme_color": {
+      "label": "Kolor motywu",
+      "help": "Wybierz kolor, aby dostosować interfejs"
+    },
+    "footer_text": {
+      "label": "Tekst stopki",
+      "help": "Ten tekst pojawi się na dole wszystkich widoków do druku"
+    },
     "save": "Zapisz ustawienia",
     "cancel": "Anuluj"
   },

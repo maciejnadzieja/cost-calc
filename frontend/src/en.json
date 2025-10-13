@@ -42,10 +42,14 @@
     "title": "User Settings",
     "description": "This is a placeholder for the user settings page.",
     "currency": "Preferred Currency",
-    "theme_color": "Theme Color",
-    "theme_color.help": "Choose a color to customize your interface",
-    "footer_text": "Print Footer Text",
-    "footer_text.help": "This text will appear at the bottom of all print views",
+    "theme_color": {
+      "label": "Theme Color",
+      "help": "Choose a color to customize your interface"
+    },
+    "footer_text": {
+      "label": "Print Footer Text",
+      "help": "This text will appear at thebottom of all print views"
+    },
     "save": "Save Settings",
     "cancel": "Cancel"
   },
