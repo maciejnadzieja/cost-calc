@@ -8,11 +8,9 @@ import java.util.UUID
 
 typealias UserId = UUID
 
-@Document(collection = "users")
 data class User(
     @Id
     val id: UserId,
-    @Indexed(unique = true)
     val email: String,
     val password: String,
     val firstName: String,

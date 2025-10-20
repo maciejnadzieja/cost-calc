@@ -22,7 +22,8 @@
     "delete": "Delete",
     "view": "View",
     "print": "Print",
-    "duplicate": "Duplicate"
+    "duplicate": "Duplicate",
+    "search": "Search"
   },
   "lang": {
     "english": "English",

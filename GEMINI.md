@@ -64,6 +64,8 @@ To run the application locally, you need to start both the backend and the front
 mvn spring-boot:run
 ```
 
+The backend api will be available at `http://localhost:8080`.
+
 ### Frontend
 
 ```sh
@@ -91,3 +93,4 @@ This will start the application, a MongoDB container, and a Keycloak container. 
 *   **Branching:** The project appears to use a feature-branching workflow, though no explicit branching strategy is documented.
 *   **Commits:** Do not commit anything to git
 *   **Dependencies:** Backend dependencies are managed with Maven, and frontend dependencies are managed with NPM.
+*   **Running locally** Both backend and frontend will be running in separate processes - do not suggest to rerun them
