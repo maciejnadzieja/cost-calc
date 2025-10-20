@@ -38,6 +38,4 @@ interface MaterialRepository : MongoRepository<Material, MaterialId> {
         ],
     )
     fun countMaterialsByCategoryForUser(userId: UserId): List<MaterialCategoryCount>
-
-    fun deleteByCategory(category: String)
 }
