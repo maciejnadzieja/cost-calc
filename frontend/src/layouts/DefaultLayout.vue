@@ -60,7 +60,7 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import keycloak from '../services/keycloak';
 import { useRouter } from 'vue-router';
 
@@ -68,11 +68,15 @@ const { locale } = useI18n();
 const username = ref('');
 const router = useRouter();
 
-onMounted(() => {
-  keycloak.loadUserProfile().then((profile) => {
-    username.value = profile.username || '';
-  });
-});
+if (keycloak.tokenParsed?.preferred_username) {
+  username.value = keycloak.tokenParsed.preferred_username;
+}
+
+keycloak.onAuthSuccess = () => {
+  if (keycloak.tokenParsed?.preferred_username) {
+    username.value = keycloak.tokenParsed.preferred_username;
+  }
+};
 
 const setLocale = (newLocale: string) => {
   locale.value = newLocale;
