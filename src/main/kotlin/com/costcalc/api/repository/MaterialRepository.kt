@@ -30,6 +30,13 @@ interface MaterialRepository : MongoRepository<Material, MaterialId> {
         pageable: Pageable,
     ): Page<Material>
 
+    fun findByUserIdAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+        userId: UserId,
+        name: String,
+        description: String,
+        pageable: Pageable,
+    ): Page<Material>
+
     @Aggregation(
         pipeline = [
             "{ '\$match': { 'userId': ?0 } }",
