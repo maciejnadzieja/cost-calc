@@ -29,10 +29,14 @@
 <script setup lang="ts">
 import {onMounted, ref} from 'vue';
 import apiClient from '@/services/api';
+import {useRoute, useRouter} from "vue-router";
 
-const query = ref('');
+const router = useRouter();
+const route = useRoute();
+
+const query = ref(route.query.query || '');
 const services = ref([]);
-const currentPage = ref(0);
+const currentPage = ref(parseInt(route.query.page as string) || 0);
 const totalPages = ref(0);
 
 const fetchServices = async (page = 0) => {
@@ -47,6 +51,15 @@ const fetchServices = async (page = 0) => {
     services.value = response.data.content;
     currentPage.value = response.data.number;
     totalPages.value = response.data.totalPages;
+
+    const queryParams: any = {};
+    if (query.value) {
+      queryParams.query = query.value;
+    }
+    if (currentPage.value > 0) {
+      queryParams.page = currentPage.value;
+    }
+    router.push({ query: queryParams });
   } catch (error) {
     console.error(error);
   }
@@ -57,7 +70,7 @@ const search = () => {
 };
 
 onMounted(() => {
-  fetchServices();
+  fetchServices(currentPage.value);
 });
 </script>
 
