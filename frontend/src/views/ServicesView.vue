@@ -18,8 +18,8 @@
         <tr v-for="service in services" :key="service.id">
           <td>{{ service.name }}</td>
           <td>{{ service.description }}</td>
-          <td>{{ service.price }}</td>
-          <td>{{ service.workUnit }}</td>
+          <td>{{ service.price }} / {{ $t('units.service.' + service.workUnit.toLowerCase() + '.symbol') }}</td>
+          <td>{{ $t('units.service.' + service.workUnit.toLowerCase() + '.label') }}</td>
         </tr>
       </tbody>
     </table>

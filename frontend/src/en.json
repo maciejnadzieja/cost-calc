@@ -105,8 +105,8 @@
     "unit": "Unit",
     "category": "Category"
   },
-  "material": {
-    "unit": {
+  "units": {
+    "material": {
       "piece": {
         "label": "Piece",
         "symbol": "pc"
@@ -151,10 +151,8 @@
         "label": "Ton",
         "symbol": "t"
       }
-    }
-  },
-  "service": {
-    "unit": {
+    },
+    "service": {
       "hour": {
         "label": "Hour",
         "symbol": "h"

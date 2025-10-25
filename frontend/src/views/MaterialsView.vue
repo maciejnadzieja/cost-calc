@@ -19,8 +19,8 @@
         <tr v-for="material in materials" :key="material.id">
           <td>{{ material.name }}</td>
           <td>{{ material.description }}</td>
-          <td>{{ material.price }}</td>
-          <td>{{ material.unit }}</td>
+          <td>{{ material.price }} / {{ $t('units.material.' + material.unit.toLowerCase() + '.symbol') }}</td>
+          <td>{{ $t('units.material.' + material.unit.toLowerCase() + '.label') }}</td>
           <td>{{ material.category }}</td>
         </tr>
       </tbody>
