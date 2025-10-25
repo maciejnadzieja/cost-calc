@@ -155,7 +155,9 @@
       "cancel": "Anuluj"
     },
     "delete.confirm": "Czy na pewno chcesz usunąć tę usługę?",
-    "name": "Nazwa usługi"
+    "name": "Nazwa usługi",
+    "price": "Cena",
+    "workUnit": "Jednostka pracy"
   },
   "materials": {
     "title": "Materiały",
@@ -174,7 +176,10 @@
     },
     "delete.confirm": "Czy na pewno chcesz usunąć ten materiał?",
     "delete.category": "Usunąć wszystkie materiały z tej kategorii?",
-    "name": "Nazwa materiału"
+    "name": "Nazwa materiału",
+    "price": "Cena",
+    "unit": "Jednostka",
+    "category": "Kategoria"
   },
   "calculations": {
     "title": "Kalkulacje",

@@ -5,11 +5,26 @@
       <input type="text" class="form-control" v-model="query" @keyup.enter="search">
       <button class="btn btn-primary" type="button" @click="search">{{ $t('search') }}</button>
     </div>
-    <ul class="list-group">
-      <li class="list-group-item" v-for="material in materials" :key="material.id">
-        {{ material.name }}
-      </li>
-    </ul>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>{{ $t('materials.form.name') }}</th>
+          <th>{{ $t('materials.form.description') }}</th>
+          <th>{{ $t('materials.price') }}</th>
+          <th>{{ $t('materials.unit') }}</th>
+          <th>{{ $t('materials.category') }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="material in materials" :key="material.id">
+          <td>{{ material.name }}</td>
+          <td>{{ material.description }}</td>
+          <td>{{ material.price }}</td>
+          <td>{{ material.unit }}</td>
+          <td>{{ material.category }}</td>
+        </tr>
+      </tbody>
+    </table>
     <nav aria-label="Page navigation">
       <ul class="pagination">
         <li class="page-item" :class="{ disabled: currentPage === 0 }">

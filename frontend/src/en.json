@@ -80,7 +80,9 @@
       "save": "Save Service",
       "cancel": "Cancel"
     },
-    "delete.confirm": "Are you sure you want to delete this service?"
+    "delete.confirm": "Are you sure you want to delete this service?",
+    "price": "Price",
+    "workUnit": "Work Unit"
   },
   "materials": {
     "title": "Materials",
@@ -98,7 +100,10 @@
       "cancel": "Cancel"
     },
     "delete.confirm": "Are you sure you want to delete this material?",
-    "delete.category": "Delete all materials in this category?"
+    "delete.category": "Delete all materials in this category?",
+    "price": "Price",
+    "unit": "Unit",
+    "category": "Category"
   },
   "material": {
     "unit": {
