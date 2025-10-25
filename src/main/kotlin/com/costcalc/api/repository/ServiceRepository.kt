@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository
 interface ServiceRepository : MongoRepository<Service, ServiceId> {
     fun findByUserId(userId: UserId): List<Service>
 
+    fun findByUserId(userId: UserId, pageable: Pageable): Page<Service>
+
     fun findByUserIdAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
         userId: UserId,
         name: String,
