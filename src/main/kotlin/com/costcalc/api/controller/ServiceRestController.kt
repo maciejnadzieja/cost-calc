@@ -1,6 +1,7 @@
 package com.costcalc.api.controller
 
 import com.costcalc.api.config.CurrentUser
+import com.costcalc.api.dto.ServiceRequest
 import com.costcalc.api.model.Service
 import com.costcalc.api.model.User
 import com.costcalc.api.repository.ServiceRepository
@@ -55,21 +56,27 @@ class ServiceRestController(
 
     @PostMapping
     fun createService(
-        @RequestBody service: Service,
+        @RequestBody serviceRequest: ServiceRequest,
         @CurrentUser user: User,
     ): Service {
-        // TODO: use DTO
-        val newService = service.copy(id = UUID.randomUUID(), userId = user.id)
+        val newService =
+            Service(
+                id = UUID.randomUUID(),
+                userId = user.id,
+                name = serviceRequest.name,
+                description = serviceRequest.description,
+                price = serviceRequest.price,
+                workUnit = serviceRequest.workUnit,
+            )
         return serviceRepository.save(newService)
     }
 
     @PutMapping("/{id}")
     fun updateService(
         @PathVariable id: UUID,
-        @RequestBody service: Service,
+        @RequestBody serviceRequest: ServiceRequest,
         @CurrentUser user: User,
     ): Service {
-        // TODO: use DTO
         val existingService =
             serviceRepository
                 .findByIdAndUserId(id, user.id)
@@ -77,10 +84,10 @@ class ServiceRestController(
 
         val updatedService =
             existingService.copy(
-                name = service.name,
-                description = service.description,
-                price = service.price,
-                workUnit = service.workUnit,
+                name = serviceRequest.name,
+                description = serviceRequest.description,
+                price = serviceRequest.price,
+                workUnit = serviceRequest.workUnit,
             )
 
         return serviceRepository.save(updatedService)

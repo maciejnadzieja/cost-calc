@@ -1,6 +1,7 @@
 package com.costcalc.api.controller
 
 import com.costcalc.api.config.CurrentUser
+import com.costcalc.api.dto.MaterialRequest
 import com.costcalc.api.model.Material
 import com.costcalc.api.model.User
 import com.costcalc.api.repository.MaterialRepository
@@ -55,21 +56,28 @@ class MaterialRestController(
 
     @PostMapping
     fun createMaterial(
-        @RequestBody material: Material,
+        @RequestBody materialRequest: MaterialRequest,
         @CurrentUser user: User,
     ): Material {
-        // TODO: use DTO
-        val newMaterial = material.copy(id = UUID.randomUUID(), userId = user.id)
+        val newMaterial =
+            Material(
+                id = UUID.randomUUID(),
+                userId = user.id,
+                name = materialRequest.name,
+                description = materialRequest.description,
+                price = materialRequest.price,
+                unit = materialRequest.unit,
+                category = materialRequest.category,
+            )
         return materialRepository.save(newMaterial)
     }
 
     @PutMapping("/{id}")
     fun updateMaterial(
         @PathVariable id: UUID,
-        @RequestBody material: Material,
+        @RequestBody materialRequest: MaterialRequest,
         @CurrentUser user: User,
     ): Material {
-        // TODO: use DTO
         val existingMaterial =
             materialRepository
                 .findByIdAndUserId(id, user.id)
@@ -77,11 +85,11 @@ class MaterialRestController(
 
         val updatedMaterial =
             existingMaterial.copy(
-                name = material.name,
-                description = material.description,
-                price = material.price,
-                unit = material.unit,
-                category = material.category,
+                name = materialRequest.name,
+                description = materialRequest.description,
+                price = materialRequest.price,
+                unit = materialRequest.unit,
+                category = materialRequest.category,
             )
 
         return materialRepository.save(updatedMaterial)
