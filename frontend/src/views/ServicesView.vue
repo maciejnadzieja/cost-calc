@@ -5,7 +5,8 @@
       <input type="text" class="form-control" v-model="query" @keyup.enter="search">
       <button class="btn btn-primary" type="button" @click="search">{{ $t('search') }}</button>
     </div>
-    <table class="table">
+    <div class="border rounded" style="overflow:hidden">
+      <table class="table table-striped table-hover">
       <thead>
         <tr>
           <th>{{ $t('services.form.name') }}</th>
@@ -22,8 +23,9 @@
           <td>{{ $t('units.service.' + service.workUnit.toLowerCase() + '.label') }}</td>
         </tr>
       </tbody>
-    </table>
-    <nav aria-label="Page navigation">
+      </table>
+    </div>
+    <nav aria-label="Page navigation" class="mt-3">
       <ul class="pagination">
         <li class="page-item" :class="{ disabled: currentPage === 0 }">
           <a class="page-link" href="#" @click.prevent="fetchServices(currentPage - 1)">{{ $t('previous') }}</a>
