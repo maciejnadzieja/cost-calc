@@ -3,7 +3,6 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
       <div class="container">
         <router-link class="navbar-brand" to="/">
-          <i class="bi bi-house"></i>
           <span>{{ $t('app.name') }}</span>
         </router-link>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -42,7 +41,7 @@
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button"
                  data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-globe"></i>
+                <i class="bi bi-globe me-2"></i>
                 <span>{{ $i18n.locale.toUpperCase() }}</span>
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
@@ -52,7 +51,7 @@
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-person-circle"></i>
+                <i class="bi bi-person-circle me-2"></i>
                 <span>{{ username }}</span>
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
