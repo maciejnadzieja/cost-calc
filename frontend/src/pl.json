@@ -23,7 +23,9 @@
     "view": "Podgląd",
     "print": "Drukuj",
     "duplicate": "Duplikuj",
-    "search": "Szukaj"
+    "search": "Szukaj",
+    "previous": "Poprzednia",
+    "next": "Następna"
   },
   "lang": {
     "english": "Angielski",
@@ -143,6 +145,8 @@
   },
   "services": {
     "title": "Usługi",
+    "create.title": "Utwórz usługę",
+    "edit.title": "Edytuj usługę",
     "new": "Nowa usługa",
     "edit": "Edytuj usługę",
     "list.empty": "Brak usług. Kliknij \"Nowa usługa\", aby utworzyć.",
@@ -161,6 +165,8 @@
   },
   "materials": {
     "title": "Materiały",
+    "create.title": "Utwórz materiał",
+    "edit.title": "Edytuj materiał",
     "new": "Nowy materiał",
     "edit": "Edytuj materiał",
     "list.empty": "Brak materiałów. Kliknij \"Nowy materiał\", aby utworzyć.",

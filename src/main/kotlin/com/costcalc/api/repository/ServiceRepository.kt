@@ -20,4 +20,6 @@ interface ServiceRepository : MongoRepository<Service, ServiceId> {
         description: String,
         pageable: Pageable,
     ): Page<Service>
+
+    fun findByIdAndUserId(id: ServiceId, userId: UserId): java.util.Optional<Service>
 }

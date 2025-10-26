@@ -33,6 +33,26 @@ const router = createRouter({
           path: 'services',
           name: 'services',
           component: () => import('../views/ServicesView.vue')
+        },
+        {
+          path: 'services/create',
+          name: 'service-create',
+          component: () => import('../views/ServiceEditView.vue')
+        },
+        {
+          path: 'services/edit/:id',
+          name: 'service-edit',
+          component: () => import('../views/ServiceEditView.vue')
+        },
+        {
+          path: 'materials/create',
+          name: 'material-create',
+          component: () => import('../views/MaterialEditView.vue')
+        },
+        {
+          path: 'materials/edit/:id',
+          name: 'material-edit',
+          component: () => import('../views/MaterialEditView.vue')
         }
       ]
     },

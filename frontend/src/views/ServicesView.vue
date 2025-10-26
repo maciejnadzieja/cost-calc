@@ -1,9 +1,12 @@
 <template>
   <div>
     <h1>{{ $t('services.title') }}</h1>
-    <div class="input-group mb-3">
-      <input type="text" class="form-control" v-model="query" @keyup.enter="search">
-      <button class="btn btn-primary" type="button" @click="search">{{ $t('search') }}</button>
+    <div class="d-flex justify-content-between mb-3">
+      <div class="input-group" style="width: auto;">
+        <input type="text" class="form-control" v-model="query" @keyup.enter="search">
+        <button class="btn btn-primary" type="button" @click="search">{{ $t('search') }}</button>
+      </div>
+      <router-link to="/services/create" class="btn btn-primary">{{ $t('services.new') }}</router-link>
     </div>
     <div class="border rounded" style="overflow:hidden">
       <table class="table table-striped table-hover">
@@ -13,6 +16,7 @@
           <th>{{ $t('services.form.description') }}</th>
           <th>{{ $t('services.price') }}</th>
           <th>{{ $t('services.workUnit') }}</th>
+          <th>{{ $t('common.actions') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -21,6 +25,9 @@
           <td>{{ service.description }}</td>
           <td>{{ service.price }} / {{ $t('units.service.' + service.workUnit.toLowerCase() + '.symbol') }}</td>
           <td>{{ $t('units.service.' + service.workUnit.toLowerCase() + '.label') }}</td>
+          <td>
+            <router-link :to="`/services/edit/${service.id}`" class="btn btn-sm btn-primary">{{ $t('common.edit') }}</router-link>
+          </td>
         </tr>
       </tbody>
       </table>

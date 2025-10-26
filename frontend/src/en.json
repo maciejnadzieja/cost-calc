@@ -23,7 +23,9 @@
     "view": "View",
     "print": "Print",
     "duplicate": "Duplicate",
-    "search": "Search"
+    "search": "Search",
+    "previous": "Previous",
+    "next": "Next"
   },
   "lang": {
     "english": "English",
@@ -69,6 +71,8 @@
   },
   "services": {
     "title": "Services",
+    "create.title": "Create Service",
+    "edit.title": "Edit Service",
     "new": "New Service",
     "edit": "Edit Service",
     "list.empty": "No services found. Click \"Add New Service\" to create one.",
@@ -86,6 +90,8 @@
   },
   "materials": {
     "title": "Materials",
+    "create.title": "Create Material",
+    "edit.title": "Edit Material",
     "new": "New Material",
     "edit": "Edit Material",
     "list.empty": "No materials found. Click \"Add New Material\" to create one.",

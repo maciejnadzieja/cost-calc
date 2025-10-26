@@ -8,9 +8,14 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.util.UUID
 
 @RestController
 @RequestMapping("/api/services")
@@ -38,5 +43,46 @@ class ServiceRestController(
                 )
         }
     }
-}
 
+    @GetMapping("/{id}")
+    fun getServiceById(
+        @PathVariable id: UUID,
+        @CurrentUser user: User,
+    ): Service =
+        serviceRepository
+            .findByIdAndUserId(id, user.id)
+            .orElseThrow { NoSuchElementException("Service not found") }
+
+    @PostMapping
+    fun createService(
+        @RequestBody service: Service,
+        @CurrentUser user: User,
+    ): Service {
+        // TODO: use DTO
+        val newService = service.copy(id = UUID.randomUUID(), userId = user.id)
+        return serviceRepository.save(newService)
+    }
+
+    @PutMapping("/{id}")
+    fun updateService(
+        @PathVariable id: UUID,
+        @RequestBody service: Service,
+        @CurrentUser user: User,
+    ): Service {
+        // TODO: use DTO
+        val existingService =
+            serviceRepository
+                .findByIdAndUserId(id, user.id)
+                .orElseThrow { NoSuchElementException("Service not found") }
+
+        val updatedService =
+            existingService.copy(
+                name = service.name,
+                description = service.description,
+                price = service.price,
+                workUnit = service.workUnit,
+            )
+
+        return serviceRepository.save(updatedService)
+    }
+}

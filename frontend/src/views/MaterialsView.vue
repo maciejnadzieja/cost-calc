@@ -1,9 +1,12 @@
 <template>
   <div>
     <h1>{{ $t('materials.title') }}</h1>
-    <div class="input-group mb-3">
-      <input type="text" class="form-control" v-model="query" @keyup.enter="search">
-      <button class="btn btn-primary" type="button" @click="search">{{ $t('search') }}</button>
+    <div class="d-flex justify-content-between mb-3">
+      <div class="input-group" style="width: auto;">
+        <input type="text" class="form-control" v-model="query" @keyup.enter="search">
+        <button class="btn btn-primary" type="button" @click="search">{{ $t('search') }}</button>
+      </div>
+      <router-link to="/materials/create" class="btn btn-primary">{{ $t('materials.new') }}</router-link>
     </div>
     <div class="border rounded" style="overflow:hidden">
       <table class="table table-striped table-hover">
@@ -14,6 +17,7 @@
           <th>{{ $t('materials.price') }}</th>
           <th>{{ $t('materials.unit') }}</th>
           <th>{{ $t('materials.category') }}</th>
+          <th>{{ $t('common.actions') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -23,6 +27,9 @@
           <td>{{ material.price }} / {{ $t('units.material.' + material.unit.toLowerCase() + '.symbol') }}</td>
           <td>{{ $t('units.material.' + material.unit.toLowerCase() + '.label') }}</td>
           <td>{{ material.category }}</td>
+          <td>
+            <router-link :to="`/materials/edit/${material.id}`" class="btn btn-sm btn-primary">{{ $t('common.edit') }}</router-link>
+          </td>
         </tr>
       </tbody>
       </table>
