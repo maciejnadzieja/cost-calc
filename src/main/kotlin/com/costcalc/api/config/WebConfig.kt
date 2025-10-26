@@ -1,6 +1,5 @@
 package com.costcalc.api.config
 
-import com.costcalc.api.config.CurrentUser
 import com.costcalc.api.model.User
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.MethodParameter
@@ -36,8 +35,11 @@ class WebConfig(
             val authentication = SecurityContextHolder.getContext().authentication
             if (authentication != null && authentication.principal is Jwt) {
                 val jwt = authentication.principal as Jwt
-                val email = jwt.getClaimAsString("email")
-                return User(UUID.nameUUIDFromBytes(email.toByteArray()), email)
+
+                return User(
+                    id = UUID.fromString(jwt.getClaimAsString("sub")),
+                    email = jwt.getClaimAsString("email"),
+                )
             }
             throw RuntimeException("user not authenticated")
         }

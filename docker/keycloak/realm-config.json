@@ -3,7 +3,11 @@
   "enabled": true,
   "users": [
     {
-      "username": "tester",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "username": "tester@cost-calc.eu",
+      "email": "tester@cost-calc.eu",
+      "firstName": "Tester",
+      "lastName": "Tester",
       "enabled": true,
       "emailVerified": true,
       "credentials": [
