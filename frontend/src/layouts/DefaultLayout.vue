@@ -92,6 +92,7 @@ keycloak.onAuthSuccess = () => {
 
 const setLocale = (newLocale: string) => {
   locale.value = newLocale;
+  localStorage.setItem('locale', newLocale);
 };
 
 const logout = () => {
