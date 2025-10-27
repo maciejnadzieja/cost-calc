@@ -112,8 +112,10 @@
     "create_calculation": "Utwórz nową kalkulację",
     "add_service": "Dodaj nową usługę",
     "add_material": "Dodaj nowy materiał",
-    "recent_activity": "Ostatnia aktywność",
-    "recent_activity.empty": "Tutaj pojawią się Twoje ostatnie kalkulacje i wyceny"
+    "recent_activity": {
+      "index": "Ostatnia aktywność",
+      "empty": "Tutaj pojawią się Twoje ostatnie kalkulacje i wyceny"
+    }
   },
   "settings": {
     "title": "Ustawienia użytkownika",
@@ -145,11 +147,16 @@
   },
   "services": {
     "title": "Usługi",
-    "create.title": "Utwórz usługę",
-    "edit.title": "Edytuj usługę",
+    "create": {
+      "title": "Utwórz usługę"
+    },
+    "edit": {
+      "title": "Edytuj usługę"
+    },
     "new": "Nowa usługa",
-    "edit": "Edytuj usługę",
-    "list.empty": "Brak usług. Kliknij \"Nowa usługa\", aby utworzyć.",
+    "list": {
+      "empty": "Brak usług. Kliknij \"Nowa usługa\", aby utworzyć."
+    },
     "form": {
       "name": "Nazwa usługi",
       "description": "Opis",
@@ -158,18 +165,25 @@
       "save": "Zapisz usługę",
       "cancel": "Anuluj"
     },
-    "delete.confirm": "Czy na pewno chcesz usunąć tę usługę?",
+    "delete": {
+      "confirm": "Czy na pewno chcesz usunąć tę usługę?"
+    },
     "name": "Nazwa usługi",
     "price": "Cena",
     "workUnit": "Jednostka pracy"
   },
   "materials": {
     "title": "Materiały",
-    "create.title": "Utwórz materiał",
-    "edit.title": "Edytuj materiał",
+    "create": {
+      "title": "Utwórz materiał"
+    },
+    "edit": {
+      "title": "Edytuj materiał"
+    },
     "new": "Nowy materiał",
-    "edit": "Edytuj materiał",
-    "list.empty": "Brak materiałów. Kliknij \"Nowy materiał\", aby utworzyć.",
+    "list": {
+      "empty": "Brak materiałów. Kliknij \"Nowy materiał\", aby utworzyć."
+    },
     "form": {
       "name": "Nazwa materiału",
       "description": "Opis",
@@ -180,8 +194,10 @@
       "save": "Zapisz materiał",
       "cancel": "Anuluj"
     },
-    "delete.confirm": "Czy na pewno chcesz usunąć ten materiał?",
-    "delete.category": "Usunąć wszystkie materiały z tej kategorii?",
+    "delete": {
+      "confirm": "Czy na pewno chcesz usunąć ten materiał?",
+      "category": "Usunąć wszystkie materiały z tej kategorii?"
+    },
     "name": "Nazwa materiału",
     "price": "Cena",
     "unit": "Jednostka",
@@ -189,38 +205,52 @@
   },
   "calculations": {
     "title": "Kalkulacje",
-    "new": "Nowa kalkulacja",
-    "edit.title": "Edytuj kalkulację",
-    "new.title": "Nowa kalkulacja",
-    "list.empty": "Brak kalkulacji",
-    "list.name": "Nazwa",
-    "list.description": "Opis",
-    "list.currency": "Waluta",
-    "list.total": "Suma",
-    "list.actions": "Akcje",
-    "delete.confirm": "Czy na pewno chcesz usunąć tę kalkulację?",
+    "new": {
+      "index": "Nowa kalkulacja",
+      "title": "Nowa kalkulacja"
+    },
+    "edit": {
+      "title": "Edytuj kalkulację"
+    },
+    "list": {
+      "empty": "Brak kalkulacji",
+      "name": "Nazwa",
+      "description": "Opis",
+      "currency": "Waluta",
+      "total": "Suma",
+      "actions": "Akcje"
+    },
+    "delete": {
+      "confirm": "Czy na pewno chcesz usunąć tę kalkulację?"
+    },
     "form": {
       "title": "Formularz kalkulacji",
       "name": "Nazwa",
       "description": "Opis",
       "currency": "Waluta",
-      "stage": "Etap",
-      "stage.name": "Nazwa etapu",
+      "stage": {
+        "index": "Etap",
+        "name": "Nazwa etapu"
+      },
       "defaultStageName": "Etap",
       "services": "Usługi",
       "materials": "Materiały",
-      "add.stage": "Dodaj etap",
-      "add.service": "Dodaj usługę",
-      "add.material": "Dodaj materiał",
-      "add": "Dodaj",
-      "remove.stage": "Usuń etap",
+      "add": {
+        "index": "Dodaj",
+        "stage": "Dodaj etap",
+        "service": "Dodaj usługę",
+        "material": "Dodaj materiał"
+      },
+      "remove": {
+        "stage": "Usuń etap"
+      },
       "unit": "Jednostka",
       "price": "Cena",
       "quantity": "Ilość",
       "total": "Suma",
-      "stage.total": "Suma etapu",
-      "services.total": "Suma usług",
-      "materials.total": "Suma materiałów",
+      "stage_total": "Suma etapu",
+      "services_total": "Suma usług",
+      "materials_total": "Suma materiałów",
       "submit": "Zapisz kalkulację",
       "saved": "Kalkulacja została pomyślnie zapisana!",
       "error": {
@@ -236,16 +266,18 @@
       "item": "Pozycja",
       "quantity": "Ilość",
       "unit": "Jednostka",
-      "unit.price": "Cena jedn.",
+      "unit_price": "Cena jedn.",
       "total": "Suma",
-      "stage.total": "Suma etapu"
+      "stage_total": "Suma etapu"
     }
   },
-  "materials.import": {
+  "materials_import": {
     "title": "Import zbiorczy materiałów",
     "category": "Kategoria",
-    "csv.label": "Dane CSV (nazwa;cena;opis w każdym wierszu)",
-    "csv.example": "Przykład: Budleja Dawida African Queen;17 PLN;Buddleja davidii African Queen C2  2025-05-17",
+    "csv": {
+      "label": "Dane CSV (nazwa;cena;opis w każdym wierszu)",
+      "example": "Przykład: Budleja Dawida African Queen;17 PLN;Buddleja davidii African Queen C2  2025-05-17"
+    },
     "submit": "Importuj",
     "cancel": "Anuluj"
   },
