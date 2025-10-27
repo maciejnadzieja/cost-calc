@@ -21,4 +21,12 @@ apiClient.interceptors.request.use(
   }
 );
 
+export const searchServices = (query: string) => {
+  return apiClient.get(`/services?query=${query}`);
+};
+
+export const searchMaterials = (query: string) => {
+  return apiClient.get(`/materials?query=${query}`);
+};
+
 export default apiClient;

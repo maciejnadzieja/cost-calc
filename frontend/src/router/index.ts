@@ -53,6 +53,21 @@ const router = createRouter({
           path: 'materials/edit/:id',
           name: 'material-edit',
           component: () => import('../views/MaterialEditView.vue')
+        },
+        {
+          path: 'calculations',
+          name: 'calculations',
+          component: () => import('../views/CalculationListView.vue')
+        },
+        {
+          path: 'calculations/new',
+          name: 'calculation-new',
+          component: () => import('../views/CalculationForm.vue')
+        },
+        {
+          path: 'calculations/edit/:id',
+          name: 'calculation-edit',
+          component: () => import('../views/CalculationForm.vue')
         }
       ]
     },

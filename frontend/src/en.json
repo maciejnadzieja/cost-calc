@@ -10,7 +10,9 @@
     "settings": "Settings",
     "logout": "Logout",
     "login": "Login",
-    "account": "Account"
+    "account": "Account",
+    "list": "List",
+    "new": "New"
   },
   "common": {
     "actions": "Actions",
@@ -222,8 +224,10 @@
       "confirm": "Are you sure you want to delete this calculation?"
     },
     "form": {
-      "title": "Calculation Form",
       "name": "Name",
+      "number": "Number",
+      "date": "Date",
+      "customer": "Customer",
       "description": "Description",
       "currency": "Currency",
       "stage": {

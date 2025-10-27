@@ -10,7 +10,9 @@
     "settings": "Ustawienia",
     "logout": "Wyloguj",
     "login": "Zaloguj",
-    "account": "Konto"
+    "account": "Konto",
+    "list": "Lista",
+    "new": "Nowa"
   },
   "common": {
     "actions": "Akcje",
@@ -226,6 +228,9 @@
     "form": {
       "title": "Formularz kalkulacji",
       "name": "Nazwa",
+      "number": "Numer",
+      "date": "Data",
+      "customer": "Klient",
       "description": "Opis",
       "currency": "Waluta",
       "stage": {

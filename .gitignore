@@ -50,3 +50,4 @@ mongodb_data/
 Thumbs.db 
 
 .windsurfrules
+/frontend/.vite/
