@@ -125,7 +125,7 @@
             </thead>
             <tbody>
               <tr
-                v-for="(item, itemIndex) in stage.items.filter((i) => i.type === 'service')"
+                v-for="(item, itemIndex) in stage.items.filter((i) => i.type === ItemType.SERVICE)"
                 :key="itemIndex"
               >
                 <td><input type="text" class="form-control" v-model="item.name" /></td>
@@ -158,7 +158,7 @@
             </thead>
             <tbody>
               <tr
-                v-for="(item, itemIndex) in stage.items.filter((i) => i.type === 'material')"
+                v-for="(item, itemIndex) in stage.items.filter((i) => i.type === ItemType.MATERIAL)"
                 :key="itemIndex"
               >
                 <td><input type="text" class="form-control" v-model="item.name" /></td>
@@ -197,7 +197,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import type { Calculation, CalculationStage, CalculationItem } from '../models/calculation'
+import { ItemType, type Calculation, type CalculationStage, type CalculationItem } from '../models/calculation'
 import {
   searchServices,
   searchMaterials,
@@ -238,8 +238,8 @@ onMounted(async () => {
         stages: response.data.stages.map((stage: any) => ({
           ...stage,
           items: [
-            ...stage.services.map((s: any) => ({ ...s, type: 'service' })),
-            ...stage.materials.map((m: any) => ({ ...m, type: 'material' })),
+            ...stage.services.map((s: any) => ({ ...s, type: ItemType.SERVICE })),
+            ...stage.materials.map((m: any) => ({ ...m, type: ItemType.MATERIAL })),
           ],
           serviceSearchQuery: '',
           materialSearchQuery: '',
@@ -305,7 +305,7 @@ const selectService = (stageIndex: number, service: Service) => {
     quantity: 1,
     unit: service.workUnit,
     unitPrice: service.price,
-    type: 'service',
+    type: ItemType.SERVICE,
   })
   stage.serviceSearchQuery = ''
   stage.serviceSearchResults = []
@@ -318,7 +318,7 @@ const selectMaterial = (stageIndex: number, material: Material) => {
     quantity: 1,
     unit: material.unit,
     unitPrice: material.price,
-    type: 'material',
+    type: ItemType.MATERIAL,
   })
   stage.materialSearchQuery = ''
   stage.materialSearchResults = []
@@ -330,8 +330,8 @@ const saveCalculation = async () => {
       ...calculation.value,
       stages: calculation.value.stages.map(stage => ({
         ...stage,
-        services: stage.items.filter(item => item.type === 'service'),
-        materials: stage.items.filter(item => item.type === 'material'),
+        services: stage.items.filter(item => item.type === ItemType.SERVICE),
+        materials: stage.items.filter(item => item.type === ItemType.MATERIAL),
       })),
     };
 

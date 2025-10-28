@@ -11,10 +11,15 @@ export interface CalculationStage {
   items: CalculationItem[]
 }
 
+export enum ItemType {
+  SERVICE = 'SERVICE',
+  MATERIAL = 'MATERIAL',
+}
+
 export interface CalculationItem {
   name: string
   quantity: number
   unit: string
   unitPrice: number
-  type: 'service' | 'material'
+  type: ItemType
 }
