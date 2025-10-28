@@ -1,10 +1,10 @@
 package com.costcalc.api.service
 
 import com.costcalc.api.model.Calculation
+import com.costcalc.api.model.CalculationId
 import com.costcalc.api.model.UserId
 import com.costcalc.api.repository.CalculationRepository
 import org.springframework.stereotype.Service
-import java.util.UUID
 
 @Service
 class CalculationService(
@@ -14,12 +14,17 @@ class CalculationService(
 
     fun create(calculation: Calculation): Calculation = calculationRepository.save(calculation)
 
+    fun findById(id: CalculationId): Calculation {
+        return calculationRepository.findById(id).orElse(null)
+            ?: throw Exception("Calculation not found")
+    }
+
     fun update(
-        id: String,
+        id: CalculationId,
         calculation: Calculation,
     ): Calculation {
         val existingCalculation =
-            calculationRepository.findById(UUID.fromString(id)).orElse(null)
+            calculationRepository.findById(id).orElse(null)
                 ?: throw Exception("Calculation not found")
 
         if (existingCalculation.userId != calculation.userId) {

@@ -3,6 +3,7 @@ package com.costcalc.api.controller
 import com.costcalc.api.config.CurrentUser
 import com.costcalc.api.dto.CalculationRequest
 import com.costcalc.api.model.Calculation
+import com.costcalc.api.model.CalculationId
 import com.costcalc.api.model.User
 import com.costcalc.api.service.CalculationService
 import org.springframework.http.ResponseEntity
@@ -28,6 +29,20 @@ class CalculationRestController(
         return ResponseEntity.ok(calculations)
     }
 
+    @GetMapping("/{id}")
+    fun getById(
+        @PathVariable id: CalculationId,
+        @CurrentUser user: User,
+    ): ResponseEntity<Calculation> {
+        val calculation = calculationService.findById(id)
+
+        if (calculation.userId != user.id) {
+            throw Exception("User does not have permission to view this calculation")
+        }
+
+        return ResponseEntity.ok(calculation)
+    }
+
     @PostMapping
     fun create(
         @RequestBody calculationRequest: CalculationRequest,
@@ -48,7 +63,7 @@ class CalculationRestController(
 
     @PutMapping("/{id}")
     fun update(
-        @PathVariable id: UUID,
+        @PathVariable id: CalculationId,
         @RequestBody calculationRequest: CalculationRequest,
         @CurrentUser user: User,
     ): ResponseEntity<Calculation> {
@@ -61,7 +76,7 @@ class CalculationRestController(
                 currency = calculationRequest.currency,
                 userId = user.id,
             )
-        val updatedCalculation = calculationService.update(id.toString(), calculation)
+        val updatedCalculation = calculationService.update(id, calculation)
         return ResponseEntity.ok(updatedCalculation)
     }
 }

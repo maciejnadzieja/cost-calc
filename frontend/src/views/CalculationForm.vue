@@ -218,6 +218,7 @@ interface Stage extends CalculationStage {
 }
 
 const calculation = ref<Calculation>({
+  id: undefined,
   name: '',
   description: '',
   stages: [],
@@ -232,7 +233,20 @@ onMounted(async () => {
   if (route.params.id) {
     try {
       const response = await getCalculationById(route.params.id as string)
-      calculation.value = response.data
+      calculation.value = {
+        ...response.data,
+        stages: response.data.stages.map((stage: any) => ({
+          ...stage,
+          items: [
+            ...stage.services.map((s: any) => ({ ...s, type: 'service' })),
+            ...stage.materials.map((m: any) => ({ ...m, type: 'material' })),
+          ],
+          serviceSearchQuery: '',
+          materialSearchQuery: '',
+          serviceSearchResults: [],
+          materialSearchResults: [],
+        })),
+      };
     } catch (error) {
       console.error('Error fetching calculation:', error)
     }
@@ -312,10 +326,19 @@ const selectMaterial = (stageIndex: number, material: Material) => {
 
 const saveCalculation = async () => {
   try {
+    const payload = {
+      ...calculation.value,
+      stages: calculation.value.stages.map(stage => ({
+        ...stage,
+        services: stage.items.filter(item => item.type === 'service'),
+        materials: stage.items.filter(item => item.type === 'material'),
+      })),
+    };
+
     if (calculation.value.id) {
-      await updateCalculation(calculation.value.id, calculation.value);
+      await updateCalculation(calculation.value.id, payload);
     } else {
-      await createCalculation(calculation.value);
+      await createCalculation(payload);
     }
     calculationSaved.value = true;
     setTimeout(() => {
