@@ -29,4 +29,34 @@ export const searchMaterials = (query: string) => {
   return apiClient.get(`/materials?query=${query}`);
 };
 
+export const createCalculation = (calculation: any) => {
+  return apiClient.post('/calculations', calculation);
+};
+
+export const updateCalculation = (id: string, calculation: any) => {
+  return apiClient.put(`/calculations/${id}`, calculation);
+};
+
+export const getAllCalculations = () => {
+  return apiClient.get('/calculations');
+};
+
+export const deleteCalculation = (id: string) => {
+
+  return apiClient.delete(`/calculations/${id}`);
+
+};
+
+
+
+export const getCalculationById = (id: string) => {
+
+  return apiClient.get(`/calculations/${id}`);
+
+};
+
+
+
 export default apiClient;
+
+

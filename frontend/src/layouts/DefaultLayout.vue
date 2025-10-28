@@ -17,14 +17,10 @@
                 <i class="bi bi-speedometer2"></i> <span>{{ $t('nav.dashboard') }}</span>
               </router-link>
             </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="calculationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <li class="nav-item">
+              <router-link class="nav-link" to="/calculations">
                 <i class="bi bi-calculator"></i> <span>{{ $t('nav.calculations') }}</span>
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="calculationsDropdown">
-                <li><router-link class="dropdown-item" to="/calculations">{{ $t('nav.list') }}</router-link></li>
-                <li><router-link class="dropdown-item" to="/calculations/new">{{ $t('nav.new') }}</router-link></li>
-              </ul>
+              </router-link>
             </li>
             <li class="nav-item">
               <router-link class="nav-link" to="/services">

@@ -195,9 +195,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import type { Calculation, CalculationStage, CalculationItem } from '../models/calculation'
-import { searchServices, searchMaterials } from '../services/api'
+import {
+  searchServices,
+  searchMaterials,
+  createCalculation,
+  updateCalculation,
+  getCalculationById,
+} from '../services/api'
 import type { Service } from '../models/service'
 import type { Material } from '../models/material'
 
@@ -218,6 +225,19 @@ const calculation = ref<Calculation>({
 })
 
 const calculationSaved = ref(false)
+
+const route = useRoute()
+
+onMounted(async () => {
+  if (route.params.id) {
+    try {
+      const response = await getCalculationById(route.params.id as string)
+      calculation.value = response.data
+    } catch (error) {
+      console.error('Error fetching calculation:', error)
+    }
+  }
+})
 
 const addStage = () => {
   calculation.value.stages.push({
@@ -290,14 +310,22 @@ const selectMaterial = (stageIndex: number, material: Material) => {
   stage.materialSearchResults = []
 }
 
-const saveCalculation = () => {
-  // Logic to save the calculation will go here
-  console.log(calculation.value)
-  calculationSaved.value = true
-  setTimeout(() => {
-    calculationSaved.value = false
-  }, 3000)
-}
+const saveCalculation = async () => {
+  try {
+    if (calculation.value.id) {
+      await updateCalculation(calculation.value.id, calculation.value);
+    } else {
+      await createCalculation(calculation.value);
+    }
+    calculationSaved.value = true;
+    setTimeout(() => {
+      calculationSaved.value = false;
+    }, 3000);
+  } catch (error) {
+    console.error("Error saving calculation:", error);
+    // Optionally, handle error display to the user
+  }
+};
 </script>
 
 <style scoped></style>
