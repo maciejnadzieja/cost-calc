@@ -213,12 +213,15 @@
       "title": "Edit Calculation"
     },
     "list": {
+      "no_calculations": "No calculations found",
       "empty": "No calculations found",
       "name": "Name",
       "description": "Description",
       "currency": "Currency",
       "total": "Total",
-      "actions": "Actions"
+      "actions": "Actions",
+      "title": "Calculations",
+      "create_new": "Create calculation"
     },
     "delete": {
       "confirm": "Are you sure you want to delete this calculation?"

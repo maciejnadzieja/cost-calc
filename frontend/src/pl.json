@@ -215,12 +215,15 @@
       "title": "Edytuj kalkulację"
     },
     "list": {
+      "no_calculations": "Brak kalkulacji",
       "empty": "Brak kalkulacji",
       "name": "Nazwa",
       "description": "Opis",
       "currency": "Waluta",
       "total": "Suma",
-      "actions": "Akcje"
+      "actions": "Akcje",
+      "title": "Kalkulacje",
+      "create_new": "Stwórz kalkulację"
     },
     "delete": {
       "confirm": "Czy na pewno chcesz usunąć tę kalkulację?"
