@@ -3,6 +3,7 @@ import en from './en.json';
 import pl from './pl.json';
 
 const i18n = createI18n({
+  legacy: false,
   locale: localStorage.getItem('locale') || 'en',
   fallbackLocale: 'en',
   messages: {

@@ -1,15 +1,15 @@
 <template>
   <div class="card mb-3">
     <div class="card-header">
-      <h5 class="card-title">{{ $t('calculations.form.stage.index') }} {{ stageIndex + 1 }}</h5>
+      <h5 class="card-title">{{ t('calculations.form.stage.index') }} {{ stageIndex + 1 }}</h5>
       <button type="button" class="btn btn-danger btn-sm" @click="$emit('remove-stage')">
-        {{ $t('calculations.form.remove.stage') }}
+        {{ t('calculations.form.remove.stage') }}
       </button>
     </div>
     <div class="card-body">
       <div class="mb-3">
         <label :for="`stage-name-${stageIndex}`" class="form-label">{{
-          $t('calculations.form.stage.name')
+          t('calculations.form.stage.name')
         }}</label>
         <input
           type="text"
@@ -24,12 +24,12 @@
       <div class="row">
         <div class="col-md-6">
           <div class="mb-3">
-            <label class="form-label">{{ $t('calculations.form.add.service') }}</label>
+            <label class="form-label">{{ t('calculations.form.add.service') }}</label>
             <div class="input-group">
               <input
                 type="text"
                 class="form-control"
-                :placeholder="$t('common.search')"
+                :placeholder="t('common.search')"
                 v-model="serviceSearchQuery"
                 @input="handleServiceSearch"
               />
@@ -48,12 +48,12 @@
         </div>
         <div class="col-md-6">
           <div class="mb-3">
-            <label class="form-label">{{ $t('calculations.form.add.material') }}</label>
+            <label class="form-label">{{ t('calculations.form.add.material') }}</label>
             <div class="input-group">
               <input
                 type="text"
                 class="form-control"
-                :placeholder="$t('common.search')"
+                :placeholder="t('common.search')"
                 v-model="materialSearchQuery"
                 @input="handleMaterialSearch"
               />
@@ -72,14 +72,14 @@
         </div>
       </div>
 
-      <h5>{{ $t('calculations.form.services') }}</h5>
+      <h5>{{ t('calculations.form.services') }}</h5>
       <table class="table">
         <thead>
           <tr>
-            <th>{{ $t('calculations.form.name') }}</th>
-            <th>{{ $t('calculations.form.quantity') }}</th>
-            <th>{{ $t('calculations.form.unit') }}</th>
-            <th>{{ $t('calculations.form.price') }}</th>
+            <th>{{ t('calculations.form.name') }}</th>
+            <th>{{ t('calculations.form.quantity') }}</th>
+            <th>{{ t('calculations.form.unit') }}</th>
+            <th>{{ t('calculations.form.price') }}</th>
             <th></th>
           </tr>
         </thead>
@@ -98,21 +98,21 @@
                 class="btn btn-danger btn-sm"
                 @click="removeItem(item)"
               >
-                {{ $t('common.remove') }}
+                {{ t('common.remove') }}
               </button>
             </td>
           </tr>
         </tbody>
       </table>
 
-      <h5>{{ $t('calculations.form.materials') }}</h5>
+      <h5>{{ t('calculations.form.materials') }}</h5>
       <table class="table">
         <thead>
           <tr>
-            <th>{{ $t('calculations.form.name') }}</th>
-            <th>{{ $t('calculations.form.quantity') }}</th>
-            <th>{{ $t('calculations.form.unit') }}</th>
-            <th>{{ $t('calculations.form.price') }}</th>
+            <th>{{ t('calculations.form.name') }}</th>
+            <th>{{ t('calculations.form.quantity') }}</th>
+            <th>{{ t('calculations.form.unit') }}</th>
+            <th>{{ t('calculations.form.price') }}</th>
             <th></th>
           </tr>
         </thead>
@@ -131,7 +131,7 @@
                 class="btn btn-danger btn-sm"
                 @click="removeItem(item)"
               >
-                {{ $t('common.remove') }}
+                {{ t('common.remove') }}
               </button>
             </td>
           </tr>
@@ -147,6 +147,9 @@ import { ItemType, type CalculationStage, type CalculationItem } from '../models
 import { searchServices, searchMaterials } from '../services/api';
 import type { Service } from '../models/service';
 import type { Material } from '../models/material';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const props = defineProps<{ stage: CalculationStage; stageIndex: number }>();
 const emit = defineEmits(['update:stage', 'remove-stage']);

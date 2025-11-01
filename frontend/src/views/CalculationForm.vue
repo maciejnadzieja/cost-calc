@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>{{ calculation.id ? $t('calculations.edit.title') : $t('calculations.new.title') }}</h2>
+    <h2>{{ calculation.id ? t('calculations.edit.title') : t('calculations.new.title') }}</h2>
 
     <form @submit.prevent="saveCalculation">
       <div
@@ -8,17 +8,17 @@
         class="alert alert-success alert-dismissible fade show"
         role="alert"
       >
-        <span>{{ $t('calculations.form.saved') }}</span>
+        <span>{{ t('calculations.form.saved') }}</span>
       </div>
 
       <!-- Calculation Details will go here -->
       <div class="row mb-3">
         <div class="col-md-6">
-          <label for="calc-name" class="form-label">{{ $t('calculations.form.name') }}</label>
+          <label for="calc-name" class="form-label">{{ t('calculations.form.name') }}</label>
           <input type="text" id="calc-name" class="form-control" v-model="calculation.name" />
 
           <label for="calc-currency" class="form-label">{{
-            $t('calculations.form.currency')
+            t('calculations.form.currency')
           }}</label>
           <input
             type="text"
@@ -29,7 +29,7 @@
         </div>
         <div class="col-md-6">
           <label for="calc-description" class="form-label">{{
-            $t('calculations.form.description')
+            t('calculations.form.description')
           }}</label>
           <textarea
             id="calc-description"
@@ -50,13 +50,13 @@
       ></calculation-stage>
 
       <button type="button" class="btn btn-secondary mb-3" @click="addStage">
-        {{ $t('calculations.form.add.stage') }}
+        {{ t('calculations.form.add.stage') }}
       </button>
 
       <div class="mb-3">
-        <button type="submit" class="btn btn-primary">{{ $t('calculations.form.submit') }}</button>
+        <button type="submit" class="btn btn-primary">{{ t('calculations.form.submit') }}</button>
         <router-link to="/calculations" class="btn btn-secondary">{{
-          $t('common.cancel')
+          t('common.cancel')
         }}</router-link>
       </div>
     </form>
@@ -73,6 +73,9 @@ import {
   getCalculationById,
 } from '../services/api'
 import CalculationStage from '@/components/CalculationStage.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const calculation = ref<Calculation>({
   id: undefined,
