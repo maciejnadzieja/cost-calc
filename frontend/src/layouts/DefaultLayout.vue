@@ -13,11 +13,6 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
-              <router-link class="nav-link" to="/dashboard">
-                <i class="bi bi-speedometer2"></i> <span>{{ t('nav.dashboard') }}</span>
-              </router-link>
-            </li>
-            <li class="nav-item">
               <router-link class="nav-link" to="/calculations">
                 <i class="bi bi-calculator"></i> <span>{{ t('nav.calculations') }}</span>
               </router-link>
