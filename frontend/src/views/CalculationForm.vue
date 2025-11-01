@@ -66,7 +66,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { ItemType, type Calculation, type CalculationStage } from '../models/calculation'
+import { ItemType, type Calculation, type CalculationStage as CalculationStageType } from '../models/calculation'
 import {
   createCalculation,
   updateCalculation,
@@ -113,14 +113,14 @@ const addStage = () => {
   calculation.value.stages.push({
     name: `Stage ${calculation.value.stages.length + 1}`,
     items: [],
-  } as CalculationStage)
+  } as CalculationStageType)
 }
 
 const removeStage = (index: number) => {
   calculation.value.stages.splice(index, 1)
 }
 
-const updateStage = (index: number, updatedStage: CalculationStage) => {
+const updateStage = (index: number, updatedStage: CalculationStageType) => {
   calculation.value.stages[index] = updatedStage;
 };
 

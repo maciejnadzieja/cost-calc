@@ -84,6 +84,10 @@
           </tr>
         </thead>
         <tbody>
+          <tr
+            v-for="(item, itemIndex) in stage.items.filter((i) => i.type === ItemType.SERVICE)"
+            :key="itemIndex"
+          >
             <td><input type="text" class="form-control" :id="`service-name-${stageIndex}-${itemIndex}`" :name="`service-name-${stageIndex}-${itemIndex}`" v-model="item.name" /></td>
             <td><input type="number" class="form-control" :id="`service-quantity-${stageIndex}-${itemIndex}`" :name="`service-quantity-${stageIndex}-${itemIndex}`" v-model="item.quantity" /></td>
             <td><input type="text" class="form-control" :id="`service-unit-${stageIndex}-${itemIndex}`" :name="`service-unit-${stageIndex}-${itemIndex}`" v-model="item.unit" /></td>
