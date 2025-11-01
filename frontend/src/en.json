@@ -221,7 +221,9 @@
       "total": "Total",
       "actions": "Actions",
       "title": "Calculations",
-      "create_new": "Create calculation"
+      "create_new": "Create calculation",
+      "total_price": "Total",
+      "creationDate": "Creation Date"
     },
     "delete": {
       "confirm": "Are you sure you want to delete this calculation?"
