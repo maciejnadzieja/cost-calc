@@ -84,14 +84,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="(item, itemIndex) in stage.items.filter((i) => i.type === ItemType.SERVICE)"
-            :key="itemIndex"
-          >
-            <td><input type="text" class="form-control" v-model="item.name" /></td>
-            <td><input type="number" class="form-control" v-model="item.quantity" /></td>
-            <td><input type="text" class="form-control" v-model="item.unit" /></td>
-            <td><input type="number" class="form-control" v-model="item.unitPrice" /></td>
+            <td><input type="text" class="form-control" :id="`service-name-${stageIndex}-${itemIndex}`" :name="`service-name-${stageIndex}-${itemIndex}`" v-model="item.name" /></td>
+            <td><input type="number" class="form-control" :id="`service-quantity-${stageIndex}-${itemIndex}`" :name="`service-quantity-${stageIndex}-${itemIndex}`" v-model="item.quantity" /></td>
+            <td><input type="text" class="form-control" :id="`service-unit-${stageIndex}-${itemIndex}`" :name="`service-unit-${stageIndex}-${itemIndex}`" v-model="item.unit" /></td>
+            <td><input type="number" class="form-control" :id="`service-unit-price-${stageIndex}-${itemIndex}`" :name="`service-unit-price-${stageIndex}-${itemIndex}`" v-model="item.unitPrice" /></td>
             <td>
               <button
                 type="button"
@@ -121,10 +117,10 @@
             v-for="(item, itemIndex) in stage.items.filter((i) => i.type === ItemType.MATERIAL)"
             :key="itemIndex"
           >
-            <td><input type="text" class="form-control" v-model="item.name" /></td>
-            <td><input type="number" class="form-control" v-model="item.quantity" /></td>
-            <td><input type="text" class="form-control" v-model="item.unit" /></td>
-            <td><input type="number" class="form-control" v-model="item.unitPrice" /></td>
+            <td><input type="text" class="form-control" :id="`material-name-${stageIndex}-${itemIndex}`" :name="`material-name-${stageIndex}-${itemIndex}`" v-model="item.name" /></td>
+            <td><input type="number" class="form-control" :id="`material-quantity-${stageIndex}-${itemIndex}`" :name="`material-quantity-${stageIndex}-${itemIndex}`" v-model="item.quantity" /></td>
+            <td><input type="text" class="form-control" :id="`material-unit-${stageIndex}-${itemIndex}`" :name="`material-unit-${stageIndex}-${itemIndex}`" v-model="item.unit" /></td>
+            <td><input type="number" class="form-control" :id="`material-unit-price-${stageIndex}-${itemIndex}`" :name="`material-unit-price-${stageIndex}-${itemIndex}`" v-model="item.unitPrice" /></td>
             <td>
               <button
                 type="button"

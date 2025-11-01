@@ -3,7 +3,7 @@
     <h1>{{ t('materials.title') }}</h1>
     <div class="d-flex justify-content-between mb-3">
       <div class="input-group" style="width: auto;">
-        <input type="text" class="form-control" v-model="query" @keyup.enter="search">
+        <input type="text" class="form-control" id="material-search-query" name="material-search-query" v-model="query" @keyup.enter="search">
         <button class="btn btn-primary" type="button" @click="search">{{ t('common.search') }}</button>
       </div>
       <router-link to="/materials/create" class="btn btn-primary">{{ t('materials.new') }}</router-link>
