@@ -1,31 +1,31 @@
 <template>
   <div>
-    <h1>{{ isEdit ? $t('materials.edit.title') : $t('materials.create.title') }}</h1>
+    <h1>{{ isEdit ? t('materials.edit.title') : t('materials.create.title') }}</h1>
     <form @submit.prevent="save">
       <div class="mb-3">
-        <label for="name" class="form-label">{{ $t('materials.form.name') }}</label>
+        <label for="name" class="form-label">{{ t('materials.form.name') }}</label>
         <input type="text" class="form-control" id="name" v-model="material.name" required>
       </div>
       <div class="mb-3">
-        <label for="description" class="form-label">{{ $t('materials.form.description') }}</label>
+        <label for="description" class="form-label">{{ t('materials.form.description') }}</label>
         <textarea class="form-control" id="description" v-model="material.description"></textarea>
       </div>
       <div class="mb-3">
-        <label for="price" class="form-label">{{ $t('materials.price') }}</label>
+        <label for="price" class="form-label">{{ t('materials.price') }}</label>
         <input type="number" class="form-control" id="price" v-model="material.price" required>
       </div>
       <div class="mb-3">
-        <label for="unit" class="form-label">{{ $t('materials.unit') }}</label>
+        <label for="unit" class="form-label">{{ t('materials.unit') }}</label>
         <select class="form-select" id="unit" v-model="material.unit" required>
-          <option v-for="unit in materialUnits" :key="unit" :value="unit">{{ $t('units.material.' + unit.toLowerCase() + '.label') }}</option>
+          <option v-for="unit in materialUnits" :key="unit" :value="unit">{{ t('units.material.' + unit.toLowerCase() + '.label') }}</option>
         </select>
       </div>
       <div class="mb-3">
-        <label for="category" class="form-label">{{ $t('materials.category') }}</label>
+        <label for="category" class="form-label">{{ t('materials.category') }}</label>
         <input type="text" class="form-control" id="category" v-model="material.category" required>
       </div>
-      <button type="submit" class="btn btn-primary">{{ $t('common.save') }}</button>
-      <router-link to="/materials" class="btn btn-secondary ms-2">{{ $t('common.cancel') }}</router-link>
+      <button type="submit" class="btn btn-primary">{{ t('common.save') }}</button>
+      <router-link to="/materials" class="btn btn-secondary ms-2">{{ t('common.cancel') }}</router-link>
     </form>
   </div>
 </template>
@@ -34,6 +34,9 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import apiClient from '@/services/api';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const route = useRoute();
 const router = useRouter();

@@ -1,27 +1,27 @@
 <template>
   <div>
-    <h1>{{ isEdit ? $t('services.edit.title') : $t('services.create.title') }}</h1>
+    <h1>{{ isEdit ? t('services.edit.title') : t('services.create.title') }}</h1>
     <form @submit.prevent="save">
       <div class="mb-3">
-        <label for="name" class="form-label">{{ $t('services.form.name') }}</label>
+        <label for="name" class="form-label">{{ t('services.form.name') }}</label>
         <input type="text" class="form-control" id="name" v-model="service.name" required>
       </div>
       <div class="mb-3">
-        <label for="description" class="form-label">{{ $t('services.form.description') }}</label>
+        <label for="description" class="form-label">{{ t('services.form.description') }}</label>
         <textarea class="form-control" id="description" v-model="service.description"></textarea>
       </div>
       <div class="mb-3">
-        <label for="price" class="form-label">{{ $t('services.price') }}</label>
+        <label for="price" class="form-label">{{ t('services.price') }}</label>
         <input type="number" class="form-control" id="price" v-model="service.price" required>
       </div>
       <div class="mb-3">
-        <label for="workUnit" class="form-label">{{ $t('services.workUnit') }}</label>
+        <label for="workUnit" class="form-label">{{ t('services.workUnit') }}</label>
         <select class="form-select" id="workUnit" v-model="service.workUnit" required>
-          <option v-for="unit in workUnits" :key="unit" :value="unit">{{ $t('units.service.' + unit.toLowerCase() + '.label') }}</option>
+          <option v-for="unit in workUnits" :key="unit" :value="unit">{{ t('units.service.' + unit.toLowerCase() + '.label') }}</option>
         </select>
       </div>
-      <button type="submit" class="btn btn-primary">{{ $t('common.save') }}</button>
-      <router-link to="/services" class="btn btn-secondary ms-2">{{ $t('common.cancel') }}</router-link>
+      <button type="submit" class="btn btn-primary">{{ t('common.save') }}</button>
+      <router-link to="/services" class="btn btn-secondary ms-2">{{ t('common.cancel') }}</router-link>
     </form>
   </div>
 </template>
@@ -30,6 +30,9 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import apiClient from '@/services/api';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const route = useRoute();
 const router = useRouter();

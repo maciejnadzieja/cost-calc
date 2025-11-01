@@ -4,7 +4,7 @@
       <div class="container">
         <router-link class="navbar-brand" to="/">
           <img src="/icon.png" alt="App Icon" class="app-icon me-2" style="height: 1.5em; vertical-align: middle;" />
-          <span>{{ $t('app.name') }}</span>
+          <span>{{ t('app.name') }}</span>
         </router-link>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -14,27 +14,27 @@
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
               <router-link class="nav-link" to="/dashboard">
-                <i class="bi bi-speedometer2"></i> <span>{{ $t('nav.dashboard') }}</span>
+                <i class="bi bi-speedometer2"></i> <span>{{ t('nav.dashboard') }}</span>
               </router-link>
             </li>
             <li class="nav-item">
               <router-link class="nav-link" to="/calculations">
-                <i class="bi bi-calculator"></i> <span>{{ $t('nav.calculations') }}</span>
+                <i class="bi bi-calculator"></i> <span>{{ t('nav.calculations') }}</span>
               </router-link>
             </li>
             <li class="nav-item">
               <router-link class="nav-link" to="/services">
-                <i class="bi bi-gear"></i> <span>{{ $t('nav.services') }}</span>
+                <i class="bi bi-gear"></i> <span>{{ t('nav.services') }}</span>
               </router-link>
             </li>
             <li class="nav-item">
               <router-link class="nav-link" to="/materials">
-                <i class="bi bi-box-seam"></i> <span>{{ $t('nav.materials') }}</span>
+                <i class="bi bi-box-seam"></i> <span>{{ t('nav.materials') }}</span>
               </router-link>
             </li>
             <li class="nav-item">
               <router-link class="nav-link" to="/settings">
-                <i class="bi bi-sliders"></i> <span>{{ $t('nav.settings') }}</span>
+                <i class="bi bi-sliders"></i> <span>{{ t('nav.settings') }}</span>
               </router-link>
             </li>
           </ul>
@@ -43,11 +43,11 @@
               <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button"
                  data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-globe me-2"></i>
-                <span>{{ $i18n.locale.toUpperCase() }}</span>
+                <span>{{ locale.toUpperCase() }}</span>
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#" @click.prevent="setLocale('en')">{{ $t('lang.english') }}</a></li>
-                <li><a class="dropdown-item" href="#" @click.prevent="setLocale('pl')">{{ $t('lang.polish') }}</a></li>
+                <li><a class="dropdown-item" href="#" @click.prevent="setLocale('en')">{{ t('lang.english') }}</a></li>
+                <li><a class="dropdown-item" href="#" @click.prevent="setLocale('pl')">{{ t('lang.polish') }}</a></li>
               </ul>
             </li>
             <li class="nav-item dropdown">
@@ -56,9 +56,9 @@
                 <span>{{ username }}</span>
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#" @click.prevent="accountManagement">{{ $t('nav.account') }}</a></li>
+                <li><a class="dropdown-item" href="#" @click.prevent="accountManagement">{{ t('nav.account') }}</a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#" @click.prevent="logout">{{ $t('nav.logout') }}</a></li>
+                <li><a class="dropdown-item" href="#" @click.prevent="logout">{{ t('nav.logout') }}</a></li>
               </ul>
             </li>
           </ul>
@@ -77,7 +77,7 @@ import { ref } from 'vue';
 import keycloak from '../services/keycloak';
 import { useRouter } from 'vue-router';
 
-const { locale } = useI18n();
+const { t, locale } = useI18n();
 const username = ref('');
 const router = useRouter();
 
