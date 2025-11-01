@@ -24,7 +24,10 @@
           <td>{{ new Date(calculation.createdAt).toLocaleDateString() }}</td>
           <td>{{ calculation.totalPrice }} {{ calculation.currency }}</td>
           <td>
-            <router-link :to="`/calculations/edit/${calculation.id}`" class="btn btn-sm btn-primary">{{ $t('common.edit') }}</router-link>
+            <router-link :to="`/calculations/edit/${calculation.id}`" class="btn btn-sm btn-primary me-2">{{ $t('common.edit') }}</router-link>
+            <router-link :to="`/calculations/print/${calculation.id}`" class="btn btn-sm btn-info">
+              <i class="bi bi-printer"></i>
+            </router-link>
           </td>
         </tr>
         </tbody>
