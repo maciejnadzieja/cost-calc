@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getToken } from './keycloak';
+import keycloak, { getToken } from './keycloak';
 
 const apiClient = axios.create({
   baseURL: 'http://localhost:8080/api',
@@ -8,18 +8,24 @@ const apiClient = axios.create({
   },
 });
 
-apiClient.interceptors.request.use(
-  (config) => {
-    const token = getToken();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+apiClient.interceptors.request.use(async (config) => {
+  try {
+    const refreshed = await keycloak.updateToken(10);
+    if (refreshed) {
+      console.log('Token refreshed');
     }
-    return config;
-  },
-  (error) => {
+  } catch (error) {
+    console.error('Failed to refresh token:', error);
+    keycloak.login();
     return Promise.reject(error);
   }
-);
+
+  const token = getToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 export const searchServices = (query: string) => {
   return apiClient.get(`/services?query=${query}`);
