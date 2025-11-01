@@ -40,145 +40,14 @@
       </div>
 
       <!-- Calculation Stages will go here -->
-      <div v-for="(stage, stageIndex) in calculation.stages" :key="stageIndex" class="card mb-3">
-        <div class="card-header">
-          <h5 class="card-title">{{ $t('calculations.form.stage.index') }} {{ stageIndex + 1 }}</h5>
-          <button type="button" class="btn btn-danger btn-sm" @click="removeStage(stageIndex)">
-            {{ $t('calculations.form.remove.stage') }}
-          </button>
-        </div>
-        <div class="card-body">
-          <div class="mb-3">
-            <label :for="`stage-name-${stageIndex}`" class="form-label">{{
-              $t('calculations.form.stage.name')
-            }}</label>
-            <input
-              type="text"
-              :id="`stage-name-${stageIndex}`"
-              class="form-control"
-              v-model="stage.name"
-            />
-          </div>
-
-          <!-- Items will go here -->
-          <div class="row">
-            <div class="col-md-6">
-              <div class="mb-3">
-                <label class="form-label">{{ $t('calculations.form.add.service') }}</label>
-                <div class="input-group">
-                  <input
-                    type="text"
-                    class="form-control"
-                    :placeholder="$t('common.search')"
-                    v-model="stage.serviceSearchQuery"
-                    @input="handleServiceSearch(stageIndex)"
-                  />
-                </div>
-                <ul class="list-group" v-if="stage.serviceSearchResults.length">
-                  <li
-                    class="list-group-item"
-                    v-for="service in stage.serviceSearchResults"
-                    :key="service.id"
-                    @click="selectService(stageIndex, service)"
-                  >
-                    {{ service.name }}
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="mb-3">
-                <label class="form-label">{{ $t('calculations.form.add.material') }}</label>
-                <div class="input-group">
-                  <input
-                    type="text"
-                    class="form-control"
-                    :placeholder="$t('common.search')"
-                    v-model="stage.materialSearchQuery"
-                    @input="handleMaterialSearch(stageIndex)"
-                  />
-                </div>
-                <ul class="list-group" v-if="stage.materialSearchResults.length">
-                  <li
-                    class="list-group-item"
-                    v-for="material in stage.materialSearchResults"
-                    :key="material.id"
-                    @click="selectMaterial(stageIndex, material)"
-                  >
-                    {{ material.name }}
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <h5>{{ $t('calculations.form.services') }}</h5>
-          <table class="table">
-            <thead>
-              <tr>
-                <th>{{ $t('calculations.form.name') }}</th>
-                <th>{{ $t('calculations.form.quantity') }}</th>
-                <th>{{ $t('calculations.form.unit') }}</th>
-                <th>{{ $t('calculations.form.price') }}</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="(item, itemIndex) in stage.items.filter((i) => i.type === ItemType.SERVICE)"
-                :key="itemIndex"
-              >
-                <td><input type="text" class="form-control" v-model="item.name" /></td>
-                <td><input type="number" class="form-control" v-model="item.quantity" /></td>
-                <td><input type="text" class="form-control" v-model="item.unit" /></td>
-                <td><input type="number" class="form-control" v-model="item.unitPrice" /></td>
-                <td>
-                  <button
-                    type="button"
-                    class="btn btn-danger btn-sm"
-                    @click="removeItem(stageIndex, item)"
-                  >
-                    {{ $t('common.remove') }}
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-          <h5>{{ $t('calculations.form.materials') }}</h5>
-          <table class="table">
-            <thead>
-              <tr>
-                <th>{{ $t('calculations.form.name') }}</th>
-                <th>{{ $t('calculations.form.quantity') }}</th>
-                <th>{{ $t('calculations.form.unit') }}</th>
-                <th>{{ $t('calculations.form.price') }}</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="(item, itemIndex) in stage.items.filter((i) => i.type === ItemType.MATERIAL)"
-                :key="itemIndex"
-              >
-                <td><input type="text" class="form-control" v-model="item.name" /></td>
-                <td><input type="number" class="form-control" v-model="item.quantity" /></td>
-                <td><input type="text" class="form-control" v-model="item.unit" /></td>
-                <td><input type="number" class="form-control" v-model="item.unitPrice" /></td>
-                <td>
-                  <button
-                    type="button"
-                    class="btn btn-danger btn-sm"
-                    @click="removeItem(stageIndex, item)"
-                  >
-                    {{ $t('common.remove') }}
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <calculation-stage
+        v-for="(stage, stageIndex) in calculation.stages"
+        :key="stageIndex"
+        :stage="stage"
+        :stage-index="stageIndex"
+        @update:stage="updateStage(stageIndex, $event)"
+        @remove-stage="removeStage(stageIndex)"
+      ></calculation-stage>
 
       <button type="button" class="btn btn-secondary mb-3" @click="addStage">
         {{ $t('calculations.form.add.stage') }}
@@ -197,25 +66,13 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { ItemType, type Calculation, type CalculationStage, type CalculationItem } from '../models/calculation'
+import { ItemType, type Calculation, type CalculationStage } from '../models/calculation'
 import {
-  searchServices,
-  searchMaterials,
   createCalculation,
   updateCalculation,
   getCalculationById,
 } from '../services/api'
-import type { Service } from '../models/service'
-import type { Material } from '../models/material'
-
-interface Stage extends CalculationStage {
-  serviceSearchQuery: string
-  materialSearchQuery: string
-  serviceSearchResults: Service[]
-  materialSearchResults: Material[]
-  selectedService: Service | null
-  selectedMaterial: Material | null
-}
+import CalculationStage from '@/components/CalculationStage.vue'
 
 const calculation = ref<Calculation>({
   id: undefined,
@@ -241,10 +98,6 @@ onMounted(async () => {
             ...stage.services.map((s: any) => ({ ...s, type: ItemType.SERVICE })),
             ...stage.materials.map((m: any) => ({ ...m, type: ItemType.MATERIAL })),
           ],
-          serviceSearchQuery: '',
-          materialSearchQuery: '',
-          serviceSearchResults: [],
-          materialSearchResults: [],
         })),
       };
     } catch (error) {
@@ -257,72 +110,16 @@ const addStage = () => {
   calculation.value.stages.push({
     name: `Stage ${calculation.value.stages.length + 1}`,
     items: [],
-    serviceSearchQuery: '',
-    materialSearchQuery: '',
-    serviceSearchResults: [],
-    materialSearchResults: [],
-    selectedService: null,
-    selectedMaterial: null,
-  } as Stage)
+  } as CalculationStage)
 }
 
 const removeStage = (index: number) => {
   calculation.value.stages.splice(index, 1)
 }
 
-const removeItem = (stageIndex: number, item: CalculationItem) => {
-  const stage = calculation.value.stages[stageIndex]
-  const itemIndex = stage.items.indexOf(item)
-  if (itemIndex > -1) {
-    stage.items.splice(itemIndex, 1)
-  }
-}
-
-const handleServiceSearch = async (stageIndex: number) => {
-  const stage = calculation.value.stages[stageIndex] as Stage
-  if (stage.serviceSearchQuery.length > 2) {
-    const response = await searchServices(stage.serviceSearchQuery)
-    stage.serviceSearchResults = response.data.content
-  } else {
-    stage.serviceSearchResults = []
-  }
-}
-
-const handleMaterialSearch = async (stageIndex: number) => {
-  const stage = calculation.value.stages[stageIndex] as Stage
-  if (stage.materialSearchQuery.length > 2) {
-    const response = await searchMaterials(stage.materialSearchQuery)
-    stage.materialSearchResults = response.data.content
-  } else {
-    stage.materialSearchResults = []
-  }
-}
-
-const selectService = (stageIndex: number, service: Service) => {
-  const stage = calculation.value.stages[stageIndex] as Stage
-  stage.items.push({
-    name: service.name,
-    quantity: 1,
-    unit: service.workUnit,
-    unitPrice: service.price,
-    type: ItemType.SERVICE,
-  })
-  stage.serviceSearchQuery = ''
-  stage.serviceSearchResults = []
-}
-
-const selectMaterial = (stageIndex: number, material: Material) => {
-  const stage = calculation.value.stages[stageIndex] as Stage
-  stage.items.push({
-    name: material.name,
-    quantity: 1,
-    unit: material.unit,
-    unitPrice: material.price,
-    type: ItemType.MATERIAL,
-  })
-  stage.materialSearchQuery = ''
-  stage.materialSearchResults = []
-}
+const updateStage = (index: number, updatedStage: CalculationStage) => {
+  calculation.value.stages[index] = updatedStage;
+};
 
 const saveCalculation = async () => {
   try {
