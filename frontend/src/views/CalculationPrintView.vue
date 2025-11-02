@@ -118,8 +118,8 @@ const formatCurrency = (value: number) => {
   if (value == null) {
     return ''
   }
-  if (!userSettings.value) return ''
-  return `${value.toFixed(2)} ${userSettings.value.currency}`
+  if (!calculation.value) return ''
+  return `${value.toFixed(2)} ${calculation.value.currency}`
 }
 
 onMounted(async () => {
