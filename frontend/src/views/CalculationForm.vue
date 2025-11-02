@@ -55,7 +55,7 @@
       </button>
 
       <div class="mb-3">
-        <button type="submit" class="btn btn-primary">{{ t('calculations.form.submit') }}</button>
+        <button type="submit" class="btn btn-primary me-2">{{ t('calculations.form.submit') }}</button>
         <router-link to="/calculations" class="btn btn-secondary">{{
           t('common.cancel')
         }}</router-link>
