@@ -8,5 +8,5 @@ data class MaterialRequest(
     val description: String,
     val price: BigDecimal,
     val unit: MaterialUnit,
-    val category: String
+    val category: String,
 )

@@ -6,7 +6,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.web.SecurityFilterChain
-
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
@@ -15,17 +14,17 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 class SecurityConfig {
-
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .cors { }
             .authorizeHttpRequests { authorize ->
                 authorize
-                    .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs", "/v3/api-docs/**").permitAll()
-                    .anyRequest().authenticated()
-            }
-            .oauth2ResourceServer { oauth2 ->
+                    .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs", "/v3/api-docs/**")
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated()
+            }.oauth2ResourceServer { oauth2 ->
                 oauth2.jwt { }
             }
         return http.build()

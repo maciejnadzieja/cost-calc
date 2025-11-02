@@ -6,5 +6,5 @@ data class CalculationRequest(
     val name: String,
     val description: String,
     val stages: List<CalculationStage>,
-    val currency: String
+    val currency: String,
 )

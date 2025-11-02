@@ -40,19 +40,26 @@ class CalculationService(
         pageable: PageRequest,
     ): Page<Calculation> = calculationRepository.findByUserId(userId, pageable)
 
-    fun duplicate(id: CalculationId, userId: UserId): Calculation {
+    fun duplicate(
+        id: CalculationId,
+        userId: UserId,
+    ): Calculation {
         val originalCalculation = findById(id)
         if (originalCalculation.userId != userId) {
             throw Exception("User does not have permission to duplicate this calculation")
         }
-        val duplicatedCalculation = originalCalculation.copy(
-            id = UUID.randomUUID(),
-            name = "Copy of ${originalCalculation.name}"
-        )
+        val duplicatedCalculation =
+            originalCalculation.copy(
+                id = UUID.randomUUID(),
+                name = "Copy of ${originalCalculation.name}",
+            )
         return create(duplicatedCalculation)
     }
 
-    fun delete(id: CalculationId, userId: UserId) {
+    fun delete(
+        id: CalculationId,
+        userId: UserId,
+    ) {
         val calculation = findById(id)
         if (calculation.userId != userId) {
             throw Exception("User does not have permission to delete this calculation")

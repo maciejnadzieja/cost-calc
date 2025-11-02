@@ -12,7 +12,10 @@ import org.springframework.stereotype.Repository
 interface ServiceRepository : MongoRepository<Service, ServiceId> {
     fun findByUserId(userId: UserId): List<Service>
 
-    fun findByUserId(userId: UserId, pageable: Pageable): Page<Service>
+    fun findByUserId(
+        userId: UserId,
+        pageable: Pageable,
+    ): Page<Service>
 
     fun findByUserIdAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
         userId: UserId,
@@ -21,7 +24,13 @@ interface ServiceRepository : MongoRepository<Service, ServiceId> {
         pageable: Pageable,
     ): Page<Service>
 
-    fun findByIdAndUserId(id: ServiceId, userId: UserId): java.util.Optional<Service>
+    fun findByIdAndUserId(
+        id: ServiceId,
+        userId: UserId,
+    ): java.util.Optional<Service>
 
-    fun deleteByIdAndUserId(id: ServiceId, userId: UserId)
+    fun deleteByIdAndUserId(
+        id: ServiceId,
+        userId: UserId,
+    )
 }

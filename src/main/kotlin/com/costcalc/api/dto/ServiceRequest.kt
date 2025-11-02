@@ -7,5 +7,5 @@ data class ServiceRequest(
     val name: String,
     val description: String,
     val price: BigDecimal,
-    val workUnit: WorkUnit
+    val workUnit: WorkUnit,
 )

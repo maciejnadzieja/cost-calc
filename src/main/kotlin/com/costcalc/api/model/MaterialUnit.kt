@@ -11,5 +11,5 @@ enum class MaterialUnit {
     MILLILITER,
     PACK,
     ROLL,
-    TON
+    TON,
 }
