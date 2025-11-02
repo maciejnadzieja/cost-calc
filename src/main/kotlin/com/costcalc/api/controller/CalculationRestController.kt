@@ -9,6 +9,7 @@ import com.costcalc.api.service.CalculationService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -25,9 +26,7 @@ class CalculationRestController(
     private val calculationService: CalculationService,
 ) {
     @GetMapping("/currencies")
-    fun getSupportedCurrencies(): List<String> {
-        return listOf("EUR", "PLN", "USD")
-    }
+    fun getSupportedCurrencies(): List<String> = listOf("EUR", "PLN", "USD")
 
     @GetMapping
     fun getCalculations(
@@ -72,6 +71,15 @@ class CalculationRestController(
         return ResponseEntity.ok(createdCalculation)
     }
 
+    @PostMapping("/{id}/duplicate")
+    fun duplicate(
+        @PathVariable id: CalculationId,
+        @CurrentUser user: User,
+    ): ResponseEntity<Calculation> {
+        val duplicatedCalculation = calculationService.duplicate(id, user.id)
+        return ResponseEntity.ok(duplicatedCalculation)
+    }
+
     @PutMapping("/{id}")
     fun update(
         @PathVariable id: CalculationId,
@@ -89,5 +97,14 @@ class CalculationRestController(
             )
         val updatedCalculation = calculationService.update(id, calculation)
         return ResponseEntity.ok(updatedCalculation)
+    }
+
+    @DeleteMapping("/{id}")
+    fun delete(
+        @PathVariable id: CalculationId,
+        @CurrentUser user: User,
+    ): ResponseEntity<Void> {
+        calculationService.delete(id, user.id)
+        return ResponseEntity.noContent().build()
     }
 }

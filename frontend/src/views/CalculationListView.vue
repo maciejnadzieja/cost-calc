@@ -25,6 +25,8 @@
           <td>{{ calculation.totalPrice }} {{ calculation.currency }}</td>
           <td>
             <router-link :to="`/calculations/edit/${calculation.id}`" class="btn btn-sm btn-primary me-2">{{ t('common.edit') }}</router-link>
+            <button class="btn btn-sm btn-secondary me-2" @click="duplicateCalculation(calculation.id)">{{ t('common.duplicate') }}</button>
+            <button class="btn btn-sm btn-danger me-2" @click="deleteCalculation(calculation.id)">{{ t('common.delete') }}</button>
             <router-link :to="`/calculations/print/${calculation.id}`" class="btn btn-sm btn-info">
               <i class="bi bi-printer"></i>
             </router-link>
@@ -94,6 +96,26 @@ const fetchCalculations = async (page = 0) => {
 
 const search = () => {
   fetchCalculations(0);
+};
+
+const duplicateCalculation = async (id: string) => {
+  try {
+    await apiClient.post(`/calculations/${id}/duplicate`);
+    await fetchCalculations(currentPage.value);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const deleteCalculation = async (id: string) => {
+  if (confirm(t('calculations.delete.confirm'))) {
+    try {
+      await apiClient.delete(`/calculations/${id}`);
+      await fetchCalculations(currentPage.value);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 };
 
 onMounted(() => {

@@ -3,7 +3,6 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
       <div class="container">
         <router-link class="navbar-brand" to="/">
-          <img src="/icon.png" alt="App Icon" class="app-icon me-2" style="height: 1.5em; vertical-align: middle;" />
           <span>{{ t('app.name') }}</span>
         </router-link>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
