@@ -68,13 +68,13 @@ const router = createRouter({
           path: 'calculations/edit/:id',
           name: 'calculation-edit',
           component: () => import('../views/CalculationForm.vue')
-        },
-        {
-          path: 'calculations/print/:id',
-          name: 'calculation-print',
-          component: () => import('../views/CalculationPrintView.vue')
         }
       ]
+    },
+    {
+      path: '/calculations/print/:id',
+      name: 'calculation-print',
+      component: () => import('../views/CalculationPrintView.vue')
     },
     {
       path: '/login',
