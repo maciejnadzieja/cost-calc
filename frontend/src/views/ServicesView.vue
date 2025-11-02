@@ -26,7 +26,8 @@
           <td>{{ service.price }} / {{ t('units.service.' + service.workUnit.toLowerCase() + '.symbol') }}</td>
           <td>{{ t('units.service.' + service.workUnit.toLowerCase() + '.label') }}</td>
           <td>
-            <router-link :to="`/services/edit/${service.id}`" class="btn btn-sm btn-primary">{{ t('common.edit') }}</router-link>
+            <router-link :to="`/services/edit/${service.id}`" class="btn btn-sm btn-primary me-2">{{ t('common.edit') }}</router-link>
+            <button class="btn btn-sm btn-danger" @click="deleteService(service.id)">{{ t('common.delete') }}</button>
           </td>
         </tr>
       </tbody>
@@ -92,6 +93,17 @@ const fetchServices = async (page = 0) => {
 
 const search = () => {
   fetchServices(0);
+};
+
+const deleteService = async (id: string) => {
+  if (confirm(t('services.delete.confirm'))) {
+    try {
+      await apiClient.delete(`/services/${id}`);
+      await fetchServices(currentPage.value);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 };
 
 onMounted(() => {

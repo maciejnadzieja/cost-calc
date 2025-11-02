@@ -22,4 +22,6 @@ interface ServiceRepository : MongoRepository<Service, ServiceId> {
     ): Page<Service>
 
     fun findByIdAndUserId(id: ServiceId, userId: UserId): java.util.Optional<Service>
+
+    fun deleteByIdAndUserId(id: ServiceId, userId: UserId)
 }

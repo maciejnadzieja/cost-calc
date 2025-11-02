@@ -28,7 +28,8 @@
           <td>{{ t('units.material.' + material.unit.toLowerCase() + '.label') }}</td>
           <td>{{ material.category }}</td>
           <td>
-            <router-link :to="`/materials/edit/${material.id}`" class="btn btn-sm btn-primary">{{ t('common.edit') }}</router-link>
+            <router-link :to="`/materials/edit/${material.id}`" class="btn btn-sm btn-primary me-2">{{ t('common.edit') }}</router-link>
+            <button class="btn btn-sm btn-danger" @click="deleteMaterial(material.id)">{{ t('common.delete') }}</button>
           </td>
         </tr>
       </tbody>
@@ -94,6 +95,17 @@ const fetchMaterials = async (page = 0) => {
 
 const search = () => {
   fetchMaterials(0);
+};
+
+const deleteMaterial = async (id: string) => {
+  if (confirm(t('materials.delete.confirm'))) {
+    try {
+      await apiClient.delete(`/materials/${id}`);
+      await fetchMaterials(currentPage.value);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 };
 
 onMounted(() => {

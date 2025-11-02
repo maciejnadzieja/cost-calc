@@ -47,4 +47,6 @@ interface MaterialRepository : MongoRepository<Material, MaterialId> {
     fun countMaterialsByCategoryForUser(userId: UserId): List<MaterialCategoryCount>
 
     fun findByIdAndUserId(id: MaterialId, userId: UserId): java.util.Optional<Material>
+
+    fun deleteByIdAndUserId(id: MaterialId, userId: UserId)
 }

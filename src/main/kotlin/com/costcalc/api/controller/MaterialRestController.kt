@@ -9,6 +9,7 @@ import com.costcalc.api.repository.MaterialRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -47,9 +48,7 @@ class MaterialRestController(
     }
 
     @GetMapping("/units")
-    fun getMaterialUnits(): Array<MaterialUnit> {
-        return MaterialUnit.values()
-    }
+    fun getMaterialUnits(): Array<MaterialUnit> = MaterialUnit.values()
 
     @GetMapping("/{id}")
     fun getMaterialById(
@@ -99,5 +98,13 @@ class MaterialRestController(
             )
 
         return materialRepository.save(updatedMaterial)
+    }
+
+    @DeleteMapping("/{id}")
+    fun deleteMaterial(
+        @PathVariable id: UUID,
+        @CurrentUser user: User,
+    ) {
+        materialRepository.deleteByIdAndUserId(id, user.id)
     }
 }
