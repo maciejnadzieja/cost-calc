@@ -1,162 +1,138 @@
 <template>
   <div class="container my-4">
-    <!-- Print button -->
-    <div class="no-print mb-4">
-      <button @click="window.print()" class="btn btn-primary">
-        <i class="bi bi-printer"></i> <span>Print</span>
-      </button>
-      <router-link to="/calculations" class="btn btn-secondary">
-        <i class="bi bi-arrow-left"></i> <span>Back</span>
-      </router-link>
+    <div v-if="loading" class="text-center">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p>Loading calculation...</p>
     </div>
 
-    <!-- Calculation header -->
-    <div class="calculation-header">
-      <h1>{{ calculation.name }}</h1>
-      <p class="text-muted">{{ calculation.description }}</p>
-    </div>
-
-    <!-- Stages -->
-    <div v-for="stage in calculation.stages" :key="stage.id" class="stage">
-      <h2 class="stage-title">{{ stage.name }}</h2>
-
-      <!-- Services -->
-      <div v-if="stage.services && stage.services.length" class="mb-4">
-        <h3>Services</h3>
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Item</th>
-              <th>Quantity</th>
-              <th>Unit</th>
-              <th>Unit Price</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="service in stage.services" :key="service.id">
-              <td>{{ service.name }}</td>
-              <td>{{ service.quantity }}</td>
-              <td>{{ service.unit }}</td>
-              <td>{{ formatCurrency(service.unitPrice) }}</td>
-              <td>{{ formatCurrency(service.quantity * service.unitPrice) }}</td>
-            </tr>
-            <tr class="stage-total">
-              <td colspan="4">Stage Total</td>
-              <td>{{ formatCurrency(stageServicesTotal(stage)) }}</td>
-            </tr>
-          </tbody>
-        </table>
+    <div v-else-if="calculation">
+      <!-- Calculation header -->
+      <div class="calculation-header">
+        <h1>{{ calculation.name }}</h1>
+        <p class="text-muted">{{ calculation.description }}</p>
       </div>
 
-      <!-- Materials -->
-      <div v-if="stage.materials && stage.materials.length" class="mb-4">
-        <h3>Materials</h3>
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Item</th>
-              <th>Quantity</th>
-              <th>Unit</th>
-              <th>Unit Price</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="material in stage.materials" :key="material.id">
-              <td>{{ material.name }}</td>
-              <td>{{ material.quantity }}</td>
-              <td>{{ material.unit }}</td>
-              <td>{{ formatCurrency(material.unitPrice) }}</td>
-              <td>{{ formatCurrency(material.quantity * material.unitPrice) }}</td>
-            </tr>
-            <tr class="stage-total">
-              <td colspan="4">Stage Total</td>
-              <td>{{ formatCurrency(stageMaterialsTotal(stage)) }}</td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- Stages -->
+      <div v-for="stage in calculation.stages" :key="stage.id" class="stage">
+        <h2 class="stage-title">{{ stage.name }}</h2>
+
+        <!-- Services -->
+        <div v-if="stage.services && stage.services.length" class="mb-4">
+          <h3>Services</h3>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Unit</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="service in stage.services" :key="service.id">
+                <td>{{ service.name }}</td>
+                <td>{{ service.quantity }}</td>
+                <td>{{ service.unit }}</td>
+                <td>{{ formatCurrency(service.unitPrice) }}</td>
+                <td>{{ formatCurrency(service.quantity * service.unitPrice) }}</td>
+              </tr>
+              <tr class="stage-total">
+                <td colspan="4">{{ t('stage.servicesTotal') }}</td>
+                <td>{{ formatCurrency(stage.servicesTotalAmount) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Materials -->
+        <div v-if="stage.materials && stage.materials.length" class="mb-4">
+          <h3>Materials</h3>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Unit</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="material in stage.materials" :key="material.id">
+                <td>{{ material.name }}</td>
+                <td>{{ material.quantity }}</td>
+                <td>{{ material.unit }}</td>
+                <td>{{ formatCurrency(material.unitPrice) }}</td>
+                <td>{{ formatCurrency(material.quantity * material.unitPrice) }}</td>
+              </tr>
+              <tr class="stage-total">
+                <td colspan="4">{{ t('stage.materialsTotal') }}</td>
+                <td>{{ formatCurrency(stage.materialsTotalAmount) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Stage total -->
+        <div class="stage-total p-2 mb-4">
+          <strong>Stage Total</strong>:
+          <span>{{ formatCurrency(stage.totalAmount) }}</span>
+        </div>
       </div>
 
-      <!-- Stage total -->
-      <div class="stage-total p-2 mb-4">
-        <strong>Stage Total</strong>:
-        <span>{{ formatCurrency(stageTotal(stage)) }}</span>
+      <!-- Calculation total -->
+      <div class="total">
+        <span>Total</span>:
+        <span>{{ formatCurrency(calculation.totalAmount) }}</span>
       </div>
-    </div>
 
-    <!-- Calculation total -->
-    <div class="total">
-      <span>Total</span>:
-      <span>{{ formatCurrency(calculation.total) }}</span>
-    </div>
-
-    <!-- Footer -->
-    <div class="mt-5 pt-4 border-top">
-      <div class="text-muted small">
-        <pre>{{ userSettings.footerText }}</pre>
+      <!-- Footer -->
+      <div v-if="userSettings && userSettings.footerText" class="mt-5 pt-4 border-top">
+        <div class="text-muted small">
+          <pre>{{ userSettings.footerText }}</pre>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import api from '@/services/api'
+import type { Calculation } from '@/models/calculation'
+import type { UserSettings } from '@/models/userSettings'
 
-const calculation = ref({
-  name: 'Project Alpha',
-  description: 'This is a sample project calculation.',
-  currency: 'USD',
-  stages: [
-    {
-      id: 1,
-      name: 'Stage 1: Foundation',
-      services: [
-        { id: 1, name: 'Excavation', quantity: 10, unit: 'h', unitPrice: 150 },
-        { id: 2, name: 'Concrete Pouring', quantity: 20, unit: 'm3', unitPrice: 200 },
-      ],
-      materials: [
-        { id: 1, name: 'Rebar', quantity: 100, unit: 'm', unitPrice: 5 },
-        { id: 2, name: 'Gravel', quantity: 50, unit: 't', unitPrice: 30 },
-      ],
-    },
-    {
-      id: 2,
-      name: 'Stage 2: Framing',
-      services: [
-        { id: 3, name: 'Wall Framing', quantity: 40, unit: 'h', unitPrice: 50 },
-      ],
-      materials: [
-        { id: 3, name: 'Lumber 2x4', quantity: 200, unit: 'pc', unitPrice: 10 },
-        { id: 4, name: 'Nails', quantity: 5, unit: 'kg', unitPrice: 15 },
-      ],
-    },
-  ],
-  total: 0, // Will be calculated
-});
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
-const userSettings = ref({
-  footerText: 'Thank you for your business!\nPayment is due within 30 days.',
-});
+const route = useRoute()
+const calculation = ref<Calculation | null>(null)
+const userSettings = ref<UserSettings | null>(null)
+const loading = ref(true)
 
 const formatCurrency = (value: number) => {
-  return `${value.toFixed(2)} ${calculation.value.currency}`;
-};
+  if (value == null) {
+    return ''
+  }
+  if (!userSettings.value) return ''
+  return `${value.toFixed(2)} ${userSettings.value.currency}`
+}
 
-const stageServicesTotal = (stage: any) => {
-  return stage.services.reduce((total: number, service: any) => total + service.quantity * service.unitPrice, 0);
-};
-
-const stageMaterialsTotal = (stage: any) => {
-  return stage.materials.reduce((total: number, material: any) => total + material.quantity * material.unitPrice, 0);
-};
-
-const stageTotal = (stage: any) => {
-  return stageServicesTotal(stage) + stageMaterialsTotal(stage);
-};
-
-calculation.value.total = calculation.value.stages.reduce((total: number, stage: any) => total + stageTotal(stage), 0);
-
+onMounted(async () => {
+  const id = route.params.id as string
+  try {
+    calculation.value = (await api.get<Calculation>(`/calculations/${id}`)).data
+    userSettings.value = (await api.get<UserSettings>('/user-settings')).data
+  } catch (error) {
+    console.error('Error fetching calculation data:', error)
+  } finally {
+    loading.value = false
+  }
+})
 </script>
 
 <style scoped>

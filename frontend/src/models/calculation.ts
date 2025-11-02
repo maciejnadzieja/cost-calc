@@ -4,11 +4,16 @@ export interface Calculation {
   description: string
   stages: CalculationStage[]
   currency: string
+  totalAmount: number
 }
 
 export interface CalculationStage {
   name: string
-  items: CalculationItem[]
+  services: CalculationItem[]
+  materials: CalculationItem[]
+  servicesTotalAmount: number
+  materialsTotalAmount: number
+  totalAmount: number
 }
 
 export enum ItemType {

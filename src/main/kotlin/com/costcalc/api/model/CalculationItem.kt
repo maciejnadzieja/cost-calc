@@ -9,10 +9,10 @@ data class CalculationItem(
     val unitPrice: BigDecimal,
     val type: ItemType,
 ) {
-    fun getTotalAmount(): BigDecimal = quantity.multiply(unitPrice)
+    val amount: BigDecimal = quantity.multiply(unitPrice)
 }
 
 enum class ItemType {
     SERVICE,
     MATERIAL,
-} 
+}

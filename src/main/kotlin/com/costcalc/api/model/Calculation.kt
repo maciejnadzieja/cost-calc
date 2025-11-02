@@ -20,9 +20,6 @@ data class Calculation(
     val createdAt: Instant = Instant.now(),
     val updatedAt: Instant = Instant.now(),
 ) {
-    val getTotalAmount: BigDecimal
-        get() =
-            stages.fold(BigDecimal.ZERO) { acc, stage ->
-                acc + stage.getTotalAmount()
-            }
+    val totalAmount: BigDecimal =
+        stages.fold(BigDecimal.ZERO) { acc, stage -> acc + stage.totalAmount }
 }

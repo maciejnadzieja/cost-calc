@@ -7,9 +7,8 @@ data class CalculationStage(
     val services: List<CalculationItem> = listOf(),
     val materials: List<CalculationItem> = listOf(),
 ) {
-    fun getServicesTotal(): BigDecimal = services.sumOf { it.getTotalAmount() }
+    val servicesTotalAmount: BigDecimal = services.sumOf { it.amount }
+    val materialsTotalAmount: BigDecimal = materials.sumOf { it.amount }
 
-    fun getMaterialsTotal(): BigDecimal = materials.sumOf { it.getTotalAmount() }
-
-    fun getTotalAmount(): BigDecimal = getServicesTotal() + getMaterialsTotal()
+    val totalAmount: BigDecimal = servicesTotalAmount + materialsTotalAmount
 }
