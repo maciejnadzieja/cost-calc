@@ -11,7 +11,5 @@ data class CalculationStage(
 
     fun getMaterialsTotal(): BigDecimal = materials.sumOf { it.getTotalAmount() }
 
-    fun getTotal(): BigDecimal = getServicesTotal() + getMaterialsTotal()
-
-    fun getTotalAmount(): BigDecimal = services.sumOf { it.getTotalAmount() } + materials.sumOf { it.getTotalAmount() }
+    fun getTotalAmount(): BigDecimal = getServicesTotal() + getMaterialsTotal()
 }
