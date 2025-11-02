@@ -32,8 +32,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import apiClient from '@/services/api';
 
 const { t } = useI18n();
 
@@ -43,11 +44,28 @@ const settings = ref({
   themeColor: '#007bff'
 });
 
-const availableCurrencies = ref(['USD', 'EUR', 'PLN']);
+const availableCurrencies = ref<string[]>([]);
 
-const saveSettings = () => {
-  // Mock implementation
-  console.log('Settings saved:', settings.value);
+onMounted(async () => {
+  try {
+    const settingsResponse = await apiClient.get('/user-settings');
+    settings.value = settingsResponse.data;
+
+    const currenciesResponse = await apiClient.get('/calculations/currencies');
+    availableCurrencies.value = currenciesResponse.data;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+});
+
+const saveSettings = async () => {
+  try {
+    await apiClient.put('/user-settings', settings.value);
+    // Optionally, show a success message to the user
+  } catch (error) {
+    console.error('Error saving settings:', error);
+    // Optionally, show an error message to the user
+  }
 };
 </script>
 
