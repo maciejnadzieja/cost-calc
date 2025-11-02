@@ -50,11 +50,18 @@ const material = ref({
   category: '',
 });
 
-const materialUnits = ref(['PIECE', 'KILOGRAM', 'GRAM', 'METER', 'CENTIMETER', 'SQUARE_METER', 'LITER', 'MILLILITER', 'PACK', 'ROLL', 'TON']); // TODO: Fetch from backend
+const materialUnits = ref([]);
 
 const isEdit = ref(false);
 
 onMounted(async () => {
+  try {
+    const response = await apiClient.get('/materials/units');
+    materialUnits.value = response.data;
+  } catch (error) {
+    console.error(error);
+  }
+
   const id = route.params.id;
   if (id) {
     isEdit.value = true;

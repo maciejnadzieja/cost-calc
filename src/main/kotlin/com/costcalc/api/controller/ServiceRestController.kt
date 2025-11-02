@@ -4,6 +4,7 @@ import com.costcalc.api.config.CurrentUser
 import com.costcalc.api.dto.ServiceRequest
 import com.costcalc.api.model.Service
 import com.costcalc.api.model.User
+import com.costcalc.api.model.WorkUnit
 import com.costcalc.api.repository.ServiceRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -43,6 +44,11 @@ class ServiceRestController(
                     pageable,
                 )
         }
+    }
+
+    @GetMapping("/units")
+    fun getWorkUnits(): Array<WorkUnit> {
+        return WorkUnit.values()
     }
 
     @GetMapping("/{id}")

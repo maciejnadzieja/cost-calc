@@ -45,11 +45,18 @@ const service = ref({
   workUnit: 'HOUR',
 });
 
-const workUnits = ref(['HOUR', 'SQUARE_METER', 'PIECE', 'LINEAR_METER', 'DAY', 'KILOGRAM']); // TODO: Fetch from backend
+const workUnits = ref([]);
 
 const isEdit = ref(false);
 
 onMounted(async () => {
+  try {
+    const response = await apiClient.get('/services/units');
+    workUnits.value = response.data;
+  } catch (error) {
+    console.error(error);
+  }
+
   const id = route.params.id;
   if (id) {
     isEdit.value = true;

@@ -20,12 +20,13 @@
           <label for="calc-currency" class="form-label">{{
             t('calculations.form.currency')
           }}</label>
-          <input
-            type="text"
+          <select
             id="calc-currency"
-            class="form-control"
+            class="form-select"
             v-model="calculation.currency"
-          />
+          >
+            <option v-for="curr in currencies" :key="curr" :value="curr">{{ curr }}</option>
+          </select>
         </div>
         <div class="col-md-6">
           <label for="calc-description" class="form-label">{{
@@ -74,6 +75,7 @@ import {
 } from '../services/api'
 import CalculationStage from '@/components/CalculationStage.vue'
 import { useI18n } from 'vue-i18n'
+import apiClient from '@/services/api'
 
 const { t } = useI18n()
 
@@ -85,11 +87,20 @@ const calculation = ref<Calculation>({
   currency: 'USD',
 })
 
+const currencies = ref<string[]>([])
+
 const calculationSaved = ref(false)
 
 const route = useRoute()
 
 onMounted(async () => {
+  try {
+    const response = await apiClient.get('/calculations/currencies')
+    currencies.value = response.data
+  } catch (error) {
+    console.error('Error fetching currencies:', error)
+  }
+
   if (route.params.id) {
     try {
       const response = await getCalculationById(route.params.id as string)

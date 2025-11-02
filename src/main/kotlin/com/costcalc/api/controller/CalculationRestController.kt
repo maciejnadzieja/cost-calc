@@ -24,6 +24,11 @@ import java.util.UUID
 class CalculationRestController(
     private val calculationService: CalculationService,
 ) {
+    @GetMapping("/currencies")
+    fun getSupportedCurrencies(): List<String> {
+        return listOf("EUR", "PLN", "USD")
+    }
+
     @GetMapping
     fun getCalculations(
         @RequestParam(required = false) query: String?,

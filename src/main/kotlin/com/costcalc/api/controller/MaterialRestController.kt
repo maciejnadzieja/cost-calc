@@ -3,6 +3,7 @@ package com.costcalc.api.controller
 import com.costcalc.api.config.CurrentUser
 import com.costcalc.api.dto.MaterialRequest
 import com.costcalc.api.model.Material
+import com.costcalc.api.model.MaterialUnit
 import com.costcalc.api.model.User
 import com.costcalc.api.repository.MaterialRepository
 import org.springframework.data.domain.Page
@@ -43,6 +44,11 @@ class MaterialRestController(
                     pageable,
                 )
         }
+    }
+
+    @GetMapping("/units")
+    fun getMaterialUnits(): Array<MaterialUnit> {
+        return MaterialUnit.values()
     }
 
     @GetMapping("/{id}")
