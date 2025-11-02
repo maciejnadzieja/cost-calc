@@ -42,4 +42,5 @@ services:
       - 9090:8080
     volumes:
       - ./docker/keycloak/realm-config.json:/opt/keycloak/data/import/realm-config.json
+      - ./docker/keycloak/cost-calc-theme:/opt/keycloak/themes/cost-calc-theme
     restart: unless-stopped

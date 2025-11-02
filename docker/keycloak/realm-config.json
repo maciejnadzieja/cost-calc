@@ -1,6 +1,8 @@
 {
   "realm": "cost-calc-realm",
   "enabled": true,
+  "loginTheme": "cost-calc-theme",
+  "accountTheme": "cost-calc-theme",
   "users": [
     {
       "id": "00000000-0000-0000-0000-000000000000",
