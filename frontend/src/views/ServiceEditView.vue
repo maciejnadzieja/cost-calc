@@ -12,7 +12,7 @@
       </div>
       <div class="mb-3">
         <label for="price" class="form-label">{{ t('services.price') }}</label>
-        <input type="number" class="form-control" id="price" v-model="service.price" required>
+        <input type="number" step="0.01" class="form-control" id="price" v-model="service.price" required>
       </div>
       <div class="mb-3">
         <label for="workUnit" class="form-label">{{ t('services.workUnit') }}</label>
