@@ -9,7 +9,6 @@ data class UserSettings(
     @Id
     val id: UserId,
     val currency: String = "USD", // Default currency
-    val themeColor: String = "#007bff", // Default bootstrap primary color
     val footerText: String = "", // Default empty footer
     val createdAt: Instant = Instant.now(),
     val updatedAt: Instant = Instant.now(),
