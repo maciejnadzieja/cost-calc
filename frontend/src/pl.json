@@ -278,7 +278,13 @@
       "unit": "Jednostka",
       "unit_price": "Cena jedn.",
       "total": "Suma",
-      "stage_total": "Suma etapu"
+      "stage_total": "Suma etapu",
+      "loading": "Ładowanie...",
+      "loadingCalculation": "Ładowanie kalkulacji...",
+      "services": "Usługi",
+      "materials": "Materiały",
+      "servicesTotal": "Suma usług",
+      "materialsTotal": "Suma materiałów"
     }
   },
   "materials_import": {

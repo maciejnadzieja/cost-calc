@@ -2,9 +2,9 @@
   <div class="container my-4">
     <div v-if="loading" class="text-center">
       <div class="spinner-border" role="status">
-        <span class="visually-hidden">Loading...</span>
+        <span class="visually-hidden">{{ t('calculations.print.loading') }}</span>
       </div>
-      <p>Loading calculation...</p>
+      <p>{{ t('calculations.print.loadingCalculation') }}</p>
     </div>
 
     <div v-else-if="calculation">
@@ -20,15 +20,15 @@
 
         <!-- Services -->
         <div v-if="stage.services && stage.services.length" class="mb-4">
-          <h3>Services</h3>
+          <h3>{{ t('calculations.print.services') }}</h3>
           <table class="table table-bordered">
             <thead>
               <tr>
-                <th>Item</th>
-                <th>Quantity</th>
-                <th>Unit</th>
-                <th>Unit Price</th>
-                <th>Total</th>
+                <th>{{ t('calculations.print.item') }}</th>
+                <th>{{ t('calculations.print.quantity') }}</th>
+                <th>{{ t('calculations.print.unit') }}</th>
+                <th>{{ t('calculations.print.unit_price') }}</th>
+                <th>{{ t('calculations.print.total') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -40,7 +40,7 @@
                 <td>{{ formatCurrency(service.quantity * service.unitPrice) }}</td>
               </tr>
               <tr class="stage-total">
-                <td colspan="4">{{ t('stage.servicesTotal') }}</td>
+                <td colspan="4">{{ t('calculations.print.servicesTotal') }}</td>
                 <td>{{ formatCurrency(stage.servicesTotalAmount) }}</td>
               </tr>
             </tbody>
@@ -49,15 +49,15 @@
 
         <!-- Materials -->
         <div v-if="stage.materials && stage.materials.length" class="mb-4">
-          <h3>Materials</h3>
+          <h3>{{ t('calculations.print.materials') }}</h3>
           <table class="table table-bordered">
             <thead>
               <tr>
-                <th>Item</th>
-                <th>Quantity</th>
-                <th>Unit</th>
-                <th>Unit Price</th>
-                <th>Total</th>
+                <th>{{ t('calculations.print.item') }}</th>
+                <th>{{ t('calculations.print.quantity') }}</th>
+                <th>{{ t('calculations.print.unit') }}</th>
+                <th>{{ t('calculations.print.unit_price') }}</th>
+                <th>{{ t('calculations.print.total') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -69,7 +69,7 @@
                 <td>{{ formatCurrency(material.quantity * material.unitPrice) }}</td>
               </tr>
               <tr class="stage-total">
-                <td colspan="4">{{ t('stage.materialsTotal') }}</td>
+                <td colspan="4">{{ t('calculations.print.materialsTotal') }}</td>
                 <td>{{ formatCurrency(stage.materialsTotalAmount) }}</td>
               </tr>
             </tbody>
@@ -78,14 +78,14 @@
 
         <!-- Stage total -->
         <div class="stage-total p-2 mb-4">
-          <strong>Stage Total</strong>:
+          <strong>{{ t('calculations.print.stage_total') }}</strong>:
           <span>{{ formatCurrency(stage.totalAmount) }}</span>
         </div>
       </div>
 
       <!-- Calculation total -->
       <div class="total">
-        <span>Total</span>:
+        <span>{{ t('calculations.print.total') }}</span>:
         <span>{{ formatCurrency(calculation.totalAmount) }}</span>
       </div>
 

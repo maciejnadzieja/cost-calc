@@ -271,7 +271,13 @@
       "unit": "Unit",
       "unit_price": "Unit Price",
       "total": "Total",
-      "stage_total": "Stage Total"
+      "stage_total": "Stage Total",
+      "loading": "Loading...",
+      "loadingCalculation": "Loading calculation...",
+      "services": "Services",
+      "materials": "Materials",
+      "servicesTotal": "Services Total",
+      "materialsTotal": "Materials Total"
     }
   },
   "materials_import": {
