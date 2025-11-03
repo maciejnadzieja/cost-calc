@@ -12,7 +12,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.put
 import java.math.BigDecimal
 import java.util.UUID
 
@@ -58,6 +60,119 @@ class MaterialRestControllerTest {
         // User 2 cannot access User 1's material
         mockMvc
             .get("/api/materials/{id}", material.id) {
+                with(jwt(userId2, "email2@example.com"))
+            }.andExpect {
+                status { isNotFound() }
+            }
+    }
+
+    @Test
+    fun `should allow user to update their own material`() {
+        val userId = UUID.randomUUID()
+        val material =
+            Material.create(
+                name = "Test Material",
+                description = "Test Description",
+                price = BigDecimal.TEN,
+                unit = MaterialUnit.KILOGRAM,
+                category = "Test Category",
+                userId = userId,
+            )
+        materialRepository.save(material)
+
+        mockMvc
+            .put("/api/materials/{id}", material.id) {
+                with(jwt(userId, "email@example.com"))
+                contentType = org.springframework.http.MediaType.APPLICATION_JSON
+                content =
+                    """
+                    {
+                        "name": "Updated Material",
+                        "description": "Updated Description",
+                        "price": 20.0,
+                        "unit": "GRAM",
+                        "category": "Updated Category"
+                    }
+                    """.trimIndent()
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.name") { value("Updated Material") }
+            }
+    }
+
+    @Test
+    fun `should not allow user to update another user's material`() {
+        val userId1 = UUID.randomUUID()
+        val userId2 = UUID.randomUUID()
+        val material =
+            Material.create(
+                name = "Test Material",
+                description = "Test Description",
+                price = BigDecimal.TEN,
+                unit = MaterialUnit.KILOGRAM,
+                category = "Test Category",
+                userId = userId1,
+            )
+        materialRepository.save(material)
+
+        mockMvc
+            .put("/api/materials/{id}", material.id) {
+                with(jwt(userId2, "email2@example.com"))
+                contentType = org.springframework.http.MediaType.APPLICATION_JSON
+                content =
+                    """
+                    {
+                        "name": "Updated Material",
+                        "description": "Updated Description",
+                        "price": 20.0,
+                        "unit": "GRAM",
+                        "category": "Updated Category"
+                    }
+                    """.trimIndent()
+            }.andExpect {
+                status { isNotFound() }
+            }
+    }
+
+    @Test
+    fun `should allow user to delete their own material`() {
+        val userId = UUID.randomUUID()
+        val material =
+            Material.create(
+                name = "Test Material",
+                description = "Test Description",
+                price = BigDecimal.TEN,
+                unit = MaterialUnit.KILOGRAM,
+                category = "Test Category",
+                userId = userId,
+            )
+        materialRepository.save(material)
+
+        mockMvc
+            .delete("/api/materials/{id}", material.id) {
+                with(jwt(userId, "email@example.com"))
+            }.andExpect {
+                status { isOk() }
+            }
+    }
+
+    @Test
+    fun `should not allow user to delete another user's material`() {
+        val userId1 = UUID.randomUUID()
+        val userId2 = UUID.randomUUID()
+        val material =
+            Material.create(
+                name = "Test Material",
+                description = "Test Description",
+                price = BigDecimal.TEN,
+                unit = MaterialUnit.KILOGRAM,
+                category = "Test Category",
+                userId = userId1,
+            )
+        materialRepository.save(material)
+
+        mockMvc
+            .delete("/api/materials/{id}", material.id) {
                 with(jwt(userId2, "email2@example.com"))
             }.andExpect {
                 status { isNotFound() }
