@@ -29,7 +29,7 @@
                     <div th:id="${'services-' + stageStat.index}" class="mb-3">
                         <div th:each="service, serviceStat : ${stage.services}" class="row mb-2">
                             <div class="col-md-4">
-                                <input type="text" class="form-control" 
+                                <input type="text" class="form-control"
                                         th:field="*{stages[__${stageStat.index}__].services[__${serviceStat.index}__].name}">
                             </div>
                             <div class="col-md-2">
@@ -44,6 +44,11 @@
                                             th:value="${unit.name}"
                                             th:text="#{${unit.label}}"></option>
                                 </select>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" class="form-control" step="0.01"
+                                        th:field="*{stages[__${stageStat.index}__].services[__${serviceStat.index}__].unitPrice}"
+                                        th:placeholder="#{calculations.form.price}">
                             </div>
                             <div class="col-md-2">
                                 <button type="button" class="btn btn-danger remove-item" data-bs-toggle="tooltip" data-bs-placement="top" th:title="#{common.remove}">
