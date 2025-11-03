@@ -19,4 +19,10 @@ class RestExceptionHandler {
         ex: NoSuchElementException,
         request: WebRequest,
     ): ResponseEntity<Any> = ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.message)
+
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handleIllegalArgumentException(
+        ex: IllegalArgumentException,
+        request: WebRequest,
+    ): ResponseEntity<Any> = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.message)
 }

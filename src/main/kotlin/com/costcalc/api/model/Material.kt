@@ -29,8 +29,10 @@ data class Material(
             unit: MaterialUnit,
             category: String,
             userId: UserId,
-        ): Material =
-            Material(
+        ): Material {
+            require(price > BigDecimal.ZERO)
+            require(name.isNotBlank())
+            return Material(
                 id = UUID.randomUUID(),
                 name = name,
                 description = description,
@@ -41,5 +43,6 @@ data class Material(
                 createdAt = Instant.now(),
                 updatedAt = Instant.now(),
             )
+        }
     }
 }

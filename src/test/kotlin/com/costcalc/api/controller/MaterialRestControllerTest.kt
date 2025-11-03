@@ -259,6 +259,50 @@ class MaterialRestControllerTest {
     }
 
     @Test
+    fun `should return bad request for invalid input price`() {
+        val userId = UUID.randomUUID()
+        mockMvc
+            .post("/api/materials") {
+                with(jwt(userId, "email@example.com"))
+                contentType = MediaType.APPLICATION_JSON
+                content =
+                    """
+                    {
+                        "name": "Test name",
+                        "description": "Test Description",
+                        "price": -10.0,
+                        "unit": "KILOGRAM",
+                        "category": "Test Category"
+                    }
+                    """.trimIndent()
+            }.andExpect {
+                status { isBadRequest() }
+            }
+    }
+
+    @Test
+    fun `should return bad request for invalid input name`() {
+        val userId = UUID.randomUUID()
+        mockMvc
+            .post("/api/materials") {
+                with(jwt(userId, "email@example.com"))
+                contentType = MediaType.APPLICATION_JSON
+                content =
+                    """
+                    {
+                        "name": "",
+                        "description": "Test Description",
+                        "price": 10.0,
+                        "unit": "KILOGRAM",
+                        "category": "Test Category"
+                    }
+                    """.trimIndent()
+            }.andExpect {
+                status { isBadRequest() }
+            }
+    }
+
+    @Test
     fun `should secure all routes`() {
         mockMvc
             .get("/api/materials")
@@ -277,7 +321,6 @@ class MaterialRestControllerTest {
             }
         mockMvc
             .post("/api/materials") {
-                contentType = MediaType.APPLICATION_JSON
                 contentType = MediaType.APPLICATION_JSON
                 content =
                     """
