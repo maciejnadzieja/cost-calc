@@ -89,7 +89,7 @@ This will start the application, a MongoDB container, and a Keycloak container. 
 # Development Conventions
 
 *   **Coding Style:** The codebase follows standard Kotlin and Vue.js coding conventions.
-*   **Testing:** The project uses JUnit and MockK for backend testing, and Vitest for frontend testing. Testcontainers is used for testing with a real MongoDB instance.
+*   **Testing:** The project uses spring-boot-starter-test, JUnit, mockito and mockito-kotlin for backend testing, and Vitest for frontend testing. Testcontainers is used for testing with a real MongoDB instance.
 *   **Branching:** The project appears to use a feature-branching workflow, though no explicit branching strategy is documented.
 *   **Commits:** Do not commit anything to git
 *   **Dependencies:** Backend dependencies are managed with Maven, and frontend dependencies are managed with NPM.
