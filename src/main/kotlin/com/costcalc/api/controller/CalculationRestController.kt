@@ -9,7 +9,6 @@ import com.costcalc.api.model.User
 import com.costcalc.api.service.CalculationService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.web.PagedModel
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -38,9 +37,9 @@ class CalculationRestController(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int,
         @CurrentUser user: User,
-    ): PagedModel<CalculationResponse> {
+    ): Page<CalculationResponse> {
         val pageable = PageRequest.of(page, size)
-        return PagedModel(calculationService.search(user.id, query, pageable).map { it.toResponse() })
+        return calculationService.search(user.id, query, pageable).map { it.toResponse() }
     }
 
     @GetMapping("/{id}")
