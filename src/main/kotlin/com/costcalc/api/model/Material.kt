@@ -18,6 +18,28 @@ data class Material(
     val unit: MaterialUnit,
     val category: String,
     val userId: UserId,
-    val createdAt: Instant = Instant.now(),
-    val updatedAt: Instant = Instant.now(),
-)
+    val createdAt: Instant,
+    val updatedAt: Instant,
+) {
+    companion object {
+        fun create(
+            name: String,
+            description: String,
+            price: BigDecimal,
+            unit: MaterialUnit,
+            category: String,
+            userId: UserId,
+        ): Material =
+            Material(
+                id = UUID.randomUUID(),
+                name = name,
+                description = description,
+                price = price,
+                unit = unit,
+                category = category,
+                userId = userId,
+                createdAt = Instant.now(),
+                updatedAt = Instant.now(),
+            )
+    }
+}

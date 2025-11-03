@@ -10,4 +10,4 @@ class CostCalcApplication
 
 fun main(args: Array<String>) {
     runApplication<CostCalcApplication>(*args)
-} 
+}

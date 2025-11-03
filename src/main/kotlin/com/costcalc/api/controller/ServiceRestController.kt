@@ -2,10 +2,12 @@ package com.costcalc.api.controller
 
 import com.costcalc.api.config.CurrentUser
 import com.costcalc.api.dto.ServiceRequest
+import com.costcalc.api.dto.ServiceResponse
+import com.costcalc.api.mapper.toResponse
 import com.costcalc.api.model.Service
 import com.costcalc.api.model.User
 import com.costcalc.api.model.WorkUnit
-import com.costcalc.api.repository.ServiceRepository
+import com.costcalc.api.service.ServiceService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.security.access.prepost.PreAuthorize
@@ -24,7 +26,7 @@ import java.util.UUID
 @RequestMapping("/api/services")
 @PreAuthorize("isAuthenticated()")
 class ServiceRestController(
-    private val serviceRepository: ServiceRepository,
+    private val serviceService: ServiceService,
 ) {
     @GetMapping
     fun getServices(
@@ -32,19 +34,9 @@ class ServiceRestController(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int,
         @CurrentUser user: User,
-    ): Page<Service> {
+    ): Page<ServiceResponse> {
         val pageable = PageRequest.of(page, size)
-        return if (query.isNullOrBlank()) {
-            serviceRepository.findByUserId(user.id, pageable)
-        } else {
-            serviceRepository
-                .findByUserIdAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                    user.id,
-                    query,
-                    query,
-                    pageable,
-                )
-        }
+        return serviceService.search(user.id, query, pageable).map { it.toResponse() }
     }
 
     @GetMapping("/units")
@@ -54,16 +46,13 @@ class ServiceRestController(
     fun getServiceById(
         @PathVariable id: UUID,
         @CurrentUser user: User,
-    ): Service =
-        serviceRepository
-            .findByIdAndUserId(id, user.id)
-            .orElseThrow { NoSuchElementException("Service not found") }
+    ): ServiceResponse = serviceService.findByIdAndUserId(id, user.id).toResponse()
 
     @PostMapping
     fun createService(
         @RequestBody serviceRequest: ServiceRequest,
         @CurrentUser user: User,
-    ): Service {
+    ): ServiceResponse {
         val newService =
             Service(
                 id = UUID.randomUUID(),
@@ -73,7 +62,7 @@ class ServiceRestController(
                 price = serviceRequest.price,
                 workUnit = serviceRequest.workUnit,
             )
-        return serviceRepository.save(newService)
+        return serviceService.create(newService).toResponse()
     }
 
     @PutMapping("/{id}")
@@ -81,21 +70,18 @@ class ServiceRestController(
         @PathVariable id: UUID,
         @RequestBody serviceRequest: ServiceRequest,
         @CurrentUser user: User,
-    ): Service {
-        val existingService =
-            serviceRepository
-                .findByIdAndUserId(id, user.id)
-                .orElseThrow { NoSuchElementException("Service not found") }
-
-        val updatedService =
-            existingService.copy(
+    ): ServiceResponse {
+        val service =
+            Service(
+                id = id,
+                userId = user.id,
                 name = serviceRequest.name,
                 description = serviceRequest.description,
                 price = serviceRequest.price,
                 workUnit = serviceRequest.workUnit,
             )
 
-        return serviceRepository.save(updatedService)
+        return serviceService.update(id, service).toResponse()
     }
 
     @DeleteMapping("/{id}")
@@ -103,6 +89,6 @@ class ServiceRestController(
         @PathVariable id: UUID,
         @CurrentUser user: User,
     ) {
-        serviceRepository.deleteByIdAndUserId(id, user.id)
+        serviceService.delete(id, user.id)
     }
 }

@@ -14,4 +14,9 @@ interface CalculationRepository : MongoRepository<Calculation, CalculationId> {
         userId: UserId,
         pageable: Pageable,
     ): Page<Calculation>
+
+    fun deleteByIdAndUserId(
+        id: CalculationId,
+        userId: UserId,
+    )
 }

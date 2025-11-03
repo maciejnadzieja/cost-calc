@@ -2,10 +2,12 @@ package com.costcalc.api.controller
 
 import com.costcalc.api.config.CurrentUser
 import com.costcalc.api.dto.MaterialRequest
+import com.costcalc.api.dto.MaterialResponse
+import com.costcalc.api.mapper.toResponse
 import com.costcalc.api.model.Material
 import com.costcalc.api.model.MaterialUnit
 import com.costcalc.api.model.User
-import com.costcalc.api.repository.MaterialRepository
+import com.costcalc.api.service.MaterialService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.security.access.prepost.PreAuthorize
@@ -24,7 +26,7 @@ import java.util.UUID
 @RequestMapping("/api/materials")
 @PreAuthorize("isAuthenticated()")
 class MaterialRestController(
-    private val materialRepository: MaterialRepository,
+    private val materialService: MaterialService,
 ) {
     @GetMapping
     fun getMaterials(
@@ -32,49 +34,35 @@ class MaterialRestController(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int,
         @CurrentUser user: User,
-    ): Page<Material> {
+    ): Page<MaterialResponse> {
         val pageable = PageRequest.of(page, size)
-        return if (query.isNullOrBlank()) {
-            materialRepository.findByUserId(user.id, pageable)
-        } else {
-            materialRepository
-                .findByUserIdAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                    user.id,
-                    query,
-                    query,
-                    pageable,
-                )
-        }
+        return materialService.search(user.id, query, pageable).map { it.toResponse() }
     }
 
     @GetMapping("/units")
-    fun getMaterialUnits(): Array<MaterialUnit> = MaterialUnit.values()
+    fun getMaterialUnits(): List<MaterialUnit> = MaterialUnit.entries.toList()
 
     @GetMapping("/{id}")
     fun getMaterialById(
         @PathVariable id: UUID,
         @CurrentUser user: User,
-    ): Material =
-        materialRepository
-            .findByIdAndUserId(id, user.id)
-            .orElseThrow { NoSuchElementException("Material not found") }
+    ): MaterialResponse = materialService.findByIdAndUserId(id, user.id).toResponse()
 
     @PostMapping
     fun createMaterial(
         @RequestBody materialRequest: MaterialRequest,
         @CurrentUser user: User,
-    ): Material {
+    ): MaterialResponse {
         val newMaterial =
-            Material(
-                id = UUID.randomUUID(),
-                userId = user.id,
+            Material.create(
                 name = materialRequest.name,
                 description = materialRequest.description,
                 price = materialRequest.price,
                 unit = materialRequest.unit,
                 category = materialRequest.category,
+                userId = user.id,
             )
-        return materialRepository.save(newMaterial)
+        return materialService.create(newMaterial).toResponse()
     }
 
     @PutMapping("/{id}")
@@ -82,29 +70,23 @@ class MaterialRestController(
         @PathVariable id: UUID,
         @RequestBody materialRequest: MaterialRequest,
         @CurrentUser user: User,
-    ): Material {
-        val existingMaterial =
-            materialRepository
-                .findByIdAndUserId(id, user.id)
-                .orElseThrow { NoSuchElementException("Material not found") }
-
-        val updatedMaterial =
-            existingMaterial.copy(
+    ): MaterialResponse =
+        materialService
+            .update(
+                id = id,
                 name = materialRequest.name,
                 description = materialRequest.description,
                 price = materialRequest.price,
                 unit = materialRequest.unit,
                 category = materialRequest.category,
-            )
-
-        return materialRepository.save(updatedMaterial)
-    }
+                userId = user.id,
+            ).toResponse()
 
     @DeleteMapping("/{id}")
     fun deleteMaterial(
         @PathVariable id: UUID,
         @CurrentUser user: User,
     ) {
-        materialRepository.deleteByIdAndUserId(id, user.id)
+        materialService.delete(id, user.id)
     }
 }
