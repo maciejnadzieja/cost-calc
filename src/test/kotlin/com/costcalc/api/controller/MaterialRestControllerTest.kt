@@ -353,7 +353,7 @@ class MaterialRestControllerTest {
                 status { isUnauthorized() }
             }
         mockMvc
-            .post("/api_materials") {
+            .post("/api/materials") {
                 contentType = MediaType.APPLICATION_JSON
                 content =
                     """
