@@ -10,10 +10,12 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.MediaType
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
 import java.math.BigDecimal
 import java.util.UUID
@@ -30,6 +32,83 @@ class MaterialRestControllerTest {
     @BeforeEach
     fun setUp() {
         materialRepository.deleteAll()
+    }
+
+    @Test
+    fun `should return all units`() {
+        mockMvc
+            .get("/api/materials/units") {
+                with(jwt(UUID.randomUUID(), "email@example.com"))
+            }.andExpect {
+                status { isOk() }
+            }
+    }
+
+    @Test
+    fun `should handle material lifecycle`() {
+        val userId = UUID.randomUUID()
+
+        // Create
+        val result =
+            mockMvc
+                .post("/api/materials") {
+                    with(jwt(userId, "email@example.com"))
+                    contentType = MediaType.APPLICATION_JSON
+                    content =
+                        """
+                        {
+                            "name": "Test Material",
+                            "description": "Test Description",
+                            "price": 10.0,
+                            "unit": "KILOGRAM",
+                            "category": "Test Category"
+                        }
+                        """.trimIndent()
+                }.andExpect {
+                    status { isOk() }
+                    jsonPath("$.id") { exists() }
+                }.andReturn()
+
+        val createdMaterialId =
+            com.fasterxml.jackson.databind
+                .ObjectMapper()
+                .readTree(result.response.contentAsString)
+                .get("id")
+                .asText()
+
+        // Get by id
+        mockMvc
+            .get("/api/materials/{id}", createdMaterialId) {
+                with(jwt(userId, "email@example.com"))
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.name") { value("Test Material") }
+            }
+
+        // Search
+        mockMvc
+            .get("/api/materials") {
+                with(jwt(userId, "email@example.com"))
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.content[0].name") { value("Test Material") }
+            }
+
+        // Delete
+        mockMvc
+            .delete("/api/materials/{id}", createdMaterialId) {
+                with(jwt(userId, "email@example.com"))
+            }.andExpect {
+                status { isOk() }
+            }
+
+        // Verify deletion
+        mockMvc
+            .get("/api/materials/{id}", createdMaterialId) {
+                with(jwt(userId, "email@example.com"))
+            }.andExpect {
+                status { isNotFound() }
+            }
     }
 
     @Test
@@ -83,7 +162,7 @@ class MaterialRestControllerTest {
         mockMvc
             .put("/api/materials/{id}", material.id) {
                 with(jwt(userId, "email@example.com"))
-                contentType = org.springframework.http.MediaType.APPLICATION_JSON
+                contentType = MediaType.APPLICATION_JSON
                 content =
                     """
                     {
@@ -118,7 +197,7 @@ class MaterialRestControllerTest {
         mockMvc
             .put("/api/materials/{id}", material.id) {
                 with(jwt(userId2, "email2@example.com"))
-                contentType = org.springframework.http.MediaType.APPLICATION_JSON
+                contentType = MediaType.APPLICATION_JSON
                 content =
                     """
                     {
@@ -176,6 +255,63 @@ class MaterialRestControllerTest {
                 with(jwt(userId2, "email2@example.com"))
             }.andExpect {
                 status { isNotFound() }
+            }
+    }
+
+    @Test
+    fun `should secure all routes`() {
+        mockMvc
+            .get("/api/materials")
+            .andExpect {
+                status { isUnauthorized() }
+            }
+        mockMvc
+            .get("/api/materials/units")
+            .andExpect {
+                status { isUnauthorized() }
+            }
+        mockMvc
+            .get("/api/materials/{id}", UUID.randomUUID())
+            .andExpect {
+                status { isUnauthorized() }
+            }
+        mockMvc
+            .post("/api/materials") {
+                contentType = MediaType.APPLICATION_JSON
+                contentType = MediaType.APPLICATION_JSON
+                content =
+                    """
+                    {
+                        "name": "Test Material",
+                        "description": "Test Description",
+                        "price": 10.0,
+                        "unit": "KILOGRAM",
+                        "category": "Test Category"
+                    }
+                    """.trimIndent()
+            }.andExpect {
+                status { isUnauthorized() }
+            }
+        mockMvc
+            .put("/api/materials/{id}", UUID.randomUUID()) {
+                contentType = MediaType.APPLICATION_JSON
+                content =
+                    """
+                    {
+                        "name": "Updated Material",
+                        "description": "Updated Description",
+                        "price": 20.0,
+                        "unit": "GRAM",
+                        "category": "Updated Category"
+                    }
+                    """.trimIndent()
+            }.andExpect {
+                status { isUnauthorized() }
+            }
+        mockMvc
+            .delete("/api/materials/{id}", UUID.randomUUID())
+            .andExpect {
+                status { isUnauthorized() }
             }
     }
 
