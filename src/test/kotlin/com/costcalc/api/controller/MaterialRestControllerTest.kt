@@ -358,6 +358,64 @@ class MaterialRestControllerTest {
             }
     }
 
+    @Test
+    fun `should return paged results`() {
+        val userId = UUID.randomUUID()
+        (1..15).forEach {
+            materialRepository.save(
+                Material.create(
+                    name = "Material $it",
+                    description = "Description $it",
+                    price = BigDecimal.valueOf(it.toLong()),
+                    unit = MaterialUnit.KILOGRAM,
+                    category = "Category",
+                    userId = userId,
+                ),
+            )
+        }
+
+        // First page
+        mockMvc
+            .get("/api/materials?page=0&size=10") {
+                with(jwt(userId, "email@example.com"))
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.content.length()") { value(10) }
+                jsonPath("$.page.totalPages") { value(2) }
+                jsonPath("$.page.totalElements") { value(15) }
+            }
+
+        // Second page
+        mockMvc
+            .get("/api/materials?page=1&size=10") {
+                with(jwt(userId, "email@example.com"))
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.content.length()") { value(5) }
+                jsonPath("$.page.totalPages") { value(2) }
+                jsonPath("$.page.totalElements") { value(15) }
+            }
+    }
+
+    @Test
+    fun `should return bad request for invalid paging params`() {
+        val userId = UUID.randomUUID()
+
+        mockMvc
+            .get("/api/materials?page=-1&size=10") {
+                with(jwt(userId, "email@example.com"))
+            }.andExpect {
+                status { isBadRequest() }
+            }
+
+        mockMvc
+            .get("/api/materials?page=0&size=-10") {
+                with(jwt(userId, "email@example.com"))
+            }.andExpect {
+                status { isBadRequest() }
+            }
+    }
+
     private fun jwt(
         userId: UserId,
         email: String,
