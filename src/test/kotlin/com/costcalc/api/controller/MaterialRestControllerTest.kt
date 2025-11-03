@@ -38,7 +38,7 @@ class MaterialRestControllerTest {
     fun `should return all units`() {
         mockMvc
             .get("/api/materials/units") {
-                with(jwt(UUID.randomUUID(), "email@example.com"))
+                with(jwt())
             }.andExpect {
                 status { isOk() }
             }
@@ -52,18 +52,9 @@ class MaterialRestControllerTest {
         val result =
             mockMvc
                 .post("/api/materials") {
-                    with(jwt(userId, "email@example.com"))
+                    with(token(userId))
                     contentType = MediaType.APPLICATION_JSON
-                    content =
-                        """
-                        {
-                            "name": "Test Material",
-                            "description": "Test Description",
-                            "price": 10.0,
-                            "unit": "KILOGRAM",
-                            "category": "Test Category"
-                        }
-                        """.trimIndent()
+                    content = createMaterialJson()
                 }.andExpect {
                     status { isOk() }
                     jsonPath("$.id") { exists() }
@@ -79,7 +70,7 @@ class MaterialRestControllerTest {
         // Get by id
         mockMvc
             .get("/api/materials/{id}", createdMaterialId) {
-                with(jwt(userId, "email@example.com"))
+                with(token(userId))
             }.andExpect {
                 status { isOk() }
                 jsonPath("$.name") { value("Test Material") }
@@ -88,7 +79,7 @@ class MaterialRestControllerTest {
         // Search
         mockMvc
             .get("/api/materials") {
-                with(jwt(userId, "email@example.com"))
+                with(token(userId))
             }.andExpect {
                 status { isOk() }
                 jsonPath("$.content[0].name") { value("Test Material") }
@@ -97,7 +88,7 @@ class MaterialRestControllerTest {
         // Delete
         mockMvc
             .delete("/api/materials/{id}", createdMaterialId) {
-                with(jwt(userId, "email@example.com"))
+                with(token(userId))
             }.andExpect {
                 status { isOk() }
             }
@@ -105,7 +96,7 @@ class MaterialRestControllerTest {
         // Verify deletion
         mockMvc
             .get("/api/materials/{id}", createdMaterialId) {
-                with(jwt(userId, "email@example.com"))
+                with(token(userId))
             }.andExpect {
                 status { isNotFound() }
             }
@@ -116,21 +107,13 @@ class MaterialRestControllerTest {
         val userId1 = UUID.randomUUID()
         val userId2 = UUID.randomUUID()
 
-        val material =
-            Material.create(
-                name = "Test Material",
-                description = "Test Description",
-                price = BigDecimal.TEN,
-                unit = MaterialUnit.KILOGRAM,
-                category = "Test Category",
-                userId = userId1,
-            )
+        val material = createTestMaterial(userId = userId1)
         materialRepository.save(material)
 
         // User 1 can access their own material
         mockMvc
             .get("/api/materials/{id}", material.id) {
-                with(jwt(userId1, "email1@example.com"))
+                with(token(userId1))
             }.andExpect {
                 status { isOk() }
                 jsonPath("$.name") { value("Test Material") }
@@ -139,7 +122,7 @@ class MaterialRestControllerTest {
         // User 2 cannot access User 1's material
         mockMvc
             .get("/api/materials/{id}", material.id) {
-                with(jwt(userId2, "email2@example.com"))
+                with(token(userId2))
             }.andExpect {
                 status { isNotFound() }
             }
@@ -148,31 +131,14 @@ class MaterialRestControllerTest {
     @Test
     fun `should allow user to update their own material`() {
         val userId = UUID.randomUUID()
-        val material =
-            Material.create(
-                name = "Test Material",
-                description = "Test Description",
-                price = BigDecimal.TEN,
-                unit = MaterialUnit.KILOGRAM,
-                category = "Test Category",
-                userId = userId,
-            )
+        val material = createTestMaterial(userId = userId)
         materialRepository.save(material)
 
         mockMvc
             .put("/api/materials/{id}", material.id) {
-                with(jwt(userId, "email@example.com"))
+                with(token(userId))
                 contentType = MediaType.APPLICATION_JSON
-                content =
-                    """
-                    {
-                        "name": "Updated Material",
-                        "description": "Updated Description",
-                        "price": 20.0,
-                        "unit": "GRAM",
-                        "category": "Updated Category"
-                    }
-                    """.trimIndent()
+                content = updateMaterialJson()
             }.andExpect {
                 status { isOk() }
                 jsonPath("$.name") { value("Updated Material") }
@@ -183,31 +149,14 @@ class MaterialRestControllerTest {
     fun `should not allow user to update another user's material`() {
         val userId1 = UUID.randomUUID()
         val userId2 = UUID.randomUUID()
-        val material =
-            Material.create(
-                name = "Test Material",
-                description = "Test Description",
-                price = BigDecimal.TEN,
-                unit = MaterialUnit.KILOGRAM,
-                category = "Test Category",
-                userId = userId1,
-            )
+        val material = createTestMaterial(userId = userId1)
         materialRepository.save(material)
 
         mockMvc
             .put("/api/materials/{id}", material.id) {
-                with(jwt(userId2, "email2@example.com"))
+                with(token(userId2))
                 contentType = MediaType.APPLICATION_JSON
-                content =
-                    """
-                    {
-                        "name": "Updated Material",
-                        "description": "Updated Description",
-                        "price": 20.0,
-                        "unit": "GRAM",
-                        "category": "Updated Category"
-                    }
-                    """.trimIndent()
+                content = updateMaterialJson()
             }.andExpect {
                 status { isNotFound() }
             }
@@ -216,31 +165,14 @@ class MaterialRestControllerTest {
     @Test
     fun `should return bad request for invalid input on update`() {
         val userId = UUID.randomUUID()
-        val material =
-            Material.create(
-                name = "Test Material",
-                description = "Test Description",
-                price = BigDecimal.TEN,
-                unit = MaterialUnit.KILOGRAM,
-                category = "Test Category",
-                userId = userId,
-            )
+        val material = createTestMaterial(userId = userId)
         materialRepository.save(material)
 
         mockMvc
             .put("/api/materials/{id}", material.id) {
-                with(jwt(userId, "email@example.com"))
+                with(token(userId))
                 contentType = MediaType.APPLICATION_JSON
-                content =
-                    """
-                    {
-                        "name": "Updated Material",
-                        "description": "Updated Description",
-                        "price": -20.0,
-                        "unit": "GRAM",
-                        "category": "Updated Category"
-                    }
-                    """.trimIndent()
+                content = updateMaterialJson(price = -20.0)
             }.andExpect {
                 status { isBadRequest() }
             }
@@ -249,20 +181,12 @@ class MaterialRestControllerTest {
     @Test
     fun `should allow user to delete their own material`() {
         val userId = UUID.randomUUID()
-        val material =
-            Material.create(
-                name = "Test Material",
-                description = "Test Description",
-                price = BigDecimal.TEN,
-                unit = MaterialUnit.KILOGRAM,
-                category = "Test Category",
-                userId = userId,
-            )
+        val material = createTestMaterial(userId = userId)
         materialRepository.save(material)
 
         mockMvc
             .delete("/api/materials/{id}", material.id) {
-                with(jwt(userId, "email@example.com"))
+                with(token(userId))
             }.andExpect {
                 status { isOk() }
             }
@@ -272,20 +196,12 @@ class MaterialRestControllerTest {
     fun `should not allow user to delete another user's material`() {
         val userId1 = UUID.randomUUID()
         val userId2 = UUID.randomUUID()
-        val material =
-            Material.create(
-                name = "Test Material",
-                description = "Test Description",
-                price = BigDecimal.TEN,
-                unit = MaterialUnit.KILOGRAM,
-                category = "Test Category",
-                userId = userId1,
-            )
+        val material = createTestMaterial(userId = userId1)
         materialRepository.save(material)
 
         mockMvc
             .delete("/api/materials/{id}", material.id) {
-                with(jwt(userId2, "email2@example.com"))
+                with(token(userId2))
             }.andExpect {
                 status { isNotFound() }
             }
@@ -293,21 +209,11 @@ class MaterialRestControllerTest {
 
     @Test
     fun `should return bad request for invalid input price`() {
-        val userId = UUID.randomUUID()
         mockMvc
             .post("/api/materials") {
-                with(jwt(userId, "email@example.com"))
+                with(jwt())
                 contentType = MediaType.APPLICATION_JSON
-                content =
-                    """
-                    {
-                        "name": "Test name",
-                        "description": "Test Description",
-                        "price": -10.0,
-                        "unit": "KILOGRAM",
-                        "category": "Test Category"
-                    }
-                    """.trimIndent()
+                content = createMaterialJson(price = -10.0)
             }.andExpect {
                 status { isBadRequest() }
             }
@@ -315,21 +221,11 @@ class MaterialRestControllerTest {
 
     @Test
     fun `should return bad request for invalid input name`() {
-        val userId = UUID.randomUUID()
         mockMvc
             .post("/api/materials") {
-                with(jwt(userId, "email@example.com"))
+                with(jwt())
                 contentType = MediaType.APPLICATION_JSON
-                content =
-                    """
-                    {
-                        "name": "",
-                        "description": "Test Description",
-                        "price": 10.0,
-                        "unit": "KILOGRAM",
-                        "category": "Test Category"
-                    }
-                    """.trimIndent()
+                content = createMaterialJson(name = "")
             }.andExpect {
                 status { isBadRequest() }
             }
@@ -337,80 +233,33 @@ class MaterialRestControllerTest {
 
     @Test
     fun `should secure all routes`() {
-        mockMvc
-            .get("/api/materials")
-            .andExpect {
-                status { isUnauthorized() }
-            }
-        mockMvc
-            .get("/api/materials/units")
-            .andExpect {
-                status { isUnauthorized() }
-            }
-        mockMvc
-            .get("/api/materials/{id}", UUID.randomUUID())
-            .andExpect {
-                status { isUnauthorized() }
-            }
+        mockMvc.get("/api/materials").andExpect { status { isUnauthorized() } }
+        mockMvc.get("/api/materials/units").andExpect { status { isUnauthorized() } }
+        mockMvc.get("/api/materials/{id}", UUID.randomUUID()).andExpect { status { isUnauthorized() } }
         mockMvc
             .post("/api/materials") {
                 contentType = MediaType.APPLICATION_JSON
-                content =
-                    """
-                    {
-                        "name": "Test Material",
-                        "description": "Test Description",
-                        "price": 10.0,
-                        "unit": "KILOGRAM",
-                        "category": "Test Category"
-                    }
-                    """.trimIndent()
-            }.andExpect {
-                status { isUnauthorized() }
-            }
+                content = createMaterialJson()
+            }.andExpect { status { isUnauthorized() } }
         mockMvc
             .put("/api/materials/{id}", UUID.randomUUID()) {
                 contentType = MediaType.APPLICATION_JSON
-                content =
-                    """
-                    {
-                        "name": "Updated Material",
-                        "description": "Updated Description",
-                        "price": 20.0,
-                        "unit": "GRAM",
-                        "category": "Updated Category"
-                    }
-                    """.trimIndent()
-            }.andExpect {
-                status { isUnauthorized() }
-            }
-        mockMvc
-            .delete("/api/materials/{id}", UUID.randomUUID())
-            .andExpect {
-                status { isUnauthorized() }
-            }
+                content = updateMaterialJson()
+            }.andExpect { status { isUnauthorized() } }
+        mockMvc.delete("/api/materials/{id}", UUID.randomUUID()).andExpect { status { isUnauthorized() } }
     }
 
     @Test
     fun `should return paged results`() {
         val userId = UUID.randomUUID()
         (1..15).forEach {
-            materialRepository.save(
-                Material.create(
-                    name = "Material $it",
-                    description = "Description $it",
-                    price = BigDecimal.valueOf(it.toLong()),
-                    unit = MaterialUnit.KILOGRAM,
-                    category = "Category",
-                    userId = userId,
-                ),
-            )
+            materialRepository.save(createTestMaterial(userId = userId, name = "Material $it"))
         }
 
         // First page
         mockMvc
             .get("/api/materials?page=0&size=10") {
-                with(jwt(userId, "email@example.com"))
+                with(token(userId))
             }.andExpect {
                 status { isOk() }
                 jsonPath("$.content.length()") { value(10) }
@@ -421,7 +270,7 @@ class MaterialRestControllerTest {
         // Second page
         mockMvc
             .get("/api/materials?page=1&size=10") {
-                with(jwt(userId, "email@example.com"))
+                with(token(userId))
             }.andExpect {
                 status { isOk() }
                 jsonPath("$.content.length()") { value(5) }
@@ -432,18 +281,16 @@ class MaterialRestControllerTest {
 
     @Test
     fun `should return bad request for invalid paging params`() {
-        val userId = UUID.randomUUID()
-
         mockMvc
             .get("/api/materials?page=-1&size=10") {
-                with(jwt(userId, "email@example.com"))
+                with(token())
             }.andExpect {
                 status { isBadRequest() }
             }
 
         mockMvc
             .get("/api/materials?page=0&size=-10") {
-                with(jwt(userId, "email@example.com"))
+                with(token())
             }.andExpect {
                 status { isBadRequest() }
             }
@@ -452,51 +299,72 @@ class MaterialRestControllerTest {
     @Test
     fun `should filter materials by name`() {
         val userId = UUID.randomUUID()
-        materialRepository.save(
-            Material.create(
-                name = "Test Material 1",
-                description = "Description 1",
-                price = BigDecimal.TEN,
-                unit = MaterialUnit.KILOGRAM,
-                category = "Category",
-                userId = userId,
-            ),
-        )
-        materialRepository.save(
-            Material.create(
-                name = "Test Material 2",
-                description = "Description 2",
-                price = BigDecimal.TEN,
-                unit = MaterialUnit.KILOGRAM,
-                category = "Category",
-                userId = userId,
-            ),
-        )
-        materialRepository.save(
-            Material.create(
-                name = "Another Material",
-                description = "Description 3",
-                price = BigDecimal.TEN,
-                unit = MaterialUnit.KILOGRAM,
-                category = "Category",
-                userId = userId,
-            ),
-        )
+        materialRepository.save(createTestMaterial(userId, name = "Test Material 1"))
+        materialRepository.save(createTestMaterial(userId, name = "Test Material 2"))
+        materialRepository.save(createTestMaterial(userId, name = "Another Material"))
 
         mockMvc
             .get("/api/materials?query=Test") {
-                with(jwt(userId, "email@example.com"))
+                with(token(userId))
             }.andExpect {
                 status { isOk() }
                 jsonPath("$.content.length()") { value(2) }
             }
     }
 
-    private fun jwt(
-        userId: UserId,
-        email: String,
+    private fun token(
+        userId: UserId = UUID.randomUUID(),
+        email: String = "$userId@example.com",
     ) = jwt().jwt {
         it.claim("sub", userId.toString())
         it.claim("email", email)
     }
+
+    private fun createTestMaterial(
+        userId: UserId,
+        name: String = "Test Material",
+        description: String = "$name Description",
+        price: BigDecimal = BigDecimal.TEN,
+        unit: MaterialUnit = MaterialUnit.KILOGRAM,
+        category: String = "Test Category",
+    ) = Material.create(
+        name = name,
+        description = description,
+        price = price,
+        unit = unit,
+        category = category,
+        userId = userId,
+    )
+
+    private fun createMaterialJson(
+        name: String = "Test Material",
+        description: String = "$name Description",
+        price: Double = 10.0,
+        unit: MaterialUnit = MaterialUnit.KILOGRAM,
+        category: String = "Test Category",
+    ) = """
+        {
+            "name": "$name",
+            "description": "$description",
+            "price": $price,
+            "unit": "$unit",
+            "category": "$category"
+        }
+        """.trimIndent()
+
+    private fun updateMaterialJson(
+        name: String = "Updated Material",
+        description: String = "Updated Description",
+        price: Double = 20.0,
+        unit: MaterialUnit = MaterialUnit.GRAM,
+        category: String = "Updated Category",
+    ) = """
+        {
+            "name": "$name",
+            "description": "$description",
+            "price": $price,
+            "unit": "$unit",
+            "category": "$category"
+        }
+        """.trimIndent()
 }
