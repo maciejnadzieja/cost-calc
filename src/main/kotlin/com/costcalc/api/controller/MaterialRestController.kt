@@ -41,7 +41,7 @@ class MaterialRestController(
     }
 
     @GetMapping("/units")
-    fun getMaterialUnits(): List<MaterialUnit> = MaterialUnit.entries.toList()
+    fun getMaterialUnits(): List<MaterialUnit> = MaterialUnit.entries
 
     @GetMapping("/{id}")
     fun getMaterialById(

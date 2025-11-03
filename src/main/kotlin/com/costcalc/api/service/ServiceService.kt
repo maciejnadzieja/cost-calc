@@ -2,9 +2,11 @@ package com.costcalc.api.service
 
 import com.costcalc.api.model.Service
 import com.costcalc.api.model.UserId
+import com.costcalc.api.model.WorkUnit
 import com.costcalc.api.repository.ServiceRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import java.math.BigDecimal
 import java.util.UUID
 import org.springframework.stereotype.Service as SpringService
 
@@ -35,34 +37,38 @@ class ServiceService(
     ): Service =
         serviceRepository
             .findByIdAndUserId(id, userId)
-            .orElseThrow { NoSuchElementException("Service not found") }
+            ?: throw NoSuchElementException("Service not found")
 
     fun create(service: Service): Service = serviceRepository.save(service)
 
     fun update(
         id: UUID,
-        service: Service,
+        name: String,
+        description: String,
+        price: BigDecimal,
+        workUnit: WorkUnit,
+        userId: UserId,
     ): Service {
         val existingService =
             serviceRepository
-                .findByIdAndUserId(id, service.userId)
-                .orElseThrow { NoSuchElementException("Service not found") }
+                .findByIdAndUserId(id, userId)
+                ?: throw NoSuchElementException("Service not found")
 
-        val updatedService =
-            existingService.copy(
-                name = service.name,
-                description = service.description,
-                price = service.price,
-                workUnit = service.workUnit,
-            )
-
-        return serviceRepository.save(updatedService)
+        return serviceRepository.save(
+            existingService.update(
+                name = name,
+                description = description,
+                price = price,
+                workUnit = workUnit,
+            ),
+        )
     }
 
     fun delete(
         id: UUID,
         userId: UserId,
     ) {
+        serviceRepository.findByIdAndUserId(id, userId) ?: throw NoSuchElementException("Service not found")
         serviceRepository.deleteByIdAndUserId(id, userId)
     }
 }

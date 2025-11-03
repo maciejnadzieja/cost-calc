@@ -40,7 +40,7 @@ class ServiceRestController(
     }
 
     @GetMapping("/units")
-    fun getWorkUnits(): Array<WorkUnit> = WorkUnit.values()
+    fun getWorkUnits(): List<WorkUnit> = WorkUnit.entries
 
     @GetMapping("/{id}")
     fun getServiceById(
@@ -54,8 +54,7 @@ class ServiceRestController(
         @CurrentUser user: User,
     ): ServiceResponse {
         val newService =
-            Service(
-                id = UUID.randomUUID(),
+            Service.create(
                 userId = user.id,
                 name = serviceRequest.name,
                 description = serviceRequest.description,
@@ -70,19 +69,16 @@ class ServiceRestController(
         @PathVariable id: UUID,
         @RequestBody serviceRequest: ServiceRequest,
         @CurrentUser user: User,
-    ): ServiceResponse {
-        val service =
-            Service(
+    ): ServiceResponse =
+        serviceService
+            .update(
                 id = id,
-                userId = user.id,
                 name = serviceRequest.name,
                 description = serviceRequest.description,
                 price = serviceRequest.price,
                 workUnit = serviceRequest.workUnit,
-            )
-
-        return serviceService.update(id, service).toResponse()
-    }
+                userId = user.id,
+            ).toResponse()
 
     @DeleteMapping("/{id}")
     fun deleteService(

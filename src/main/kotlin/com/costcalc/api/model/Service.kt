@@ -19,4 +19,42 @@ data class Service(
     val userId: UserId,
     val createdAt: Instant = Instant.now(),
     val updatedAt: Instant = Instant.now(),
-)
+) {
+    fun update(
+        name: String,
+        description: String,
+        price: BigDecimal,
+        workUnit: WorkUnit,
+    ): Service {
+        require(price > BigDecimal.ZERO)
+        require(name.isNotBlank())
+
+        return this.copy(
+            name = name,
+            description = description,
+            price = price,
+            workUnit = workUnit,
+        )
+    }
+
+    companion object {
+        fun create(
+            name: String,
+            description: String,
+            price: BigDecimal,
+            workUnit: WorkUnit,
+            userId: UserId,
+        ): Service {
+            require(price > BigDecimal.ZERO)
+            require(name.isNotBlank())
+            return Service(
+                id = UUID.randomUUID(),
+                name = name,
+                description = description,
+                price = price,
+                workUnit = workUnit,
+                userId = userId,
+            )
+        }
+    }
+}
