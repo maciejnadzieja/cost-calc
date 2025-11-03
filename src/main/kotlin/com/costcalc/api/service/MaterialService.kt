@@ -55,16 +55,15 @@ class MaterialService(
                 .findByIdAndUserId(id, userId)
                 ?: throw NoSuchElementException("Material not found")
 
-        val updatedMaterial =
-            existingMaterial.copy(
+        return materialRepository.save(
+            existingMaterial.update(
                 name = name,
                 description = description,
                 price = price,
                 unit = unit,
                 category = category,
-            )
-
-        return materialRepository.save(updatedMaterial)
+            ),
+        )
     }
 
     fun delete(

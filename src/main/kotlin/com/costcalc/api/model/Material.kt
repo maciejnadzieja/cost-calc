@@ -21,6 +21,24 @@ data class Material(
     val createdAt: Instant,
     val updatedAt: Instant,
 ) {
+    fun update(
+        name: String,
+        description: String,
+        price: BigDecimal,
+        unit: MaterialUnit,
+        category: String,
+    ): Material {
+        require(price > BigDecimal.ZERO)
+        require(name.isNotBlank())
+        return this.copy(
+            name = name,
+            description = description,
+            price = price,
+            unit = unit,
+            category = category,
+        )
+    }
+
     companion object {
         fun create(
             name: String,
