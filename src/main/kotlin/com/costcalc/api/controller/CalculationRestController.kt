@@ -9,7 +9,6 @@ import com.costcalc.api.model.User
 import com.costcalc.api.service.CalculationService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
-import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -28,16 +27,16 @@ import java.util.UUID
 class CalculationRestController(
     private val calculationService: CalculationService,
 ) {
-    @GetMapping
-    fun getCalculations(
-        @RequestParam(required = false) query: String?,
-        @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "10") size: Int,
-        @CurrentUser user: User,
-    ): Page<CalculationResponse> {
-        val pageable = PageRequest.of(page, size)
-        return calculationService.search(user.id, query, pageable).map { it.toResponse() }
-    }
+//    @GetMapping
+//    fun getCalculations(
+//        @RequestParam(required = false) query: String?,
+//        @RequestParam(defaultValue = "0") page: Int,
+//        @RequestParam(defaultValue = "10") size: Int,
+//        @CurrentUser user: User,
+//    ): Page<CalculationResponse> {
+//        val pageable = PageRequest.of(page, size)
+//        return calculationService.search(user.id, query, pageable).map { it.toResponse() }
+//    }
 
     @GetMapping("/currencies")
     fun getSupportedCurrencies(): List<String> = listOf("EUR", "PLN", "USD")
@@ -46,21 +45,21 @@ class CalculationRestController(
     fun getById(
         @PathVariable id: CalculationId,
         @CurrentUser user: User,
-    ): ResponseEntity<CalculationResponse> {
+    ): CalculationResponse {
         val calculation = calculationService.findById(id)
 
         if (calculation.userId != user.id) {
             throw ForbiddenException("User does not have permission to view this calculation")
         }
 
-        return ResponseEntity.ok(calculation.toResponse())
+        return calculation.toResponse()
     }
 
     @PostMapping
     fun create(
         @RequestBody calculationRequest: CalculationRequest,
         @CurrentUser user: User,
-    ): ResponseEntity<CalculationResponse> {
+    ): CalculationResponse {
         val calculation =
             Calculation(
                 id = UUID.randomUUID(),
@@ -71,16 +70,16 @@ class CalculationRestController(
                 userId = user.id,
             )
         val createdCalculation = calculationService.create(calculation)
-        return ResponseEntity.ok(createdCalculation.toResponse())
+        return createdCalculation.toResponse()
     }
 
     @PostMapping("/{id}/duplicate")
     fun duplicate(
         @PathVariable id: CalculationId,
         @CurrentUser user: User,
-    ): ResponseEntity<CalculationResponse> {
+    ): CalculationResponse {
         val duplicatedCalculation = calculationService.duplicate(id, user.id)
-        return ResponseEntity.ok(duplicatedCalculation.toResponse())
+        return duplicatedCalculation.toResponse()
     }
 
     @PutMapping("/{id}")
@@ -88,7 +87,7 @@ class CalculationRestController(
         @PathVariable id: CalculationId,
         @RequestBody calculationRequest: CalculationRequest,
         @CurrentUser user: User,
-    ): ResponseEntity<CalculationResponse> {
+    ): CalculationResponse {
         val calculation =
             Calculation(
                 id = id,
@@ -99,15 +98,14 @@ class CalculationRestController(
                 userId = user.id,
             )
         val updatedCalculation = calculationService.update(id, calculation)
-        return ResponseEntity.ok(updatedCalculation.toResponse())
+        return updatedCalculation.toResponse()
     }
 
     @DeleteMapping("/{id}")
     fun delete(
         @PathVariable id: CalculationId,
         @CurrentUser user: User,
-    ): ResponseEntity<Void> {
+    ) {
         calculationService.delete(id, user.id)
-        return ResponseEntity.noContent().build()
     }
 }

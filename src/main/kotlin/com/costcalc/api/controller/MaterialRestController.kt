@@ -8,7 +8,6 @@ import com.costcalc.api.model.Material
 import com.costcalc.api.model.MaterialUnit
 import com.costcalc.api.model.User
 import com.costcalc.api.service.MaterialService
-import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.security.access.prepost.PreAuthorize
@@ -51,7 +50,7 @@ class MaterialRestController(
 
     @PostMapping
     fun createMaterial(
-        @Valid @RequestBody materialRequest: MaterialRequest,
+        @RequestBody materialRequest: MaterialRequest,
         @CurrentUser user: User,
     ): MaterialResponse {
         val newMaterial =
@@ -69,7 +68,7 @@ class MaterialRestController(
     @PutMapping("/{id}")
     fun updateMaterial(
         @PathVariable id: UUID,
-        @Valid @RequestBody materialRequest: MaterialRequest,
+        @RequestBody materialRequest: MaterialRequest,
         @CurrentUser user: User,
     ): MaterialResponse =
         materialService
