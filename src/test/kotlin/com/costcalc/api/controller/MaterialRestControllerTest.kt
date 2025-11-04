@@ -1,15 +1,15 @@
-
 package com.costcalc.api.controller
 
+import com.costcalc.api.AbstractIntegrationTest
 import com.costcalc.api.model.Material
 import com.costcalc.api.model.MaterialUnit
 import com.costcalc.api.model.UserId
 import com.costcalc.api.repository.MaterialRepository
+import java.math.BigDecimal
+import java.util.UUID
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
 import org.springframework.test.web.servlet.MockMvc
@@ -17,12 +17,9 @@ import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
-import java.math.BigDecimal
-import java.util.UUID
 
-@SpringBootTest
-@AutoConfigureMockMvc
-class MaterialRestControllerTest {
+
+class MaterialRestControllerTest : AbstractIntegrationTest() {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
