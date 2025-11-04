@@ -5,8 +5,6 @@ import com.costcalc.api.model.Service
 import com.costcalc.api.model.UserId
 import com.costcalc.api.model.WorkUnit
 import com.costcalc.api.repository.ServiceRepository
-import java.math.BigDecimal
-import java.util.UUID
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,6 +15,8 @@ import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
+import java.math.BigDecimal
+import java.util.UUID
 
 class ServiceRestControllerTest : AbstractIntegrationTest() {
     @Autowired
@@ -34,7 +34,7 @@ class ServiceRestControllerTest : AbstractIntegrationTest() {
     fun `should return all units`() {
         mockMvc
             .get("/api/services/units") {
-                with(jwtRequestPostProcessor())
+                with(token())
             }.andExpect {
                 status { isOk() }
             }
@@ -48,7 +48,7 @@ class ServiceRestControllerTest : AbstractIntegrationTest() {
         val result =
             mockMvc
                 .post("/api/services") {
-                    with(jwtRequestPostProcessor(userId))
+                    with(token(userId))
                     contentType = MediaType.APPLICATION_JSON
                     content = createServiceJson()
                 }.andExpect {
@@ -66,7 +66,7 @@ class ServiceRestControllerTest : AbstractIntegrationTest() {
         // Get by id
         mockMvc
             .get("/api/services/{id}", createdServiceId) {
-                with(jwtRequestPostProcessor(userId))
+                with(token(userId))
             }.andExpect {
                 status { isOk() }
                 jsonPath("$.name") { value("Test Service") }
@@ -75,7 +75,7 @@ class ServiceRestControllerTest : AbstractIntegrationTest() {
         // Search
         mockMvc
             .get("/api/services") {
-                with(jwtRequestPostProcessor(userId))
+                with(token(userId))
             }.andExpect {
                 status { isOk() }
                 jsonPath("$.content[0].name") { value("Test Service") }
@@ -84,7 +84,7 @@ class ServiceRestControllerTest : AbstractIntegrationTest() {
         // Delete
         mockMvc
             .delete("/api/services/{id}", createdServiceId) {
-                with(jwtRequestPostProcessor(userId))
+                with(token(userId))
             }.andExpect {
                 status { isOk() }
             }
@@ -92,7 +92,7 @@ class ServiceRestControllerTest : AbstractIntegrationTest() {
         // Verify deletion
         mockMvc
             .get("/api/services/{id}", createdServiceId) {
-                with(jwtRequestPostProcessor(userId))
+                with(token(userId))
             }.andExpect {
                 status { isNotFound() }
             }
@@ -109,7 +109,7 @@ class ServiceRestControllerTest : AbstractIntegrationTest() {
         // User 1 can access their own service
         mockMvc
             .get("/api/services/{id}", service.id) {
-                with(jwtRequestPostProcessor(userId1))
+                with(token(userId1))
             }.andExpect {
                 status { isOk() }
                 jsonPath("$.name") { value("Test Service") }
@@ -118,7 +118,7 @@ class ServiceRestControllerTest : AbstractIntegrationTest() {
         // User 2 cannot access User 1's service
         mockMvc
             .get("/api/services/{id}", service.id) {
-                with(jwtRequestPostProcessor(userId2))
+                with(token(userId2))
             }.andExpect {
                 status { isNotFound() }
             }
@@ -132,7 +132,7 @@ class ServiceRestControllerTest : AbstractIntegrationTest() {
 
         mockMvc
             .put("/api/services/{id}", service.id) {
-                with(jwtRequestPostProcessor(userId))
+                with(token(userId))
                 contentType = MediaType.APPLICATION_JSON
                 content = updateServiceJson()
             }.andExpect {
@@ -150,7 +150,7 @@ class ServiceRestControllerTest : AbstractIntegrationTest() {
 
         mockMvc
             .put("/api/services/{id}", service.id) {
-                with(jwtRequestPostProcessor(userId2))
+                with(token(userId2))
                 contentType = MediaType.APPLICATION_JSON
                 content = updateServiceJson()
             }.andExpect {
@@ -166,7 +166,7 @@ class ServiceRestControllerTest : AbstractIntegrationTest() {
 
         mockMvc
             .put("/api/services/{id}", service.id) {
-                with(jwtRequestPostProcessor(userId))
+                with(token(userId))
                 contentType = MediaType.APPLICATION_JSON
                 content = updateServiceJson(price = -20.0)
             }.andExpect {
@@ -182,7 +182,7 @@ class ServiceRestControllerTest : AbstractIntegrationTest() {
 
         mockMvc
             .delete("/api/services/{id}", service.id) {
-                with(jwtRequestPostProcessor(userId))
+                with(token(userId))
             }.andExpect {
                 status { isOk() }
             }
@@ -197,7 +197,7 @@ class ServiceRestControllerTest : AbstractIntegrationTest() {
 
         mockMvc
             .delete("/api/services/{id}", service.id) {
-                with(jwtRequestPostProcessor(userId2))
+                with(token(userId2))
             }.andExpect {
                 status { isNotFound() }
             }
@@ -207,7 +207,7 @@ class ServiceRestControllerTest : AbstractIntegrationTest() {
     fun `should return bad request for invalid input price`() {
         mockMvc
             .post("/api/services") {
-                with(jwtRequestPostProcessor())
+                with(token())
                 contentType = MediaType.APPLICATION_JSON
                 content = createServiceJson(price = -10.0)
             }.andExpect {
@@ -219,7 +219,7 @@ class ServiceRestControllerTest : AbstractIntegrationTest() {
     fun `should return bad request for invalid input name`() {
         mockMvc
             .post("/api/services") {
-                with(jwtRequestPostProcessor())
+                with(token())
                 contentType = MediaType.APPLICATION_JSON
                 content = createServiceJson(name = "")
             }.andExpect {
@@ -255,7 +255,7 @@ class ServiceRestControllerTest : AbstractIntegrationTest() {
         // First page
         mockMvc
             .get("/api/services?page=0&size=10") {
-                with(jwtRequestPostProcessor(userId))
+                with(token(userId))
             }.andExpect {
                 status { isOk() }
                 jsonPath("$.content.length()") { value(10) }
@@ -266,7 +266,7 @@ class ServiceRestControllerTest : AbstractIntegrationTest() {
         // Second page
         mockMvc
             .get("/api/services?page=1&size=10") {
-                with(jwtRequestPostProcessor(userId))
+                with(token(userId))
             }.andExpect {
                 status { isOk() }
                 jsonPath("$.content.length()") { value(5) }
@@ -279,14 +279,14 @@ class ServiceRestControllerTest : AbstractIntegrationTest() {
     fun `should return bad request for invalid paging params`() {
         mockMvc
             .get("/api/services?page=-1&size=10") {
-                with(jwtRequestPostProcessor())
+                with(token())
             }.andExpect {
                 status { isBadRequest() }
             }
 
         mockMvc
             .get("/api/services?page=0&size=-10") {
-                with(jwtRequestPostProcessor())
+                with(token())
             }.andExpect {
                 status { isBadRequest() }
             }
@@ -301,14 +301,14 @@ class ServiceRestControllerTest : AbstractIntegrationTest() {
 
         mockMvc
             .get("/api/services?query=Test") {
-                with(jwtRequestPostProcessor(userId))
+                with(token(userId))
             }.andExpect {
                 status { isOk() }
                 jsonPath("$.content.length()") { value(2) }
             }
     }
 
-    private fun jwtRequestPostProcessor(
+    private fun token(
         userId: UserId = UUID.randomUUID(),
         email: String = "email@example.com",
     ) = jwt().jwt {

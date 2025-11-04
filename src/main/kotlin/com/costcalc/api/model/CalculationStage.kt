@@ -11,4 +11,9 @@ data class CalculationStage(
     val materialsTotalAmount: BigDecimal = materials.sumOf { it.amount }
 
     val totalAmount: BigDecimal = servicesTotalAmount + materialsTotalAmount
+
+    init {
+        require(servicesTotalAmount > BigDecimal.ZERO)
+        require(materialsTotalAmount > BigDecimal.ZERO)
+    }
 }

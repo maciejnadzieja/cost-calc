@@ -5,8 +5,6 @@ import com.costcalc.api.model.Material
 import com.costcalc.api.model.MaterialUnit
 import com.costcalc.api.model.UserId
 import com.costcalc.api.repository.MaterialRepository
-import java.math.BigDecimal
-import java.util.UUID
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,7 +15,8 @@ import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
-
+import java.math.BigDecimal
+import java.util.UUID
 
 class MaterialRestControllerTest : AbstractIntegrationTest() {
     @Autowired
@@ -35,7 +34,7 @@ class MaterialRestControllerTest : AbstractIntegrationTest() {
     fun `should return all units`() {
         mockMvc
             .get("/api/materials/units") {
-                with(jwt())
+                with(token())
             }.andExpect {
                 status { isOk() }
             }
@@ -208,7 +207,7 @@ class MaterialRestControllerTest : AbstractIntegrationTest() {
     fun `should return bad request for invalid input price`() {
         mockMvc
             .post("/api/materials") {
-                with(jwt())
+                with(token())
                 contentType = MediaType.APPLICATION_JSON
                 content = createMaterialJson(price = -10.0)
             }.andExpect {
@@ -220,7 +219,7 @@ class MaterialRestControllerTest : AbstractIntegrationTest() {
     fun `should return bad request for invalid input name`() {
         mockMvc
             .post("/api/materials") {
-                with(jwt())
+                with(token())
                 contentType = MediaType.APPLICATION_JSON
                 content = createMaterialJson(name = "")
             }.andExpect {

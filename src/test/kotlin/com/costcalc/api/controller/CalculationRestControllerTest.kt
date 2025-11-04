@@ -155,6 +155,40 @@ class CalculationRestControllerTest : AbstractIntegrationTest() {
     }
 
     @Test
+    fun `should not allow user to delete calculation of another user`() {
+        val userId1 = UUID.randomUUID()
+        val userId2 = UUID.randomUUID()
+
+        val calculation = createTestCalculation(userId = userId1)
+        calculationRepository.save(calculation)
+
+        mockMvc
+            .delete("/api/calculations/{id}", calculation.id) {
+                with(token(userId2))
+            }.andExpect {
+                status { isNotFound() }
+            }
+    }
+
+    @Test
+    fun `should not allow user to update calculation of another user`() {
+        val userId1 = UUID.randomUUID()
+        val userId2 = UUID.randomUUID()
+
+        val calculation = createTestCalculation(userId = userId1)
+
+        calculationRepository.save(calculation)
+        mockMvc
+            .put("/api/calculations/{id}", calculation.id) {
+                with(token(userId2))
+                contentType = MediaType.APPLICATION_JSON
+                content = createCalculationJson()
+            }.andExpect {
+                status { isNotFound() }
+            }
+    }
+
+    @Test
     fun `should return paged results`() {
         val userId = UUID.randomUUID()
         (1..15).forEach {

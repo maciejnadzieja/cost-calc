@@ -10,6 +10,11 @@ data class CalculationItem(
     val type: ItemType,
 ) {
     val amount: BigDecimal = quantity.multiply(unitPrice)
+
+    init {
+        require(quantity > BigDecimal.ZERO)
+        require(unitPrice > BigDecimal.ZERO)
+    }
 }
 
 enum class ItemType {
