@@ -2,11 +2,13 @@ package com.costcalc.api.service
 
 import com.costcalc.api.model.Calculation
 import com.costcalc.api.model.CalculationId
+import com.costcalc.api.model.CalculationStage
 import com.costcalc.api.model.UserId
 import com.costcalc.api.repository.CalculationRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class CalculationService(
@@ -16,38 +18,64 @@ class CalculationService(
         userId: UserId,
         query: String?,
         pageable: Pageable,
-    ): Page<Calculation> = calculationRepository.findByUserId(userId, pageable)
+    ): Page<Calculation> =
+        if (query.isNullOrBlank()) {
+            calculationRepository.findByUserId(userId, pageable)
+        } else {
+            calculationRepository
+                .findByUserIdAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+                    userId,
+                    query,
+                    query,
+                    pageable,
+                )
+        }
 
-    fun findById(id: CalculationId): Calculation =
+    fun findByIdAndUserId(
+        id: CalculationId,
+        userId: UserId,
+    ): Calculation =
         calculationRepository
-            .findById(id)
-            .orElseThrow { NoSuchElementException("Calculation not found") }
+            .findByIdAndUserId(id, userId)
+            ?: throw NoSuchElementException("Calculation not found")
 
     fun create(calculation: Calculation): Calculation = calculationRepository.save(calculation)
 
     fun duplicate(
         id: CalculationId,
         userId: UserId,
-    ): Calculation {
-        val original = findById(id)
-        val duplicated =
-            original.copy(
-                id = CalculationId.randomUUID(),
-                name = "Copy of ${original.name}",
-                userId = userId,
-            )
-        return calculationRepository.save(duplicated)
-    }
+    ): Calculation = calculationRepository.save(findByIdAndUserId(id, userId).duplicate())
 
     fun update(
-        id: CalculationId,
-        calculation: Calculation,
-    ): Calculation = calculationRepository.save(calculation)
+        id: UUID,
+        name: String,
+        description: String,
+        stages: List<CalculationStage>,
+        currency: String,
+        userId: UserId,
+    ): Calculation {
+        val existingCalculation =
+            calculationRepository
+                .findByIdAndUserId(id, userId)
+                ?: throw NoSuchElementException("Calculation not found")
+
+        return calculationRepository.save(
+            existingCalculation.update(
+                name = name,
+                description = description,
+                stages = stages,
+                currency = currency,
+            ),
+        )
+    }
 
     fun delete(
         id: CalculationId,
         userId: UserId,
     ) {
+        calculationRepository
+            .findByIdAndUserId(id, userId)
+            ?: throw NoSuchElementException("Calculation not found")
         calculationRepository.deleteByIdAndUserId(id, userId)
     }
 }

@@ -15,6 +15,18 @@ interface CalculationRepository : MongoRepository<Calculation, CalculationId> {
         pageable: Pageable,
     ): Page<Calculation>
 
+    fun findByUserIdAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+        userId: UserId,
+        name: String,
+        description: String,
+        pageable: Pageable,
+    ): Page<Calculation>
+
+    fun findByIdAndUserId(
+        id: CalculationId,
+        userId: UserId,
+    ): Calculation?
+
     fun deleteByIdAndUserId(
         id: CalculationId,
         userId: UserId,

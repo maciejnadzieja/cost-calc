@@ -48,7 +48,7 @@ class CalculationRestController(
         @PathVariable id: CalculationId,
         @CurrentUser user: User,
     ): CalculationResponse {
-        val calculation = calculationService.findById(id)
+        val calculation = calculationService.findByIdAndUserId(id, user.id)
 
         if (calculation.userId != user.id) {
             throw ForbiddenException("User does not have permission to view this calculation")
@@ -90,8 +90,8 @@ class CalculationRestController(
         @RequestBody calculationRequest: CalculationRequest,
         @CurrentUser user: User,
     ): CalculationResponse {
-        val calculation =
-            Calculation(
+        val updatedCalculation =
+            calculationService.update(
                 id = id,
                 name = calculationRequest.name,
                 description = calculationRequest.description,
@@ -99,7 +99,6 @@ class CalculationRestController(
                 currency = calculationRequest.currency,
                 userId = user.id,
             )
-        val updatedCalculation = calculationService.update(id, calculation)
         return updatedCalculation.toResponse()
     }
 

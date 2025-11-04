@@ -20,7 +20,6 @@ import org.springframework.test.web.servlet.put
 import java.util.UUID
 
 class CalculationRestControllerTest : AbstractIntegrationTest() {
-
     @Autowired
     private lateinit var mockMvc: MockMvc
 
@@ -37,14 +36,15 @@ class CalculationRestControllerTest : AbstractIntegrationTest() {
 
     @Test
     fun `should return supported currencies`() {
-        mockMvc.get("/api/calculations/currencies") {
-            with(token())
-        }.andExpect {
-            status { isOk() }
-            jsonPath("$[0]") { value("EUR") }
-            jsonPath("$[1]") { value("PLN") }
-            jsonPath("$[2]") { value("USD") }
-        }
+        mockMvc
+            .get("/api/calculations/currencies") {
+                with(token())
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$[0]") { value("EUR") }
+                jsonPath("$[1]") { value("PLN") }
+                jsonPath("$[2]") { value("USD") }
+            }
     }
 
     @Test
@@ -52,74 +52,90 @@ class CalculationRestControllerTest : AbstractIntegrationTest() {
         val userId = UUID.randomUUID()
 
         // Create
-        val result = mockMvc.post("/api/calculations") {
-            with(token(userId))
-            contentType = MediaType.APPLICATION_JSON
-            content = createCalculationJson()
-        }.andExpect {
-            status { isOk() }
-            jsonPath("$.id") { exists() }
-        }.andReturn()
+        val result =
+            mockMvc
+                .post("/api/calculations") {
+                    with(token(userId))
+                    contentType = MediaType.APPLICATION_JSON
+                    content = createCalculationJson()
+                }.andExpect {
+                    status { isOk() }
+                    jsonPath("$.id") { exists() }
+                }.andReturn()
 
         val createdId = objectMapper.readTree(result.response.contentAsString).get("id").asText()
 
         // Get by id
-        mockMvc.get("/api/calculations/{id}", createdId) {
-            with(token(userId))
-        }.andExpect {
-            status { isOk() }
-            jsonPath("$.name") { value("Test Calculation") }
-        }
+        mockMvc
+            .get("/api/calculations/{id}", createdId) {
+                with(token(userId))
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.name") { value("Test Calculation") }
+            }
 
         // Search
-        mockMvc.get("/api/calculations") {
-            with(token(userId))
-        }.andExpect {
-            status { isOk() }
-            jsonPath("$.content[0].name") { value("Test Calculation") }
-        }
+        mockMvc
+            .get("/api/calculations") {
+                with(token(userId))
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.content[0].name") { value("Test Calculation") }
+            }
 
         // Update
-        mockMvc.put("/api/calculations/{id}", createdId) {
-            with(token(userId))
-            contentType = MediaType.APPLICATION_JSON
-            content = createCalculationJson(name = "Updated Calculation")
-        }.andExpect {
-            status { isOk() }
-            jsonPath("$.name") { value("Updated Calculation") }
-        }
+        mockMvc
+            .put("/api/calculations/{id}", createdId) {
+                with(token(userId))
+                contentType = MediaType.APPLICATION_JSON
+                content = createCalculationJson(name = "Updated Calculation")
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.name") { value("Updated Calculation") }
+            }
 
         // Duplicate
-        val duplicateResult = mockMvc.post("/api/calculations/{id}/duplicate", createdId) {
-            with(token(userId))
-        }.andExpect {
-            status { isOk() }
-            jsonPath("$.id") { exists() }
-            jsonPath("$.name") { value("Updated Calculation (copy)") }
-        }.andReturn()
+        val duplicateResult =
+            mockMvc
+                .post("/api/calculations/{id}/duplicate", createdId) {
+                    with(token(userId))
+                }.andExpect {
+                    status { isOk() }
+                    jsonPath("$.id") { exists() }
+                    jsonPath("$.name") { value("Copy of Updated Calculation") }
+                }.andReturn()
 
         val duplicatedId = objectMapper.readTree(duplicateResult.response.contentAsString).get("id").asText()
 
         // Delete duplicated
-        mockMvc.delete("/api/calculations/{id}", duplicatedId) {
-            with(token(userId))
-        }.andExpect {
-            status { isNoContent() }
-        }
+        mockMvc
+            .delete("/api/calculations/{id}", duplicatedId) {
+                with(token(userId))
+            }.andExpect {
+                status { isOk() }
+            }
 
         // Delete
-        mockMvc.delete("/api/calculations/{id}", createdId) {
-            with(token(userId))
-        }.andExpect {
-            status { isNoContent() }
-        }
+        mockMvc
+            .delete("/api/calculations/{id}", createdId) {
+                with(token(userId))
+            }.andExpect {
+                status { isOk() }
+            }
 
         // Verify deletion
-        mockMvc.get("/api/calculations/{id}", createdId) {
-            with(token(userId))
-        }.andExpect {
-            status { isNotFound() }
-        }
+        mockMvc
+            .get("/api/calculations/{id}", createdId) {
+                with(token(userId))
+            }.andExpect {
+                status { isNotFound() }
+            }
+        mockMvc
+            .get("/api/calculations/{id}", duplicatedId) {
+                with(token(userId))
+            }.andExpect {
+                status { isNotFound() }
+            }
     }
 
     @Test
@@ -130,11 +146,12 @@ class CalculationRestControllerTest : AbstractIntegrationTest() {
         val calculation = createTestCalculation(userId = userId1)
         calculationRepository.save(calculation)
 
-        mockMvc.get("/api/calculations/{id}", calculation.id) {
-            with(token(userId2))
-        }.andExpect {
-            status { isForbidden() }
-        }
+        mockMvc
+            .get("/api/calculations/{id}", calculation.id) {
+                with(token(userId2))
+            }.andExpect {
+                status { isNotFound() }
+            }
     }
 
     @Test
@@ -144,21 +161,23 @@ class CalculationRestControllerTest : AbstractIntegrationTest() {
             calculationRepository.save(createTestCalculation(userId = userId, name = "Calculation $it"))
         }
 
-        mockMvc.get("/api/calculations?page=0&size=10") {
-            with(token(userId))
-        }.andExpect {
-            status { isOk() }
-            jsonPath("$.content.length()") { value(10) }
-            jsonPath("$.totalPages") { value(2) }
-            jsonPath("$.totalElements") { value(15) }
-        }
+        mockMvc
+            .get("/api/calculations?page=0&size=10") {
+                with(token(userId))
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.content.length()") { value(10) }
+                jsonPath("$.page.totalPages") { value(2) }
+                jsonPath("$.page.totalElements") { value(15) }
+            }
 
-        mockMvc.get("/api/calculations?page=1&size=10") {
-            with(token(userId))
-        }.andExpect {
-            status { isOk() }
-            jsonPath("$.content.length()") { value(5) }
-        }
+        mockMvc
+            .get("/api/calculations?page=1&size=10") {
+                with(token(userId))
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.content.length()") { value(5) }
+            }
     }
 
     @Test
@@ -168,12 +187,13 @@ class CalculationRestControllerTest : AbstractIntegrationTest() {
         calculationRepository.save(createTestCalculation(userId, name = "Test Calculation 2"))
         calculationRepository.save(createTestCalculation(userId, name = "Another Calculation"))
 
-        mockMvc.get("/api/calculations?query=Test") {
-            with(token(userId))
-        }.andExpect {
-            status { isOk() }
-            jsonPath("$.content.length()") { value(2) }
-        }
+        mockMvc
+            .get("/api/calculations?query=Test") {
+                with(token(userId))
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.content.length()") { value(2) }
+            }
     }
 
     @Test
@@ -181,14 +201,16 @@ class CalculationRestControllerTest : AbstractIntegrationTest() {
         mockMvc.get("/api/calculations").andExpect { status { isUnauthorized() } }
         mockMvc.get("/api/calculations/currencies").andExpect { status { isUnauthorized() } }
         mockMvc.get("/api/calculations/{id}", UUID.randomUUID()).andExpect { status { isUnauthorized() } }
-        mockMvc.post("/api/calculations") {
-            contentType = MediaType.APPLICATION_JSON
-            content = createCalculationJson()
-        }.andExpect { status { isUnauthorized() } }
-        mockMvc.put("/api/calculations/{id}", UUID.randomUUID()) {
-            contentType = MediaType.APPLICATION_JSON
-            content = createCalculationJson()
-        }.andExpect { status { isUnauthorized() } }
+        mockMvc
+            .post("/api/calculations") {
+                contentType = MediaType.APPLICATION_JSON
+                content = createCalculationJson()
+            }.andExpect { status { isUnauthorized() } }
+        mockMvc
+            .put("/api/calculations/{id}", UUID.randomUUID()) {
+                contentType = MediaType.APPLICATION_JSON
+                content = createCalculationJson()
+            }.andExpect { status { isUnauthorized() } }
         mockMvc.delete("/api/calculations/{id}", UUID.randomUUID()).andExpect { status { isUnauthorized() } }
         mockMvc.post("/api/calculations/{id}/duplicate", UUID.randomUUID()).andExpect { status { isUnauthorized() } }
     }
@@ -206,30 +228,30 @@ class CalculationRestControllerTest : AbstractIntegrationTest() {
         name: String = "Test Calculation",
         description: String = "Description",
         stages: List<CalculationStage> = emptyList(),
-        currency: String = "USD"
+        currency: String = "USD",
     ) = Calculation(
         id = UUID.randomUUID(),
         name = name,
         description = description,
         stages = stages,
         currency = currency,
-        userId = userId
+        userId = userId,
     )
 
     private fun createCalculationJson(
         name: String = "Test Calculation",
         description: String? = "Description",
         stages: List<CalculationStage> = emptyList(),
-        currency: String = "USD"
+        currency: String = "USD",
     ): String {
         val stagesJson = objectMapper.writeValueAsString(stages)
         return """
-        {
-            "name": "$name",
-            "description": ${description},
-            "stages": $stagesJson,
-            "currency": "$currency"
-        }
-        """.trimIndent()
+            {
+                "name": "$name",
+                "description": "$description",
+                "stages": $stagesJson,
+                "currency": "$currency"
+            }
+            """.trimIndent()
     }
 }
