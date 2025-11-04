@@ -28,9 +28,6 @@ import java.util.UUID
 class CalculationRestController(
     private val calculationService: CalculationService,
 ) {
-    @GetMapping("/currencies")
-    fun getSupportedCurrencies(): List<String> = listOf("EUR", "PLN", "USD")
-
     @GetMapping
     fun getCalculations(
         @RequestParam(required = false) query: String?,
@@ -41,6 +38,9 @@ class CalculationRestController(
         val pageable = PageRequest.of(page, size)
         return calculationService.search(user.id, query, pageable).map { it.toResponse() }
     }
+
+    @GetMapping("/currencies")
+    fun getSupportedCurrencies(): List<String> = listOf("EUR", "PLN", "USD")
 
     @GetMapping("/{id}")
     fun getById(
