@@ -1,3 +1,5 @@
+package com.costcalc.api.controller
+
 import com.costcalc.api.config.CurrentUser
 import com.costcalc.api.dto.CalculationRequest
 import com.costcalc.api.dto.CalculationResponse
@@ -27,16 +29,16 @@ import java.util.UUID
 class CalculationRestController(
     private val calculationService: CalculationService,
 ) {
-//    @GetMapping
-//    fun getCalculations(
-//        @RequestParam(required = false) query: String?,
-//        @RequestParam(defaultValue = "0") page: Int,
-//        @RequestParam(defaultValue = "10") size: Int,
-//        @CurrentUser user: User,
-//    ): Page<CalculationResponse> {
-//        val pageable = PageRequest.of(page, size)
-//        return calculationService.search(user.id, query, pageable).map { it.toResponse() }
-//    }
+    @GetMapping
+    fun getCalculations(
+        @RequestParam(required = false) query: String?,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") size: Int,
+        @CurrentUser user: User,
+    ): Page<CalculationResponse> {
+        val pageable = PageRequest.of(page, size)
+        return calculationService.search(user.id, query, pageable).map { it.toResponse() }
+    }
 
     @GetMapping("/currencies")
     fun getSupportedCurrencies(): List<String> = listOf("EUR", "PLN", "USD")
