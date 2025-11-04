@@ -189,6 +189,37 @@ class CalculationRestControllerTest : AbstractIntegrationTest() {
     }
 
     @Test
+    fun `should return bad request in case of stage with wrong items`() {
+        val calculationWithInvalidItem =
+            """
+            {
+                "name": "Test",
+                "currency": "USD",
+                "stages": [
+                    {
+                        "name": "Stage 1",
+                        "services": [
+                            { "name": "Service 1", "unitPrice": "10", "quantity": "0", "unit": "HOUR", "type": "SERVICE" }
+                        ],
+                        "materials": [
+                            { "name": "Material 1", "unitPrice": "10", "quantity": "1", "unit": "KILOGRAM", "type": "MATERIAL" }
+                        ]
+                    }
+                ]
+            }
+            """.trimIndent()
+
+        mockMvc
+            .post("/api/calculations") {
+                with(token())
+                contentType = MediaType.APPLICATION_JSON
+                content = calculationWithInvalidItem
+            }.andExpect {
+                status { isBadRequest() }
+            }
+    }
+
+    @Test
     fun `should return paged results`() {
         val userId = UUID.randomUUID()
         (1..15).forEach {
