@@ -36,9 +36,9 @@ Cost calculation/estimation application powered by AI, built with Kotlin and Spr
 ## Relase
 ```
 docker compose build
-docker save -o cost_calc_ai-app.tar cost_calc_ai-app:latest
+docker save -o cost-calc-app.tar cost-calc-app:latest
 ...
-docker load -i cost_calc_ai-app.tar
+docker load -i cost-calc-app.tar
 docker compose down
-docker compose up
+docker compose up -d
 ```
