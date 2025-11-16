@@ -16,7 +16,9 @@
           :id="`stage-name-${stageIndex}`"
           class="form-control"
           :value="stage.name"
-          @input="$emit('update:stage', { ...stage, name: $event.target.value })"
+          @input="
+            $emit('update:stage', { ...stage, name: ($event.target as HTMLInputElement).value })
+          "
         />
       </div>
 
@@ -38,7 +40,7 @@
               <li
                 class="list-group-item"
                 v-for="service in serviceSearchResults"
-                :key="service.id"
+                :key="service.id || service.name"
                 @click="selectService(service)"
               >
                 {{ service.name }}
@@ -62,7 +64,7 @@
               <li
                 class="list-group-item"
                 v-for="material in materialSearchResults"
-                :key="material.id"
+                :key="material.id || material.name"
                 @click="selectMaterial(material)"
               >
                 {{ material.name }}
@@ -84,20 +86,47 @@
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="(item, itemIndex) in stage.items.filter((i) => i.type === ItemType.SERVICE)"
-            :key="itemIndex"
-          >
-            <td><input type="text" class="form-control" :id="`service-name-${stageIndex}-${itemIndex}`" :name="`service-name-${stageIndex}-${itemIndex}`" v-model="item.name" /></td>
-            <td><input type="number" step="0.01" class="form-control" :id="`service-quantity-${stageIndex}-${itemIndex}`" :name="`service-quantity-${stageIndex}-${itemIndex}`" v-model="item.quantity" /></td>
-            <td><input type="text" class="form-control" :id="`service-unit-${stageIndex}-${itemIndex}`" :name="`service-unit-${stageIndex}-${itemIndex}`" v-model="item.unit" /></td>
-            <td><input type="number" step="0.01" class="form-control" :id="`service-unit-price-${stageIndex}-${itemIndex}`" :name="`service-unit-price-${stageIndex}-${itemIndex}`" v-model="item.unitPrice" /></td>
+          <tr v-for="(item, itemIndex) in stage.services" :key="itemIndex">
             <td>
-              <button
-                type="button"
-                class="btn btn-danger btn-sm"
-                @click="removeItem(item)"
-              >
+              <input
+                type="text"
+                class="form-control"
+                :id="`service-name-${stageIndex}-${itemIndex}`"
+                :name="`service-name-${stageIndex}-${itemIndex}`"
+                v-model="item.name"
+              />
+            </td>
+            <td>
+              <input
+                type="number"
+                step="0.01"
+                class="form-control"
+                :id="`service-quantity-${stageIndex}-${itemIndex}`"
+                :name="`service-quantity-${stageIndex}-${itemIndex}`"
+                v-model="item.quantity"
+              />
+            </td>
+            <td>
+              <input
+                type="text"
+                class="form-control"
+                :id="`service-unit-${stageIndex}-${itemIndex}`"
+                :name="`service-unit-${stageIndex}-${itemIndex}`"
+                v-model="item.unit"
+              />
+            </td>
+            <td>
+              <input
+                type="number"
+                step="0.01"
+                class="form-control"
+                :id="`service-unit-price-${stageIndex}-${itemIndex}`"
+                :name="`service-unit-price-${stageIndex}-${itemIndex}`"
+                v-model="item.unitPrice"
+              />
+            </td>
+            <td>
+              <button type="button" class="btn btn-danger btn-sm" @click="removeService(item)">
                 {{ t('common.remove') }}
               </button>
             </td>
@@ -117,20 +146,47 @@
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="(item, itemIndex) in stage.items.filter((i) => i.type === ItemType.MATERIAL)"
-            :key="itemIndex"
-          >
-            <td><input type="text" class="form-control" :id="`material-name-${stageIndex}-${itemIndex}`" :name="`material-name-${stageIndex}-${itemIndex}`" v-model="item.name" /></td>
-            <td><input type="number" step="0.01" class="form-control" :id="`material-quantity-${stageIndex}-${itemIndex}`" :name="`material-quantity-${stageIndex}-${itemIndex}`" v-model="item.quantity" /></td>
-            <td><input type="text" class="form-control" :id="`material-unit-${stageIndex}-${itemIndex}`" :name="`material-unit-${stageIndex}-${itemIndex}`" v-model="item.unit" /></td>
-            <td><input type="number" step="0.01" class="form-control" :id="`material-unit-price-${stageIndex}-${itemIndex}`" :name="`material-unit-price-${stageIndex}-${itemIndex}`" v-model="item.unitPrice" /></td>
+          <tr v-for="(item, itemIndex) in stage.materials" :key="itemIndex">
             <td>
-              <button
-                type="button"
-                class="btn btn-danger btn-sm"
-                @click="removeItem(item)"
-              >
+              <input
+                type="text"
+                class="form-control"
+                :id="`material-name-${stageIndex}-${itemIndex}`"
+                :name="`material-name-${stageIndex}-${itemIndex}`"
+                v-model="item.name"
+              />
+            </td>
+            <td>
+              <input
+                type="number"
+                step="0.01"
+                class="form-control"
+                :id="`material-quantity-${stageIndex}-${itemIndex}`"
+                :name="`material-quantity-${stageIndex}-${itemIndex}`"
+                v-model="item.quantity"
+              />
+            </td>
+            <td>
+              <input
+                type="text"
+                class="form-control"
+                :id="`material-unit-${stageIndex}-${itemIndex}`"
+                :name="`material-unit-${stageIndex}-${itemIndex}`"
+                v-model="item.unit"
+              />
+            </td>
+            <td>
+              <input
+                type="number"
+                step="0.01"
+                class="form-control"
+                :id="`material-unit-price-${stageIndex}-${itemIndex}`"
+                :name="`material-unit-price-${stageIndex}-${itemIndex}`"
+                v-model="item.unitPrice"
+              />
+            </td>
+            <td>
+              <button type="button" class="btn btn-danger btn-sm" @click="removeMaterial(item)">
                 {{ t('common.remove') }}
               </button>
             </td>
@@ -142,71 +198,82 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { ItemType, type CalculationStage, type CalculationItem } from '../models/calculation';
-import { searchServices, searchMaterials } from '../services/api';
-import type { Service } from '../models/service';
-import type { Material } from '../models/material';
-import { useI18n } from 'vue-i18n';
+import { ref } from 'vue'
+import { ItemType, type CalculationStage, type CalculationItem } from '../models/calculation'
+import { searchServices, searchMaterials } from '../services/api'
+import type { Service } from '../models/service'
+import type { Material } from '../models/material'
+import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n();
+const { t } = useI18n()
 
-const props = defineProps<{ stage: CalculationStage; stageIndex: number }>();
-const emit = defineEmits(['update:stage', 'remove-stage']);
+const props = defineProps<{ stage: CalculationStage; stageIndex: number }>()
+const emit = defineEmits(['update:stage', 'remove-stage'])
 
-const serviceSearchQuery = ref('');
-const materialSearchQuery = ref('');
-const serviceSearchResults = ref<Service[]>([]);
-const materialSearchResults = ref<Material[]>([]);
+const serviceSearchQuery = ref('')
+const materialSearchQuery = ref('')
+const serviceSearchResults = ref<Service[]>([])
+const materialSearchResults = ref<Material[]>([])
 
 const handleServiceSearch = async () => {
   if (serviceSearchQuery.value.length > 2) {
-    const response = await searchServices(serviceSearchQuery.value);
-    serviceSearchResults.value = response.data.content;
+    const response = await searchServices(serviceSearchQuery.value)
+    serviceSearchResults.value = response.data.content
   } else {
-    serviceSearchResults.value = [];
+    serviceSearchResults.value = []
   }
-};
+}
 
 const handleMaterialSearch = async () => {
   if (materialSearchQuery.value.length > 2) {
-    const response = await searchMaterials(materialSearchQuery.value);
-    materialSearchResults.value = response.data.content;
+    const response = await searchMaterials(materialSearchQuery.value)
+    materialSearchResults.value = response.data.content
   } else {
-    materialSearchResults.value = [];
+    materialSearchResults.value = []
   }
-};
+}
 
 const selectService = (service: Service) => {
-  const newItems = [...props.stage.items, {
-    name: service.name,
-    quantity: 1,
-    unit: service.workUnit,
-    unitPrice: service.price,
-    type: ItemType.SERVICE,
-  }];
-  emit('update:stage', { ...props.stage, items: newItems });
-  serviceSearchQuery.value = '';
-  serviceSearchResults.value = [];
-};
+  const newServices = [
+    ...props.stage.services,
+    {
+      name: service.name,
+      quantity: 1,
+      unit: service.workUnit,
+      unitPrice: service.price,
+      type: ItemType.SERVICE
+    }
+  ]
+  emit('update:stage', { ...props.stage, services: newServices })
+  serviceSearchQuery.value = ''
+  serviceSearchResults.value = []
+}
 
 const selectMaterial = (material: Material) => {
-  const newItems = [...props.stage.items, {
-    name: material.name,
-    quantity: 1,
-    unit: material.unit,
-    unitPrice: material.price,
-    type: ItemType.MATERIAL,
-  }];
-  emit('update:stage', { ...props.stage, items: newItems });
-  materialSearchQuery.value = '';
-  materialSearchResults.value = [];
-};
+  const newMaterials = [
+    ...props.stage.materials,
+    {
+      name: material.name,
+      quantity: 1,
+      unit: material.unit,
+      unitPrice: material.price,
+      type: ItemType.MATERIAL
+    }
+  ]
+  emit('update:stage', { ...props.stage, materials: newMaterials })
+  materialSearchQuery.value = ''
+  materialSearchResults.value = []
+}
 
-const removeItem = (item: CalculationItem) => {
-  const newItems = props.stage.items.filter(i => i !== item);
-  emit('update:stage', { ...props.stage, items: newItems });
-};
+const removeService = (item: CalculationItem) => {
+  const newServices = props.stage.services.filter((i) => i !== item)
+  emit('update:stage', { ...props.stage, services: newServices })
+}
+
+const removeMaterial = (item: CalculationItem) => {
+  const newMaterials = props.stage.materials.filter((i) => i !== item)
+  emit('update:stage', { ...props.stage, materials: newMaterials })
+}
 </script>
 
 <style scoped></style>

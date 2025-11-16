@@ -5,6 +5,8 @@ export interface Calculation {
   stages: CalculationStage[]
   currency: string
   totalAmount: number
+  createdAt?: string
+  updatedAt?: string
 }
 
 export interface CalculationStage {

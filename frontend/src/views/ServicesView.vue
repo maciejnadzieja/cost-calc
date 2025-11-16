@@ -20,14 +20,14 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="service in services" :key="service.id">
+        <tr v-for="service in services" :key="service.id || service.name">
           <td>{{ service.name }}</td>
           <td>{{ service.description }}</td>
           <td>{{ service.price }} / {{ t('units.service.' + service.workUnit.toLowerCase() + '.symbol') }}</td>
           <td>{{ t('units.service.' + service.workUnit.toLowerCase() + '.label') }}</td>
           <td>
             <router-link :to="`/services/edit/${service.id}`" class="btn btn-sm btn-primary me-2">{{ t('common.edit') }}</router-link>
-            <button class="btn btn-sm btn-danger" @click="deleteService(service.id)">{{ t('common.delete') }}</button>
+            <button v-if="service.id" class="btn btn-sm btn-danger" @click="deleteService(service.id)">{{ t('common.delete') }}</button>
           </td>
         </tr>
       </tbody>
@@ -50,10 +50,11 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref} from 'vue';
+import { onMounted, ref } from 'vue';
 import apiClient from '@/services/api';
-import {useRoute, useRouter} from "vue-router";
+import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+import type { Service } from '@/models/service';
 
 const { t } = useI18n();
 
@@ -61,7 +62,7 @@ const router = useRouter();
 const route = useRoute();
 
 const query = ref(route.query.query || '');
-const services = ref([]);
+const services = ref<Service[]>([]);
 const currentPage = ref(parseInt(route.query.page as string) || 0);
 const totalPages = ref(0);
 

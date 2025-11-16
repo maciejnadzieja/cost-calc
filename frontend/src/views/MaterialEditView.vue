@@ -50,7 +50,7 @@ const material = ref({
   category: '',
 });
 
-const materialUnits = ref([]);
+const materialUnits = ref<string[]>([]);
 
 const isEdit = ref(false);
 

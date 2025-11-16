@@ -67,11 +67,14 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { ItemType, type Calculation, type CalculationStage as CalculationStageType } from '../models/calculation'
+import {
+  type Calculation,
+  type CalculationStage as CalculationStageType
+} from '../models/calculation'
 import {
   createCalculation,
-  updateCalculation,
   getCalculationById,
+  updateCalculation
 } from '../services/api'
 import CalculationStage from '@/components/CalculationStage.vue'
 import { useI18n } from 'vue-i18n'
@@ -85,6 +88,7 @@ const calculation = ref<Calculation>({
   description: '',
   stages: [],
   currency: 'USD',
+  totalAmount: 0
 })
 
 const currencies = ref<string[]>([])
@@ -104,16 +108,7 @@ onMounted(async () => {
   if (route.params.id) {
     try {
       const response = await getCalculationById(route.params.id as string)
-      calculation.value = {
-        ...response.data,
-        stages: response.data.stages.map((stage: any) => ({
-          ...stage,
-          items: [
-            ...stage.services.map((s: any) => ({ ...s, type: ItemType.SERVICE })),
-            ...stage.materials.map((m: any) => ({ ...m, type: ItemType.MATERIAL })),
-          ],
-        })),
-      };
+      calculation.value = response.data
     } catch (error) {
       console.error('Error fetching calculation:', error)
     }
@@ -123,7 +118,11 @@ onMounted(async () => {
 const addStage = () => {
   calculation.value.stages.push({
     name: `Stage ${calculation.value.stages.length + 1}`,
-    items: [],
+    services: [],
+    materials: [],
+    servicesTotalAmount: 0,
+    materialsTotalAmount: 0,
+    totalAmount: 0
   } as CalculationStageType)
 }
 
@@ -132,34 +131,27 @@ const removeStage = (index: number) => {
 }
 
 const updateStage = (index: number, updatedStage: CalculationStageType) => {
-  calculation.value.stages[index] = updatedStage;
-};
+  calculation.value.stages[index] = updatedStage
+}
 
 const saveCalculation = async () => {
   try {
-    const payload = {
-      ...calculation.value,
-      stages: calculation.value.stages.map(stage => ({
-        ...stage,
-        services: stage.items.filter(item => item.type === ItemType.SERVICE),
-        materials: stage.items.filter(item => item.type === ItemType.MATERIAL),
-      })),
-    };
+    const payload = calculation.value
 
     if (calculation.value.id) {
-      await updateCalculation(calculation.value.id, payload);
+      await updateCalculation(calculation.value.id, payload)
     } else {
-      await createCalculation(payload);
+      await createCalculation(payload)
     }
-    calculationSaved.value = true;
+    calculationSaved.value = true
     setTimeout(() => {
-      calculationSaved.value = false;
-    }, 3000);
+      calculationSaved.value = false
+    }, 3000)
   } catch (error) {
-    console.error("Error saving calculation:", error);
+    console.error('Error saving calculation:', error)
     // Optionally, handle error display to the user
   }
-};
+}
 </script>
 
 <style scoped></style>

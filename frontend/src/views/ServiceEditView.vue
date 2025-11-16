@@ -45,7 +45,7 @@ const service = ref({
   workUnit: 'HOUR',
 });
 
-const workUnits = ref([]);
+const workUnits = ref<string[]>([]);
 
 const isEdit = ref(false);
 

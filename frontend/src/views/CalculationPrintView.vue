@@ -15,7 +15,7 @@
       </div>
 
       <!-- Stages -->
-      <div v-for="stage in calculation.stages" :key="stage.id" class="stage">
+      <div v-for="(stage, index) in calculation.stages" :key="index" class="stage">
         <h2 class="stage-title">{{ stage.name }}</h2>
 
         <!-- Services -->
@@ -32,7 +32,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="service in stage.services" :key="service.id">
+              <tr v-for="(service, index) in stage.services" :key="index">
                 <td>{{ service.name }}</td>
                 <td>{{ service.quantity }}</td>
                 <td>{{ service.unit }}</td>
@@ -61,7 +61,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="material in stage.materials" :key="material.id">
+              <tr v-for="(material, index) in stage.materials" :key="index">
                 <td>{{ material.name }}</td>
                 <td>{{ material.quantity }}</td>
                 <td>{{ material.unit }}</td>

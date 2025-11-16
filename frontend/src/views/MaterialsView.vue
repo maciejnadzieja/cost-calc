@@ -21,7 +21,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="material in materials" :key="material.id">
+        <tr v-for="material in materials" :key="material.id || material.name">
           <td>{{ material.name }}</td>
           <td>{{ material.description }}</td>
           <td>{{ material.price }} / {{ t('units.material.' + material.unit.toLowerCase() + '.symbol') }}</td>
@@ -29,7 +29,7 @@
           <td>{{ material.category }}</td>
           <td>
             <router-link :to="`/materials/edit/${material.id}`" class="btn btn-sm btn-primary me-2">{{ t('common.edit') }}</router-link>
-            <button class="btn btn-sm btn-danger" @click="deleteMaterial(material.id)">{{ t('common.delete') }}</button>
+            <button v-if="material.id" class="btn btn-sm btn-danger" @click="deleteMaterial(material.id)">{{ t('common.delete') }}</button>
           </td>
         </tr>
       </tbody>
@@ -52,10 +52,11 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref} from 'vue';
+import { onMounted, ref } from 'vue';
 import apiClient from '@/services/api';
-import {useRoute, useRouter} from "vue-router";
+import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+import type { Material } from '@/models/material';
 
 const { t } = useI18n();
 
@@ -63,7 +64,7 @@ const router = useRouter();
 const route = useRoute();
 
 const query = ref(route.query.query || '');
-const materials = ref([]);
+const materials = ref<Material[]>([]);
 const currentPage = ref(parseInt(route.query.page as string) || 0);
 const totalPages = ref(0);
 

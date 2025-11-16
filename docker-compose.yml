@@ -3,7 +3,7 @@ version: '3.8'
 services:
   mongodb:
     image: mongo:7.0
-    container_name: cost_calc_mongodb
+    container_name: mongodb
     restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
@@ -20,15 +20,29 @@ services:
     container_name: cost_calc_app
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "8888:8080"
     environment:
       - SPRING_DATA_MONGODB_HOST=mongodb
       - SPRING_DATA_MONGODB_PORT=27017
       - SPRING_DATA_MONGODB_DATABASE=cost_calc
       - SPRING_DATA_MONGODB_USERNAME=cost_calc_user
       - SPRING_DATA_MONGODB_PASSWORD=cost_calc_password
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://host.docker.internal:9090/realms/cost-calc-realm
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI=http://host.docker.internal:9090/realms/cost-calc-realm/protocol/openid-connect/certs
     depends_on:
       - mongodb
+      - keycloak
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cost_calc_frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - app
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.4.0
@@ -39,7 +53,7 @@ services:
       - KEYCLOAK_IMPORT=/opt/keycloak/data/import/realm-config.json
     command: [ "start-dev", "--import-realm" ]
     ports:
-      - 9090:8080
+      - "9090:8080"
     volumes:
       - ./docker/keycloak/realm-config.json:/opt/keycloak/data/import/realm-config.json
       - ./docker/keycloak/cost-calc-theme:/opt/keycloak/themes/cost-calc-theme

@@ -21,12 +21,12 @@
         <tbody>
         <tr v-for="calculation in calculations" :key="calculation.id">
           <td>{{ calculation.name }}</td>
-          <td>{{ new Date(calculation.createdAt).toLocaleDateString() }}</td>
-          <td>{{ calculation.totalPrice }} {{ calculation.currency }}</td>
+          <td>{{ calculation.createdAt ? new Date(calculation.createdAt).toLocaleDateString() : '' }}</td>
+          <td>{{ calculation.totalAmount }} {{ calculation.currency }}</td>
           <td>
             <router-link :to="`/calculations/edit/${calculation.id}`" class="btn btn-sm btn-primary me-2">{{ t('common.edit') }}</router-link>
-            <button class="btn btn-sm btn-secondary me-2" @click="duplicateCalculation(calculation.id)">{{ t('common.duplicate') }}</button>
-            <button class="btn btn-sm btn-danger me-2" @click="deleteCalculation(calculation.id)">{{ t('common.delete') }}</button>
+            <button v-if="calculation.id" class="btn btn-sm btn-secondary me-2" @click="duplicateCalculation(calculation.id)">{{ t('common.duplicate') }}</button>
+            <button v-if="calculation.id" class="btn btn-sm btn-danger me-2" @click="deleteCalculation(calculation.id)">{{ t('common.delete') }}</button>
             <router-link :to="`/calculations/print/${calculation.id}`" class="btn btn-sm btn-info">
               <i class="bi bi-printer"></i>
             </router-link>
