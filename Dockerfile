@@ -9,5 +9,5 @@ FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 COPY src/main/resources/application.properties /app/application.properties
-EXPOSE 8080
+EXPOSE 8888
 CMD ["java", "-jar", "app.jar"]

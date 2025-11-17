@@ -64,7 +64,7 @@ To run the application locally, you need to start both the backend and the front
 mvn spring-boot:run
 ```
 
-The backend api will be available at `http://localhost:8080`.
+The backend api will be available at `http://localhost:8888`.
 
 ### Frontend
 
@@ -84,7 +84,7 @@ To run the application with Docker, use the following command:
 docker-compose up --build
 ```
 
-This will start the application, a MongoDB container, and a Keycloak container. The application will be available at `http://localhost:8080`.
+This will start the application, a MongoDB container, and a Keycloak container. The application will be available at `http://localhost:5173`.
 
 # Development Conventions
 
