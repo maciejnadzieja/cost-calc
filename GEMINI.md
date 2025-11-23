@@ -12,7 +12,6 @@ It is containerized with Docker for easy deployment and uses Keycloak for authen
 *   **Database:** MongoDB
 *   **Build Tool:** Maven, NPM
 *   **Containerization:** Docker, Docker Compose
-*   **PDF Generation:** iText
 *   **Testing:** JUnit, MockK, Testcontainers, Vitest
 
 ## Architecture

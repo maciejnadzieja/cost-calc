@@ -1,44 +1,95 @@
 # Cost Calc AI
 
-Cost calculation/estimation application powered by AI, built with Kotlin and Spring Boot. It leverages MongoDB for data storage and Docker for easy deployment.
+Cost Calc AI is a powerful cost calculation and estimation application designed for small businesses and independent professionals. It leverages Artificial Intelligence to help users manage services, materials, and generate accurate quotes for clients.
 
-## Features
-- AI vibe coded cost calculation
-- RESTful API
-- MongoDB integration
-- Dockerized setup
+The application is built with a modern technology stack, featuring a robust Kotlin Spring Boot backend and a responsive Vue.js frontend, all containerized with Docker for seamless deployment.
 
-## Prerequisites
-- Java 17+
-- Maven
-- Docker
+## ✨ Features
 
-## Usage
-- To run locally:
-  ```powershell
-  mvn spring-boot:run
-  ```
-- To run with Docker Compose:
-  ```powershell
-  docker-compose up --build
-  ```
+-   **AI-Powered Estimation**: Intelligent cost calculation algorithms.
+-   **Project Management**: Manage services, materials, and client details.
+-   **Quote Generation**: Create and export professional PDF quotes.
+-   **Secure Authentication**: Integrated with Keycloak for robust security.
+-   **Modern UI**: Responsive interface built with Vue.js and Bootstrap.
+-   **RESTful API**: Fully documented API for backend interactions.
 
-## Configuration
-- Application properties are in `src/main/resources/application.properties`.
-- MongoDB initialization script: `docker/mongodb/init-mongo.js`.
-- Customize environment variables in `docker-compose.yml` as needed.
+## 🛠 Technology Stack
 
-## Docker & Database
-- MongoDB data is stored in `mongodb_data/`.
-- For custom database setup, edit `docker/mongodb/init-mongo.js`.
+### Backend
+-   **Language**: Kotlin
+-   **Framework**: Spring Boot (Web, Security, Data MongoDB)
+-   **Database**: MongoDB
+-   **Testing**: JUnit, MockK, Testcontainers
 
+### Frontend
+-   **Framework**: Vue.js 3
+-   **Build Tool**: Vite
+-   **State Management**: Pinia
+-   **Styling**: Bootstrap
+-   **Testing**: Vitest
 
-## Relase
+### Infrastructure
+-   **Containerization**: Docker & Docker Compose
+-   **Authentication**: Keycloak
+
+## 📋 Prerequisites
+
+Ensure you have the following installed on your local machine:
+-   **Java 17+**
+-   **Maven**
+-   **Node.js 20+**
+-   **Docker** & **Docker Compose**
+
+## 🚀 Getting Started
+
+### Running with Docker (Recommended)
+
+The easiest way to run the entire application (Backend, Frontend, Database, Auth) is using Docker Compose.
+
+```bash
+docker-compose up --build
 ```
-docker compose build
-docker save -o cost-calc-app.tar cost-calc-app:latest
-...
-docker load -i cost-calc-app.tar
-docker compose down
-docker compose up -d
+
+-   **Frontend**: [http://localhost:5173](http://localhost:5173)
+-   **Backend API**: [http://localhost:8888](http://localhost:8888)
+
+### Running Locally
+
+If you prefer to run services individually for development:
+
+#### 1. Backend
+
+```bash
+# From the root directory
+mvn spring-boot:run
+```
+The backend server will start at `http://localhost:8888`.
+
+#### 2. Frontend
+
+```bash
+# From the root directory
+cd frontend
+npm install
+npm run dev
+```
+The frontend development server will start at `http://localhost:5173`.
+
+## ⚙️ Configuration
+
+-   **Backend**: Main configuration is located in `src/main/resources/application.properties`.
+-   **Database**: MongoDB initialization scripts are in `docker/mongodb/init-mongo.js`.
+-   **Environment**: You can customize environment variables in `docker-compose.yml`.
+
+## 🧪 Testing
+
+### Backend Tests
+```bash
+mvn test
+```
+
+### Frontend Tests
+```bash
+cd frontend
+npm run test
 ```
