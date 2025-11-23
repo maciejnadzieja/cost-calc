@@ -8,6 +8,7 @@ import com.costcalc.api.model.Service
 import com.costcalc.api.model.User
 import com.costcalc.api.model.WorkUnit
 import com.costcalc.api.service.ServiceService
+import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.security.access.prepost.PreAuthorize
@@ -50,7 +51,7 @@ class ServiceRestController(
 
     @PostMapping
     fun createService(
-        @RequestBody serviceRequest: ServiceRequest,
+        @Valid @RequestBody serviceRequest: ServiceRequest,
         @CurrentUser user: User,
     ): ServiceResponse {
         val newService =
@@ -67,7 +68,7 @@ class ServiceRestController(
     @PutMapping("/{id}")
     fun updateService(
         @PathVariable id: UUID,
-        @RequestBody serviceRequest: ServiceRequest,
+        @Valid @RequestBody serviceRequest: ServiceRequest,
         @CurrentUser user: User,
     ): ServiceResponse =
         serviceService

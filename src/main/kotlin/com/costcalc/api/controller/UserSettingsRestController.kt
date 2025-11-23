@@ -5,6 +5,7 @@ import com.costcalc.api.dto.UserSettingsRequest
 import com.costcalc.api.model.User
 import com.costcalc.api.model.UserSettings
 import com.costcalc.api.service.UserSettingsService
+import jakarta.validation.Valid
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -26,7 +27,7 @@ class UserSettingsRestController(
     @PutMapping
     fun updateUserSettings(
         @CurrentUser user: User,
-        @RequestBody userSettingsRequest: UserSettingsRequest,
+        @Valid @RequestBody userSettingsRequest: UserSettingsRequest,
     ): UserSettings {
         val userSettings =
             UserSettings(

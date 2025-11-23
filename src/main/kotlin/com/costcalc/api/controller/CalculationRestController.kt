@@ -9,6 +9,7 @@ import com.costcalc.api.model.Calculation
 import com.costcalc.api.model.CalculationId
 import com.costcalc.api.model.User
 import com.costcalc.api.service.CalculationService
+import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.security.access.prepost.PreAuthorize
@@ -59,7 +60,7 @@ class CalculationRestController(
 
     @PostMapping
     fun create(
-        @RequestBody calculationRequest: CalculationRequest,
+        @Valid @RequestBody calculationRequest: CalculationRequest,
         @CurrentUser user: User,
     ): CalculationResponse {
         val calculation =
@@ -87,7 +88,7 @@ class CalculationRestController(
     @PutMapping("/{id}")
     fun update(
         @PathVariable id: CalculationId,
-        @RequestBody calculationRequest: CalculationRequest,
+        @Valid @RequestBody calculationRequest: CalculationRequest,
         @CurrentUser user: User,
     ): CalculationResponse {
         val updatedCalculation =
