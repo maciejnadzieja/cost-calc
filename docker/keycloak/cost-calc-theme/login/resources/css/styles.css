@@ -1,0 +1,26 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.card-header {
+    text-align: center;
+}
+
+/* Target buttons by their Keycloak alias ID */
+#social-google {
+    color: #db4437;
+    border-color: #db4437;
+}
+#social-google:hover {
+    background-color: #db4437;
+    color: white;
+}
+
+#social-facebook {
+    color: #4267B2;
+    border-color: #4267B2;
+}
+#social-facebook:hover {
+    background-color: #4267B2;
+    color: white;
+}
