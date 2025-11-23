@@ -22,13 +22,7 @@ class CalculationService(
         if (query.isNullOrBlank()) {
             calculationRepository.findByUserId(userId, pageable)
         } else {
-            calculationRepository
-                .findByUserIdAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                    userId,
-                    query,
-                    query,
-                    pageable,
-                )
+            calculationRepository.findByUserIdAndQuery(userId, query, pageable)
         }
 
     fun findByIdAndUserId(

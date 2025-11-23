@@ -22,13 +22,7 @@ class ServiceService(
         if (query.isNullOrBlank()) {
             serviceRepository.findByUserId(userId, pageable)
         } else {
-            serviceRepository
-                .findByUserIdAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                    userId,
-                    query,
-                    query,
-                    pageable,
-                )
+            serviceRepository.findByUserIdAndQuery(userId, query, pageable)
         }
 
     fun findByIdAndUserId(

@@ -22,13 +22,7 @@ class MaterialService(
         if (query.isNullOrBlank()) {
             materialRepository.findByUserId(userId, pageable)
         } else {
-            materialRepository
-                .findByUserIdAndNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                    userId,
-                    query,
-                    query,
-                    pageable,
-                )
+            materialRepository.findByUserIdAndQuery(userId, query, pageable)
         }
 
     fun findByIdAndUserId(
