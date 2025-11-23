@@ -28,14 +28,15 @@ data class Material(
         unit: MaterialUnit,
         category: String,
     ): Material {
-        require(price > BigDecimal.ZERO)
-        require(name.isNotBlank())
+        require(price > BigDecimal.ZERO) { "Price must be greater than zero" }
+        require(name.isNotBlank()) { "Name cannot be blank" }
         return this.copy(
             name = name,
             description = description,
             price = price,
             unit = unit,
             category = category,
+            updatedAt = Instant.now(),
         )
     }
 

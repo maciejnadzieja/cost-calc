@@ -3,7 +3,6 @@ package com.costcalc.api.controller
 import com.costcalc.api.config.CurrentUser
 import com.costcalc.api.dto.CalculationRequest
 import com.costcalc.api.dto.CalculationResponse
-import com.costcalc.api.exception.ForbiddenException
 import com.costcalc.api.mapper.toResponse
 import com.costcalc.api.model.Calculation
 import com.costcalc.api.model.CalculationId
@@ -50,11 +49,6 @@ class CalculationRestController(
         @CurrentUser user: User,
     ): CalculationResponse {
         val calculation = calculationService.findByIdAndUserId(id, user.id)
-
-        if (calculation.userId != user.id) {
-            throw ForbiddenException("User does not have permission to view this calculation")
-        }
-
         return calculation.toResponse()
     }
 

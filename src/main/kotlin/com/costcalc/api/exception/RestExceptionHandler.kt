@@ -39,25 +39,6 @@ class RestExceptionHandler {
             )
     }
 
-    @ExceptionHandler(ForbiddenException::class)
-    fun handleForbiddenException(
-        ex: ForbiddenException,
-        request: WebRequest,
-    ): ResponseEntity<ErrorResponse> {
-        logger.warn { "Access forbidden: ${ex.message}" }
-
-        return ResponseEntity
-            .status(HttpStatus.FORBIDDEN)
-            .body(
-                ErrorResponse(
-                    status = HttpStatus.FORBIDDEN.value(),
-                    error = "Forbidden",
-                    message = ex.message ?: "Access denied",
-                    path = extractPath(request),
-                ),
-            )
-    }
-
     @ExceptionHandler(AuthenticationException::class)
     fun handleAuthenticationException(
         ex: AuthenticationException,

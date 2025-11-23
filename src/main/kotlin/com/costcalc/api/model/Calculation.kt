@@ -34,6 +34,7 @@ data class Calculation(
             description = description,
             stages = stages,
             currency = currency,
+            updatedAt = Instant.now(),
         )
 
     fun duplicate(): Calculation =
