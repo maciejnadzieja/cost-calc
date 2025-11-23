@@ -19,12 +19,13 @@ class RestExceptionHandler {
         ex: MethodArgumentNotValidException,
         request: WebRequest,
     ): ResponseEntity<ErrorResponse> {
-        val fieldErrors = ex.bindingResult.fieldErrors.associate {
-            it.field to (it.defaultMessage ?: "Invalid value")
-        }
-        
+        val fieldErrors =
+            ex.bindingResult.fieldErrors.associate {
+                it.field to (it.defaultMessage ?: "Invalid value")
+            }
+
         logger.warn { "Validation failed: $fieldErrors" }
-        
+
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(
@@ -44,7 +45,7 @@ class RestExceptionHandler {
         request: WebRequest,
     ): ResponseEntity<ErrorResponse> {
         logger.warn { "Access forbidden: ${ex.message}" }
-        
+
         return ResponseEntity
             .status(HttpStatus.FORBIDDEN)
             .body(
@@ -63,7 +64,7 @@ class RestExceptionHandler {
         request: WebRequest,
     ): ResponseEntity<ErrorResponse> {
         logger.warn { "Authentication failed: ${ex.message}" }
-        
+
         return ResponseEntity
             .status(HttpStatus.UNAUTHORIZED)
             .body(
@@ -82,7 +83,7 @@ class RestExceptionHandler {
         request: WebRequest,
     ): ResponseEntity<ErrorResponse> {
         logger.warn { "Resource not found: ${ex.message}" }
-        
+
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
             .body(
@@ -101,7 +102,7 @@ class RestExceptionHandler {
         request: WebRequest,
     ): ResponseEntity<ErrorResponse> {
         logger.warn { "Invalid argument: ${ex.message}" }
-        
+
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(
@@ -120,7 +121,7 @@ class RestExceptionHandler {
         request: WebRequest,
     ): ResponseEntity<ErrorResponse> {
         logger.warn { "Malformed request: ${ex.message}" }
-        
+
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(
@@ -139,7 +140,7 @@ class RestExceptionHandler {
         request: WebRequest,
     ): ResponseEntity<ErrorResponse> {
         logger.error(ex) { "An unexpected error occurred" }
-        
+
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(
@@ -152,6 +153,5 @@ class RestExceptionHandler {
             )
     }
 
-    private fun extractPath(request: WebRequest): String =
-        request.getDescription(false).removePrefix("uri=")
+    private fun extractPath(request: WebRequest): String = request.getDescription(false).removePrefix("uri=")
 }
