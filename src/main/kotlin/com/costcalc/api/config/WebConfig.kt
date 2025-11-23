@@ -1,5 +1,6 @@
 package com.costcalc.api.config
 
+import com.costcalc.api.exception.AuthenticationException
 import com.costcalc.api.model.User
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.MethodParameter
@@ -41,7 +42,7 @@ class WebConfig(
                     email = jwt.getClaimAsString("email"),
                 )
             }
-            throw RuntimeException("user not authenticated")
+            throw AuthenticationException("User not authenticated")
         }
     }
 }

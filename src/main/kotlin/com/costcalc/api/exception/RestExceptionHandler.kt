@@ -14,6 +14,12 @@ class RestExceptionHandler {
         request: WebRequest,
     ): ResponseEntity<Any> = ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.message)
 
+    @ExceptionHandler(AuthenticationException::class)
+    fun handleAuthenticationException(
+        ex: AuthenticationException,
+        request: WebRequest,
+    ): ResponseEntity<Any> = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.message)
+
     @ExceptionHandler(NoSuchElementException::class)
     fun handleNoSuchElementException(
         ex: NoSuchElementException,
