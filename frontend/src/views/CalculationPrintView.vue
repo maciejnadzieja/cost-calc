@@ -35,7 +35,7 @@
               <tr v-for="(service, index) in stage.services" :key="index">
                 <td>{{ service.name }}</td>
                 <td>{{ service.quantity }}</td>
-                <td>{{ service.unit }}</td>
+                <td>{{ getUnitSymbol('service', service.unit) }}</td>
                 <td>{{ formatCurrency(service.unitPrice) }}</td>
                 <td>{{ formatCurrency(service.quantity * service.unitPrice) }}</td>
               </tr>
@@ -64,7 +64,7 @@
               <tr v-for="(material, index) in stage.materials" :key="index">
                 <td>{{ material.name }}</td>
                 <td>{{ material.quantity }}</td>
-                <td>{{ material.unit }}</td>
+                <td>{{ getUnitSymbol('material', material.unit) }}</td>
                 <td>{{ formatCurrency(material.unitPrice) }}</td>
                 <td>{{ formatCurrency(material.quantity * material.unitPrice) }}</td>
               </tr>
@@ -120,6 +120,15 @@ const formatCurrency = (value: number) => {
   }
   if (!calculation.value) return ''
   return `${value.toFixed(2)} ${calculation.value.currency}`
+}
+
+const getUnitSymbol = (type: 'service' | 'material', unit: string) => {
+  if (!unit) return ''
+  const unitLower = unit.toLowerCase()
+  const key = `units.${type}.${unitLower}.symbol`
+  const translation = t(key)
+  // If translation returns the key itself (or is empty), fallback to original unit
+  return translation === key ? unit : translation
 }
 
 onMounted(async () => {
