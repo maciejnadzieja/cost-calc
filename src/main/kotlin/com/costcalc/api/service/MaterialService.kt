@@ -22,7 +22,7 @@ class MaterialService(
         if (query.isNullOrBlank()) {
             materialRepository.findByUserId(userId, pageable)
         } else {
-            materialRepository.findByUserIdAndQuery(userId, query, pageable)
+            materialRepository.findByUserIdAndQuery(userId, Regex.escape(query), pageable)
         }
 
     fun findByIdAndUserId(

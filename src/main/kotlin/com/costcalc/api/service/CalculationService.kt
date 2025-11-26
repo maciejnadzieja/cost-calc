@@ -22,7 +22,7 @@ class CalculationService(
         if (query.isNullOrBlank()) {
             calculationRepository.findByUserId(userId, pageable)
         } else {
-            calculationRepository.findByUserIdAndQuery(userId, query, pageable)
+            calculationRepository.findByUserIdAndQuery(userId, Regex.escape(query), pageable)
         }
 
     fun findByIdAndUserId(

@@ -308,6 +308,31 @@ class MaterialRestControllerTest : AbstractIntegrationTest() {
             }
     }
 
+    @Test
+    fun `should handle special characters in search query`() {
+        val userId = UUID.randomUUID()
+        materialRepository.save(createTestMaterial(userId, name = "Material (Special)"))
+        materialRepository.save(createTestMaterial(userId, name = "Material ."))
+
+        mockMvc
+            .get("/api/materials?query=(Special)") {
+                with(token(userId))
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.content.length()") { value(1) }
+                jsonPath("$.content[0].name") { value("Material (Special)") }
+            }
+
+        mockMvc
+            .get("/api/materials?query=.") {
+                with(token(userId))
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.content.length()") { value(1) }
+                jsonPath("$.content[0].name") { value("Material .") }
+            }
+    }
+
     private fun token(
         userId: UserId = UUID.randomUUID(),
         email: String = "$userId@example.com",
