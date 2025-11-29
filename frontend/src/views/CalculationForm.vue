@@ -56,7 +56,7 @@
       <!-- Calculation Stages -->
       <div class="mb-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <h5 class="mb-0 text-muted">{{ t('calculations.form.stage.index') }}s</h5>
+          <h5 class="mb-0 text-muted">{{ t('calculations.form.stage.stages') }}</h5>
           <button type="button" class="btn btn-outline-primary btn-sm" @click="addStage">
             <i class="bi bi-plus-lg me-2"></i>{{ t('calculations.form.add.stage') }}
           </button>

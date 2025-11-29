@@ -244,7 +244,8 @@
       "currency": "Waluta",
       "stage": {
         "index": "Etap",
-        "name": "Nazwa etapu"
+        "name": "Nazwa etapu",
+        "stages": "Etapy"
       },
       "defaultStageName": "Etap",
       "services": "Usługi",

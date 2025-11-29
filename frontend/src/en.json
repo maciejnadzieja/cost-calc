@@ -241,7 +241,8 @@
       "currency": "Currency",
       "stage": {
         "index": "Stage",
-        "name": "Stage Name"
+        "name": "Stage Name",
+        "stages": "Stages"
       },
       "default": {
         "stage": {
