@@ -2,6 +2,7 @@ package com.costcalc.api.model
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.math.BigDecimal
 import java.time.Instant
 import java.util.UUID
@@ -20,6 +21,7 @@ data class Calculation(
     val createdAt: Instant = Instant.now(),
     val updatedAt: Instant = Instant.now(),
 ) {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     val totalAmount: BigDecimal =
         stages.fold(BigDecimal.ZERO) { acc, stage -> acc + stage.totalAmount }
 

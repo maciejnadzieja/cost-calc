@@ -59,7 +59,7 @@
 
         <calculation-stage
           v-for="(stage, stageIndex) in calculation.stages"
-          :key="stageIndex"
+          :key="`${stageIndex}-${stage.totalAmount}`"
           :stage="stage"
           :stage-index="stageIndex"
           :is-expanded="expandedStages.includes(stageIndex)"
@@ -167,12 +167,16 @@ const toggleStage = (index: number) => {
 const saveCalculation = async () => {
   try {
     const payload = calculation.value
+    let response
 
     if (calculation.value.id) {
-      await updateCalculation(calculation.value.id, payload)
+      response = await updateCalculation(calculation.value.id, payload)
     } else {
-      await createCalculation(payload)
+      response = await createCalculation(payload)
     }
+    
+    calculation.value = response.data
+    
     calculationSaved.value = true
     setTimeout(() => {
       calculationSaved.value = false

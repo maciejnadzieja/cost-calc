@@ -1,5 +1,6 @@
 package com.costcalc.api.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.math.BigDecimal
 
 data class CalculationItem(
@@ -9,6 +10,7 @@ data class CalculationItem(
     val unitPrice: BigDecimal,
     val type: ItemType,
 ) {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     val amount: BigDecimal = quantity.multiply(unitPrice)
 
     init {

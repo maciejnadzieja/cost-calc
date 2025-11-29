@@ -280,6 +280,147 @@ class CalculationRestControllerTest : AbstractIntegrationTest() {
         mockMvc.post("/api/calculations/{id}/duplicate", UUID.randomUUID()).andExpect { status { isUnauthorized() } }
     }
 
+    @Test
+    fun `should calculate sums correctly after update`() {
+        val userId = UUID.randomUUID()
+        
+        // Create initial calculation
+        val result = mockMvc.post("/api/calculations") {
+            with(token(userId))
+            contentType = MediaType.APPLICATION_JSON
+            content = createCalculationJson()
+        }.andReturn()
+        
+        val id = objectMapper.readTree(result.response.contentAsString).get("id").asText()
+
+        // Update with items
+        val updateJson = """
+            {
+                "name": "Updated Calculation",
+                "description": "Description",
+                "currency": "USD",
+                "stages": [
+                    {
+                        "name": "Stage 1",
+                        "services": [
+                            { "name": "Service 1", "unitPrice": 100.00, "quantity": 2, "unit": "HOUR", "type": "SERVICE" }
+                        ],
+                        "materials": [
+                            { "name": "Material 1", "unitPrice": 50.00, "quantity": 3, "unit": "PIECE", "type": "MATERIAL" }
+                        ]
+                    }
+                ]
+            }
+        """.trimIndent()
+
+        mockMvc.put("/api/calculations/{id}", id) {
+            with(token(userId))
+            contentType = MediaType.APPLICATION_JSON
+            content = updateJson
+        }.andExpect {
+            status { isOk() }
+            // Service: 100 * 2 = 200
+            // Material: 50 * 3 = 150
+            // Stage Total: 200 + 150 = 350
+            // Calculation Total: 350
+            jsonPath("$.stages[0].servicesTotalAmount") { value(200.0) }
+            jsonPath("$.stages[0].materialsTotalAmount") { value(150.0) }
+            jsonPath("$.stages[0].totalAmount") { value(350.0) }
+            jsonPath("$.totalAmount") { value(350.0) }
+        }
+
+        // Update removing material
+        val updateRemoveItemJson = """
+            {
+                "name": "Updated Calculation",
+                "description": "Description",
+                "currency": "USD",
+                "stages": [
+                    {
+                        "name": "Stage 1",
+                        "services": [
+                            { "name": "Service 1", "unitPrice": 100.00, "quantity": 2, "unit": "HOUR", "type": "SERVICE" }
+                        ],
+                        "materials": []
+                    }
+                ]
+            }
+        """.trimIndent()
+
+        mockMvc.put("/api/calculations/{id}", id) {
+            with(token(userId))
+            contentType = MediaType.APPLICATION_JSON
+            content = updateRemoveItemJson
+        }.andExpect {
+            status { isOk() }
+            // Service: 100 * 2 = 200
+            // Material: 0
+            // Stage Total: 200
+            // Calculation Total: 200
+            jsonPath("$.stages[0].servicesTotalAmount") { value(200.0) }
+            jsonPath("$.stages[0].materialsTotalAmount") { value(0.0) }
+            jsonPath("$.stages[0].totalAmount") { value(200.0) }
+            jsonPath("$.totalAmount") { value(200.0) }
+        }
+    }
+
+    @Test
+    fun `should ignore provided totals and recalculate`() {
+        val userId = UUID.randomUUID()
+        
+        // Create initial calculation
+        val result = mockMvc.post("/api/calculations") {
+            with(token(userId))
+            contentType = MediaType.APPLICATION_JSON
+            content = createCalculationJson()
+        }.andReturn()
+        
+        val id = objectMapper.readTree(result.response.contentAsString).get("id").asText()
+
+        // Update with items AND incorrect totals
+        // Service: 100 * 1 = 100
+        // Provided totals: 999 (should be ignored)
+        val updateJson = """
+            {
+                "name": "Updated Calculation",
+                "description": "Description",
+                "currency": "USD",
+                "stages": [
+                    {
+                        "name": "Stage 1",
+                        "services": [
+                            { 
+                                "name": "Service 1", 
+                                "unitPrice": 100.00, 
+                                "quantity": 1, 
+                                "unit": "HOUR", 
+                                "type": "SERVICE",
+                                "amount": 999.0 
+                            }
+                        ],
+                        "materials": [],
+                        "servicesTotalAmount": 999.0,
+                        "materialsTotalAmount": 999.0,
+                        "totalAmount": 999.0
+                    }
+                ],
+                "totalAmount": 999.0
+            }
+        """.trimIndent()
+
+        mockMvc.put("/api/calculations/{id}", id) {
+            with(token(userId))
+            contentType = MediaType.APPLICATION_JSON
+            content = updateJson
+        }.andExpect {
+            status { isOk() }
+            // Should be 100, not 999
+            jsonPath("$.stages[0].servicesTotalAmount") { value(100.0) }
+            jsonPath("$.stages[0].totalAmount") { value(100.0) }
+            jsonPath("$.totalAmount") { value(100.0) }
+        }
+    }
+
     private fun token(
         userId: UserId = UUID.randomUUID(),
         email: String = "$userId@example.com",
