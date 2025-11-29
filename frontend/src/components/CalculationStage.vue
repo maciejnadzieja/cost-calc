@@ -1,20 +1,33 @@
 <template>
-  <div class="card mb-3">
-    <div class="card-header">
-      <h5 class="card-title">{{ t('calculations.form.stage.index') }} {{ stageIndex + 1 }}</h5>
-      <button type="button" class="btn btn-danger btn-sm" @click="$emit('remove-stage')">
-        {{ t('calculations.form.remove.stage') }}
+  <div class="card mb-3 shadow-sm">
+    <div 
+      class="card-header d-flex justify-content-between align-items-center cursor-pointer bg-light"
+      @click="$emit('toggle')"
+    >
+      <div class="d-flex align-items-center gap-3">
+        <i 
+          class="bi transition-transform" 
+          :class="isExpanded ? 'bi-chevron-down' : 'bi-chevron-right'"
+        ></i>
+        <h6 class="m-0 fw-bold">{{ stage.name || `${t('calculations.form.stage.index')} ${stageIndex + 1}` }}</h6>
+        <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill">
+          {{ stage.totalAmount?.toFixed(2) }}
+        </span>
+      </div>
+      <button type="button" class="btn btn-outline-danger btn-sm py-0 px-2" @click.stop="$emit('remove-stage')">
+        <i class="bi bi-trash"></i>
       </button>
     </div>
-    <div class="card-body">
+    
+    <div v-show="isExpanded" class="card-body p-3">
       <div class="mb-3">
-        <label :for="`stage-name-${stageIndex}`" class="form-label">{{
+        <label :for="`stage-name-${stageIndex}`" class="form-label small text-muted mb-1">{{
           t('calculations.form.stage.name')
         }}</label>
         <input
           type="text"
           :id="`stage-name-${stageIndex}`"
-          class="form-control"
+          class="form-control form-control-sm"
           :value="stage.name"
           @input="
             $emit('update:stage', { ...stage, name: ($event.target as HTMLInputElement).value })
@@ -22,177 +35,173 @@
         />
       </div>
 
-      <!-- Items will go here -->
-      <div class="row">
+      <!-- Add Items Section -->
+      <div class="row g-2 mb-3">
         <div class="col-md-6">
-          <div class="mb-3">
-            <label class="form-label">{{ t('calculations.form.add.service') }}</label>
-            <div class="input-group">
-              <input
-                type="text"
-                class="form-control"
-                :placeholder="t('common.search')"
-                v-model="serviceSearchQuery"
-                @input="handleServiceSearch"
-              />
-            </div>
-            <ul class="list-group" v-if="serviceSearchResults.length">
-              <li
-                class="list-group-item"
-                v-for="service in serviceSearchResults"
-                :key="service.id || service.name"
-                @click="selectService(service)"
-              >
-                {{ service.name }}
-              </li>
-            </ul>
+          <div class="input-group input-group-sm">
+            <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+            <input
+              type="text"
+              class="form-control"
+              :placeholder="t('calculations.form.add.service')"
+              v-model="serviceSearchQuery"
+              @input="handleServiceSearch"
+            />
           </div>
+          <ul class="list-group list-group-flush shadow-sm position-absolute w-100 start-0" style="z-index: 1000;" v-if="serviceSearchResults.length">
+            <li
+              class="list-group-item list-group-item-action cursor-pointer small"
+              v-for="service in serviceSearchResults"
+              :key="service.id || service.name"
+              @click="selectService(service)"
+            >
+              <div class="d-flex justify-content-between">
+                <span>{{ service.name }}</span>
+                <span class="text-muted">{{ service.price }}</span>
+              </div>
+            </li>
+          </ul>
         </div>
         <div class="col-md-6">
-          <div class="mb-3">
-            <label class="form-label">{{ t('calculations.form.add.material') }}</label>
-            <div class="input-group">
-              <input
-                type="text"
-                class="form-control"
-                :placeholder="t('common.search')"
-                v-model="materialSearchQuery"
-                @input="handleMaterialSearch"
-              />
-            </div>
-            <ul class="list-group" v-if="materialSearchResults.length">
-              <li
-                class="list-group-item"
-                v-for="material in materialSearchResults"
-                :key="material.id || material.name"
-                @click="selectMaterial(material)"
-              >
-                {{ material.name }}
-              </li>
-            </ul>
+          <div class="input-group input-group-sm">
+            <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+            <input
+              type="text"
+              class="form-control"
+              :placeholder="t('calculations.form.add.material')"
+              v-model="materialSearchQuery"
+              @input="handleMaterialSearch"
+            />
           </div>
+          <ul class="list-group list-group-flush shadow-sm position-absolute w-100 start-0" style="z-index: 1000;" v-if="materialSearchResults.length">
+            <li
+              class="list-group-item list-group-item-action cursor-pointer small"
+              v-for="material in materialSearchResults"
+              :key="material.id || material.name"
+              @click="selectMaterial(material)"
+            >
+              <div class="d-flex justify-content-between">
+                <span>{{ material.name }}</span>
+                <span class="text-muted">{{ material.price }}</span>
+              </div>
+            </li>
+          </ul>
         </div>
       </div>
 
-      <h5>{{ t('calculations.form.services') }}</h5>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>{{ t('calculations.form.name') }}</th>
-            <th>{{ t('calculations.form.quantity') }}</th>
-            <th>{{ t('calculations.form.unit') }}</th>
-            <th>{{ t('calculations.form.price') }}</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(item, itemIndex) in stage.services" :key="itemIndex">
-            <td>
-              <input
-                type="text"
-                class="form-control"
-                :id="`service-name-${stageIndex}-${itemIndex}`"
-                :name="`service-name-${stageIndex}-${itemIndex}`"
-                v-model="item.name"
-              />
-            </td>
-            <td>
-              <input
-                type="number"
-                step="0.01"
-                class="form-control"
-                :id="`service-quantity-${stageIndex}-${itemIndex}`"
-                :name="`service-quantity-${stageIndex}-${itemIndex}`"
-                v-model="item.quantity"
-              />
-            </td>
-            <td>
-              <input
-                type="text"
-                class="form-control"
-                :id="`service-unit-${stageIndex}-${itemIndex}`"
-                :name="`service-unit-${stageIndex}-${itemIndex}`"
-                v-model="item.unit"
-              />
-            </td>
-            <td>
-              <input
-                type="number"
-                step="0.01"
-                class="form-control"
-                :id="`service-unit-price-${stageIndex}-${itemIndex}`"
-                :name="`service-unit-price-${stageIndex}-${itemIndex}`"
-                v-model="item.unitPrice"
-              />
-            </td>
-            <td>
-              <button type="button" class="btn btn-danger btn-sm" @click="removeService(item)">
-                {{ t('common.remove') }}
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <!-- Services Table -->
+      <div v-if="stage.services.length > 0" class="mb-3">
+        <h6 class="small text-uppercase text-muted fw-bold mb-2">{{ t('calculations.form.services') }}</h6>
+        <div class="table-responsive">
+          <table class="table table-sm table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th style="width: 40%">{{ t('calculations.form.name') }}</th>
+                <th style="width: 15%">{{ t('calculations.form.quantity') }}</th>
+                <th style="width: 15%">{{ t('calculations.form.unit') }}</th>
+                <th style="width: 20%">{{ t('calculations.form.price') }}</th>
+                <th style="width: 10%"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item, itemIndex) in stage.services" :key="itemIndex">
+                <td>
+                  <input
+                    type="text"
+                    class="form-control form-control-sm border-0 bg-transparent p-0"
+                    v-model="item.name"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    step="0.01"
+                    class="form-control form-control-sm"
+                    v-model="item.quantity"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    class="form-control form-control-sm border-0 bg-transparent p-0"
+                    v-model="item.unit"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    step="0.01"
+                    class="form-control form-control-sm"
+                    v-model="item.unitPrice"
+                  />
+                </td>
+                <td class="text-end">
+                  <button type="button" class="btn btn-link text-danger p-0" @click="removeService(item)">
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-      <h5>{{ t('calculations.form.materials') }}</h5>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>{{ t('calculations.form.name') }}</th>
-            <th>{{ t('calculations.form.quantity') }}</th>
-            <th>{{ t('calculations.form.unit') }}</th>
-            <th>{{ t('calculations.form.price') }}</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(item, itemIndex) in stage.materials" :key="itemIndex">
-            <td>
-              <input
-                type="text"
-                class="form-control"
-                :id="`material-name-${stageIndex}-${itemIndex}`"
-                :name="`material-name-${stageIndex}-${itemIndex}`"
-                v-model="item.name"
-              />
-            </td>
-            <td>
-              <input
-                type="number"
-                step="0.01"
-                class="form-control"
-                :id="`material-quantity-${stageIndex}-${itemIndex}`"
-                :name="`material-quantity-${stageIndex}-${itemIndex}`"
-                v-model="item.quantity"
-              />
-            </td>
-            <td>
-              <input
-                type="text"
-                class="form-control"
-                :id="`material-unit-${stageIndex}-${itemIndex}`"
-                :name="`material-unit-${stageIndex}-${itemIndex}`"
-                v-model="item.unit"
-              />
-            </td>
-            <td>
-              <input
-                type="number"
-                step="0.01"
-                class="form-control"
-                :id="`material-unit-price-${stageIndex}-${itemIndex}`"
-                :name="`material-unit-price-${stageIndex}-${itemIndex}`"
-                v-model="item.unitPrice"
-              />
-            </td>
-            <td>
-              <button type="button" class="btn btn-danger btn-sm" @click="removeMaterial(item)">
-                {{ t('common.remove') }}
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <!-- Materials Table -->
+      <div v-if="stage.materials.length > 0">
+        <h6 class="small text-uppercase text-muted fw-bold mb-2">{{ t('calculations.form.materials') }}</h6>
+        <div class="table-responsive">
+          <table class="table table-sm table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th style="width: 40%">{{ t('calculations.form.name') }}</th>
+                <th style="width: 15%">{{ t('calculations.form.quantity') }}</th>
+                <th style="width: 15%">{{ t('calculations.form.unit') }}</th>
+                <th style="width: 20%">{{ t('calculations.form.price') }}</th>
+                <th style="width: 10%"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item, itemIndex) in stage.materials" :key="itemIndex">
+                <td>
+                  <input
+                    type="text"
+                    class="form-control form-control-sm border-0 bg-transparent p-0"
+                    v-model="item.name"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    step="0.01"
+                    class="form-control form-control-sm"
+                    v-model="item.quantity"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    class="form-control form-control-sm border-0 bg-transparent p-0"
+                    v-model="item.unit"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    step="0.01"
+                    class="form-control form-control-sm"
+                    v-model="item.unitPrice"
+                  />
+                </td>
+                <td class="text-end">
+                  <button type="button" class="btn btn-link text-danger p-0" @click="removeMaterial(item)">
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -207,8 +216,13 @@ import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
-const props = defineProps<{ stage: CalculationStage; stageIndex: number }>()
-const emit = defineEmits(['update:stage', 'remove-stage'])
+const props = defineProps<{ 
+  stage: CalculationStage; 
+  stageIndex: number;
+  isExpanded: boolean;
+}>()
+
+const emit = defineEmits(['update:stage', 'remove-stage', 'toggle'])
 
 const serviceSearchQuery = ref('')
 const materialSearchQuery = ref('')
@@ -276,4 +290,16 @@ const removeMaterial = (item: CalculationItem) => {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.transition-transform {
+  transition: transform 0.2s ease;
+}
+
+.list-group-item:hover {
+  background-color: var(--bg-body);
+}
+</style>
