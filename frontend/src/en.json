@@ -27,7 +27,8 @@
     "duplicate": "Duplicate",
     "search": "Search",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "go": "Go"
   },
   "lang": {
     "english": "English",
@@ -43,7 +44,10 @@
     "recent_activity": {
       "index": "Recent Activity",
       "empty": "Your recent calculations and estimates will appear here"
-    }
+    },
+    "manage_calculations": "Manage your calculations",
+    "manage_materials": "Manage your materials",
+    "manage_services": "Manage your services"
   },
   "settings": {
     "title": "User Settings",

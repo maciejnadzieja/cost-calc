@@ -1,1 +1,16 @@
-@use 'bootstrap/scss/bootstrap' as *;
+@import './assets/base.scss';
+
+// Bootstrap Variable Overrides
+$primary: #4f46e5;
+$secondary: #64748b;
+$success: #10b981;
+$info: #3b82f6;
+$warning: #f59e0b;
+$danger: #ef4444;
+$light: #f8fafc;
+$dark: #0f172a;
+
+$font-family-base: 'Inter', sans-serif;
+$border-radius: 0.5rem;
+
+@import 'bootstrap/scss/bootstrap';

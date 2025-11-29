@@ -27,7 +27,8 @@
     "duplicate": "Duplikuj",
     "search": "Szukaj",
     "previous": "Poprzednia",
-    "next": "Następna"
+    "next": "Następna",
+    "go": "Przejdź"
   },
   "lang": {
     "english": "Angielski",
@@ -117,7 +118,10 @@
     "recent_activity": {
       "index": "Ostatnia aktywność",
       "empty": "Tutaj pojawią się Twoje ostatnie kalkulacje i wyceny"
-    }
+    },
+    "manage_calculations": "Zarządzaj swoimi kalkulacjami",
+    "manage_materials": "Zarządzaj swoimi materiałami",
+    "manage_services": "Zarządzaj swoimi usługami"
   },
   "settings": {
     "title": "Ustawienia użytkownika",
