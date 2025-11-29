@@ -121,11 +121,14 @@
                   />
                 </td>
                 <td>
-                  <input
-                    type="text"
-                    class="form-control form-control-sm border-0 bg-transparent p-0"
+                  <select
+                    class="form-select form-select-sm"
                     v-model="item.unit"
-                  />
+                  >
+                    <option v-for="unit in serviceUnits" :key="unit" :value="unit">
+                      {{ getUnitSymbol('service', unit) }}
+                    </option>
+                  </select>
                 </td>
                 <td>
                   <input
@@ -178,11 +181,14 @@
                   />
                 </td>
                 <td>
-                  <input
-                    type="text"
-                    class="form-control form-control-sm border-0 bg-transparent p-0"
+                  <select
+                    class="form-select form-select-sm"
                     v-model="item.unit"
-                  />
+                  >
+                    <option v-for="unit in materialUnits" :key="unit" :value="unit">
+                      {{ getUnitSymbol('material', unit) }}
+                    </option>
+                  </select>
                 </td>
                 <td>
                   <input
@@ -228,6 +234,37 @@ const serviceSearchQuery = ref('')
 const materialSearchQuery = ref('')
 const serviceSearchResults = ref<Service[]>([])
 const materialSearchResults = ref<Material[]>([])
+
+const serviceUnits = [
+  'HOUR',
+  'SQUARE_METER',
+  'PIECE',
+  'LINEAR_METER',
+  'DAY',
+  'KILOGRAM'
+]
+
+const materialUnits = [
+  'PIECE',
+  'KILOGRAM',
+  'GRAM',
+  'METER',
+  'CENTIMETER',
+  'SQUARE_METER',
+  'LITER',
+  'MILLILITER',
+  'PACK',
+  'ROLL',
+  'TON'
+]
+
+const getUnitSymbol = (type: 'service' | 'material', unit: string) => {
+  if (!unit) return ''
+  const unitLower = unit.toLowerCase()
+  const key = `units.${type}.${unitLower}.symbol`
+  const translation = t(key)
+  return translation === key ? unit : translation
+}
 
 const handleServiceSearch = async () => {
   if (serviceSearchQuery.value.length > 2) {

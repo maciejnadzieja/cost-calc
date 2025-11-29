@@ -1,7 +1,12 @@
 <template>
   <div class="calculation-form">
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="h3 mb-0">{{ calculation.id ? t('calculations.edit.title') : t('calculations.new.title') }}</h2>
+      <div class="d-flex align-items-center gap-3">
+        <h2 class="h3 mb-0">{{ calculation.id ? t('calculations.edit.title') : t('calculations.new.title') }}</h2>
+        <span class="badge bg-primary fs-6" v-if="calculation.totalAmount">
+          {{ calculation.totalAmount.toFixed(2) }} {{ calculation.currency }}
+        </span>
+      </div>
       <div class="d-flex gap-2">
         <router-link to="/calculations" class="btn btn-outline-secondary">
           {{ t('common.cancel') }}
