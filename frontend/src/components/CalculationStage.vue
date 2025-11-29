@@ -38,54 +38,58 @@
       <!-- Add Items Section -->
       <div class="row g-2 mb-3">
         <div class="col-md-6">
-          <div class="input-group input-group-sm">
-            <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
-            <input
-              type="text"
-              class="form-control"
-              :placeholder="t('calculations.form.add.service')"
-              v-model="serviceSearchQuery"
-              @input="handleServiceSearch"
-            />
+          <div class="position-relative">
+            <div class="input-group input-group-sm">
+              <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+              <input
+                type="text"
+                class="form-control"
+                :placeholder="t('calculations.form.add.service')"
+                v-model="serviceSearchQuery"
+                @input="handleServiceSearch"
+              />
+            </div>
+            <ul class="list-group list-group-flush shadow-sm position-absolute w-100 start-0" style="z-index: 1000;" v-if="serviceSearchResults.length">
+              <li
+                class="list-group-item list-group-item-action cursor-pointer small"
+                v-for="service in serviceSearchResults"
+                :key="service.id || service.name"
+                @click="selectService(service)"
+              >
+                <div class="d-flex justify-content-between">
+                  <span>{{ service.name }}</span>
+                  <span class="text-muted">{{ service.price }}</span>
+                </div>
+              </li>
+            </ul>
           </div>
-          <ul class="list-group list-group-flush shadow-sm position-absolute w-100 start-0" style="z-index: 1000;" v-if="serviceSearchResults.length">
-            <li
-              class="list-group-item list-group-item-action cursor-pointer small"
-              v-for="service in serviceSearchResults"
-              :key="service.id || service.name"
-              @click="selectService(service)"
-            >
-              <div class="d-flex justify-content-between">
-                <span>{{ service.name }}</span>
-                <span class="text-muted">{{ service.price }}</span>
-              </div>
-            </li>
-          </ul>
         </div>
         <div class="col-md-6">
-          <div class="input-group input-group-sm">
-            <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
-            <input
-              type="text"
-              class="form-control"
-              :placeholder="t('calculations.form.add.material')"
-              v-model="materialSearchQuery"
-              @input="handleMaterialSearch"
-            />
+          <div class="position-relative">
+            <div class="input-group input-group-sm">
+              <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+              <input
+                type="text"
+                class="form-control"
+                :placeholder="t('calculations.form.add.material')"
+                v-model="materialSearchQuery"
+                @input="handleMaterialSearch"
+              />
+            </div>
+            <ul class="list-group list-group-flush shadow-sm position-absolute w-100 start-0" style="z-index: 1000;" v-if="materialSearchResults.length">
+              <li
+                class="list-group-item list-group-item-action cursor-pointer small"
+                v-for="material in materialSearchResults"
+                :key="material.id || material.name"
+                @click="selectMaterial(material)"
+              >
+                <div class="d-flex justify-content-between">
+                  <span>{{ material.name }}</span>
+                  <span class="text-muted">{{ material.price }}</span>
+                </div>
+              </li>
+            </ul>
           </div>
-          <ul class="list-group list-group-flush shadow-sm position-absolute w-100 start-0" style="z-index: 1000;" v-if="materialSearchResults.length">
-            <li
-              class="list-group-item list-group-item-action cursor-pointer small"
-              v-for="material in materialSearchResults"
-              :key="material.id || material.name"
-              @click="selectMaterial(material)"
-            >
-              <div class="d-flex justify-content-between">
-                <span>{{ material.name }}</span>
-                <span class="text-muted">{{ material.price }}</span>
-              </div>
-            </li>
-          </ul>
         </div>
       </div>
 
