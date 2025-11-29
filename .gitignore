@@ -52,3 +52,4 @@ Thumbs.db
 .windsurfrules
 /frontend/.vite/
 frontend/.env.prod
+/release/
