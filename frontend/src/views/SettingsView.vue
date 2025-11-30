@@ -41,7 +41,6 @@ const { t } = useI18n();
 const settings = ref({
   currency: 'USD',
   footerText: '',
-  themeColor: '#007bff'
 });
 
 const availableCurrencies = ref<string[]>([]);
