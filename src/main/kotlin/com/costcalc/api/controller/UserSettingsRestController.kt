@@ -2,7 +2,6 @@ package com.costcalc.api.controller
 
 import com.costcalc.api.config.CurrentUser
 import com.costcalc.api.dto.UserSettingsRequest
-import com.costcalc.api.model.Currency
 import com.costcalc.api.model.User
 import com.costcalc.api.model.UserSettings
 import com.costcalc.api.service.UserSettingsService
@@ -33,7 +32,7 @@ class UserSettingsRestController(
         val userSettings =
             UserSettings(
                 id = user.id,
-                currency = Currency(userSettingsRequest.currency),
+                currency = userSettingsRequest.currency,
                 footerText = userSettingsRequest.footerText,
             )
 

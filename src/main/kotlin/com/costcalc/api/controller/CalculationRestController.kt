@@ -7,7 +7,6 @@ import com.costcalc.api.dto.CalculationResponse
 import com.costcalc.api.mapper.toResponse
 import com.costcalc.api.model.Calculation
 import com.costcalc.api.model.CalculationId
-import com.costcalc.api.model.Currency
 import com.costcalc.api.model.User
 import com.costcalc.api.service.CalculationService
 import jakarta.validation.Valid
@@ -66,7 +65,7 @@ class CalculationRestController(
                 name = calculationRequest.name,
                 description = calculationRequest.description,
                 stages = calculationRequest.stages,
-                currency = Currency(calculationRequest.currency),
+                currency = calculationRequest.currency,
                 userId = user.id,
             )
         val createdCalculation = calculationService.create(calculation)
@@ -94,7 +93,7 @@ class CalculationRestController(
                 name = calculationRequest.name,
                 description = calculationRequest.description,
                 stages = calculationRequest.stages,
-                currency = Currency(calculationRequest.currency),
+                currency = calculationRequest.currency,
                 userId = user.id,
             )
         return updatedCalculation.toResponse()

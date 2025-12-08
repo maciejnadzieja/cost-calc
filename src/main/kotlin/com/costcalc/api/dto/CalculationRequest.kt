@@ -1,6 +1,7 @@
 package com.costcalc.api.dto
 
 import com.costcalc.api.model.CalculationStage
+import com.costcalc.api.model.Currency
 import com.costcalc.api.validation.SupportedCurrency
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
@@ -14,7 +15,6 @@ data class CalculationRequest(
     val description: String,
     @field:Valid
     val stages: List<CalculationStage>,
-    @field:NotBlank(message = "Currency is required")
     @field:SupportedCurrency
-    val currency: String,
+    val currency: Currency,
 )

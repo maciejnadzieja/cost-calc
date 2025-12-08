@@ -1,19 +1,15 @@
 package com.costcalc.api.validation
 
 import com.costcalc.api.config.CurrencyConfig
+import com.costcalc.api.model.Currency
 import jakarta.validation.ConstraintValidator
 import jakarta.validation.ConstraintValidatorContext
 
 class SupportedCurrencyValidator(
     private val currencyConfig: CurrencyConfig,
-) : ConstraintValidator<SupportedCurrency, String> {
+) : ConstraintValidator<SupportedCurrency, Currency> {
     override fun isValid(
-        value: String?,
+        value: Currency,
         context: ConstraintValidatorContext,
-    ): Boolean {
-        if (value == null) {
-            return true // Let @NotNull or @NotBlank handle nulls
-        }
-        return currencyConfig.supportedCurrencies.contains(value)
-    }
+    ): Boolean = currencyConfig.supportedCurrencies.contains(value.code)
 }
