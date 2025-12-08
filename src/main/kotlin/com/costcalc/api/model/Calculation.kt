@@ -1,8 +1,8 @@
 package com.costcalc.api.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
-import com.fasterxml.jackson.annotation.JsonProperty
 import java.math.BigDecimal
 import java.time.Instant
 import java.util.UUID
@@ -16,7 +16,7 @@ data class Calculation(
     val name: String,
     val description: String,
     val userId: UserId,
-    val currency: String,
+    val currency: Currency,
     val stages: List<CalculationStage> = listOf(),
     val createdAt: Instant = Instant.now(),
     val updatedAt: Instant = Instant.now(),
@@ -29,7 +29,7 @@ data class Calculation(
         name: String,
         description: String,
         stages: List<CalculationStage>,
-        currency: String,
+        currency: Currency,
     ): Calculation =
         this.copy(
             name = name,
@@ -50,7 +50,7 @@ data class Calculation(
             name: String,
             description: String,
             userId: UserId,
-            currency: String,
+            currency: Currency,
             stages: List<CalculationStage> = listOf(),
         ) = Calculation(
             id = UUID.randomUUID(),

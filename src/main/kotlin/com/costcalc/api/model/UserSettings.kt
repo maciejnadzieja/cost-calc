@@ -8,7 +8,7 @@ import java.time.Instant
 data class UserSettings(
     @Id
     val id: UserId,
-    val currency: String = "USD", // Default currency
+    val currency: Currency = Currency("USD"), // Default currency
     val footerText: String = "", // Default empty footer
     val createdAt: Instant = Instant.now(),
     val updatedAt: Instant = Instant.now(),

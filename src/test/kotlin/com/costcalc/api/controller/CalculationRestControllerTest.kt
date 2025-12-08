@@ -4,6 +4,7 @@ package com.costcalc.api.controller
 import com.costcalc.api.AbstractIntegrationTest
 import com.costcalc.api.model.Calculation
 import com.costcalc.api.model.CalculationStage
+import com.costcalc.api.model.Currency
 import com.costcalc.api.model.UserId
 import com.costcalc.api.repository.CalculationRepository
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -283,18 +284,21 @@ class CalculationRestControllerTest : AbstractIntegrationTest() {
     @Test
     fun `should calculate sums correctly after update`() {
         val userId = UUID.randomUUID()
-        
+
         // Create initial calculation
-        val result = mockMvc.post("/api/calculations") {
-            with(token(userId))
-            contentType = MediaType.APPLICATION_JSON
-            content = createCalculationJson()
-        }.andReturn()
-        
+        val result =
+            mockMvc
+                .post("/api/calculations") {
+                    with(token(userId))
+                    contentType = MediaType.APPLICATION_JSON
+                    content = createCalculationJson()
+                }.andReturn()
+
         val id = objectMapper.readTree(result.response.contentAsString).get("id").asText()
 
         // Update with items
-        val updateJson = """
+        val updateJson =
+            """
             {
                 "name": "Updated Calculation",
                 "description": "Description",
@@ -311,26 +315,28 @@ class CalculationRestControllerTest : AbstractIntegrationTest() {
                     }
                 ]
             }
-        """.trimIndent()
+            """.trimIndent()
 
-        mockMvc.put("/api/calculations/{id}", id) {
-            with(token(userId))
-            contentType = MediaType.APPLICATION_JSON
-            content = updateJson
-        }.andExpect {
-            status { isOk() }
-            // Service: 100 * 2 = 200
-            // Material: 50 * 3 = 150
-            // Stage Total: 200 + 150 = 350
-            // Calculation Total: 350
-            jsonPath("$.stages[0].servicesTotalAmount") { value(200.0) }
-            jsonPath("$.stages[0].materialsTotalAmount") { value(150.0) }
-            jsonPath("$.stages[0].totalAmount") { value(350.0) }
-            jsonPath("$.totalAmount") { value(350.0) }
-        }
+        mockMvc
+            .put("/api/calculations/{id}", id) {
+                with(token(userId))
+                contentType = MediaType.APPLICATION_JSON
+                content = updateJson
+            }.andExpect {
+                status { isOk() }
+                // Service: 100 * 2 = 200
+                // Material: 50 * 3 = 150
+                // Stage Total: 200 + 150 = 350
+                // Calculation Total: 350
+                jsonPath("$.stages[0].servicesTotalAmount") { value(200.0) }
+                jsonPath("$.stages[0].materialsTotalAmount") { value(150.0) }
+                jsonPath("$.stages[0].totalAmount") { value(350.0) }
+                jsonPath("$.totalAmount") { value(350.0) }
+            }
 
         // Update removing material
-        val updateRemoveItemJson = """
+        val updateRemoveItemJson =
+            """
             {
                 "name": "Updated Calculation",
                 "description": "Description",
@@ -345,42 +351,46 @@ class CalculationRestControllerTest : AbstractIntegrationTest() {
                     }
                 ]
             }
-        """.trimIndent()
+            """.trimIndent()
 
-        mockMvc.put("/api/calculations/{id}", id) {
-            with(token(userId))
-            contentType = MediaType.APPLICATION_JSON
-            content = updateRemoveItemJson
-        }.andExpect {
-            status { isOk() }
-            // Service: 100 * 2 = 200
-            // Material: 0
-            // Stage Total: 200
-            // Calculation Total: 200
-            jsonPath("$.stages[0].servicesTotalAmount") { value(200.0) }
-            jsonPath("$.stages[0].materialsTotalAmount") { value(0.0) }
-            jsonPath("$.stages[0].totalAmount") { value(200.0) }
-            jsonPath("$.totalAmount") { value(200.0) }
-        }
+        mockMvc
+            .put("/api/calculations/{id}", id) {
+                with(token(userId))
+                contentType = MediaType.APPLICATION_JSON
+                content = updateRemoveItemJson
+            }.andExpect {
+                status { isOk() }
+                // Service: 100 * 2 = 200
+                // Material: 0
+                // Stage Total: 200
+                // Calculation Total: 200
+                jsonPath("$.stages[0].servicesTotalAmount") { value(200.0) }
+                jsonPath("$.stages[0].materialsTotalAmount") { value(0.0) }
+                jsonPath("$.stages[0].totalAmount") { value(200.0) }
+                jsonPath("$.totalAmount") { value(200.0) }
+            }
     }
 
     @Test
     fun `should ignore provided totals and recalculate`() {
         val userId = UUID.randomUUID()
-        
+
         // Create initial calculation
-        val result = mockMvc.post("/api/calculations") {
-            with(token(userId))
-            contentType = MediaType.APPLICATION_JSON
-            content = createCalculationJson()
-        }.andReturn()
-        
+        val result =
+            mockMvc
+                .post("/api/calculations") {
+                    with(token(userId))
+                    contentType = MediaType.APPLICATION_JSON
+                    content = createCalculationJson()
+                }.andReturn()
+
         val id = objectMapper.readTree(result.response.contentAsString).get("id").asText()
 
         // Update with items AND incorrect totals
         // Service: 100 * 1 = 100
         // Provided totals: 999 (should be ignored)
-        val updateJson = """
+        val updateJson =
+            """
             {
                 "name": "Updated Calculation",
                 "description": "Description",
@@ -406,19 +416,20 @@ class CalculationRestControllerTest : AbstractIntegrationTest() {
                 ],
                 "totalAmount": 999.0
             }
-        """.trimIndent()
+            """.trimIndent()
 
-        mockMvc.put("/api/calculations/{id}", id) {
-            with(token(userId))
-            contentType = MediaType.APPLICATION_JSON
-            content = updateJson
-        }.andExpect {
-            status { isOk() }
-            // Should be 100, not 999
-            jsonPath("$.stages[0].servicesTotalAmount") { value(100.0) }
-            jsonPath("$.stages[0].totalAmount") { value(100.0) }
-            jsonPath("$.totalAmount") { value(100.0) }
-        }
+        mockMvc
+            .put("/api/calculations/{id}", id) {
+                with(token(userId))
+                contentType = MediaType.APPLICATION_JSON
+                content = updateJson
+            }.andExpect {
+                status { isOk() }
+                // Should be 100, not 999
+                jsonPath("$.stages[0].servicesTotalAmount") { value(100.0) }
+                jsonPath("$.stages[0].totalAmount") { value(100.0) }
+                jsonPath("$.totalAmount") { value(100.0) }
+            }
     }
 
     private fun token(
@@ -440,7 +451,7 @@ class CalculationRestControllerTest : AbstractIntegrationTest() {
         name = name,
         description = description,
         stages = stages,
-        currency = currency,
+        currency = Currency(currency),
         userId = userId,
     )
 

@@ -3,6 +3,7 @@ package com.costcalc.api.service
 import com.costcalc.api.model.Calculation
 import com.costcalc.api.model.CalculationId
 import com.costcalc.api.model.CalculationStage
+import com.costcalc.api.model.Currency
 import com.costcalc.api.model.UserId
 import com.costcalc.api.repository.CalculationRepository
 import org.springframework.data.domain.Page
@@ -45,7 +46,7 @@ class CalculationService(
         name: String,
         description: String,
         stages: List<CalculationStage>,
-        currency: String,
+        currency: Currency,
         userId: UserId,
     ): Calculation {
         val existingCalculation =
