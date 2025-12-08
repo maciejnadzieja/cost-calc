@@ -1,9 +1,9 @@
 package com.costcalc.api.dto
 
 import com.costcalc.api.model.CalculationStage
+import com.costcalc.api.validation.SupportedCurrency
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
 
 data class CalculationRequest(
@@ -15,6 +15,6 @@ data class CalculationRequest(
     @field:Valid
     val stages: List<CalculationStage>,
     @field:NotBlank(message = "Currency is required")
-    @field:Pattern(regexp = "^(EUR|PLN|USD)$", message = "Currency must be EUR, PLN, or USD")
+    @field:SupportedCurrency
     val currency: String,
 )

@@ -1,5 +1,6 @@
 package com.costcalc.api.controller
 
+import com.costcalc.api.config.CurrencyConfig
 import com.costcalc.api.config.CurrentUser
 import com.costcalc.api.dto.CalculationRequest
 import com.costcalc.api.dto.CalculationResponse
@@ -28,6 +29,7 @@ import java.util.UUID
 @PreAuthorize("isAuthenticated()")
 class CalculationRestController(
     private val calculationService: CalculationService,
+    private val currencyConfig: CurrencyConfig,
 ) {
     @GetMapping
     fun getCalculations(
@@ -41,7 +43,7 @@ class CalculationRestController(
     }
 
     @GetMapping("/currencies")
-    fun getSupportedCurrencies(): List<String> = listOf("EUR", "PLN", "USD")
+    fun getSupportedCurrencies(): List<String> = currencyConfig.supportedCurrencies
 
     @GetMapping("/{id}")
     fun getById(

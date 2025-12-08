@@ -8,10 +8,12 @@ import org.springframework.stereotype.Service
 @Service
 class UserSettingsService(
     private val userSettingsRepository: UserSettingsRepository,
+    private val currencyConfig: com.costcalc.api.config.CurrencyConfig,
 ) {
     fun getUserSettings(user: User): UserSettings =
         userSettingsRepository.findById(user.id).orElseGet {
-            val newUserSettings = UserSettings(id = user.id)
+            val defaultCurrency = currencyConfig.defaultCurrency()
+            val newUserSettings = UserSettings(id = user.id, currency = defaultCurrency)
             userSettingsRepository.save(newUserSettings)
         }
 

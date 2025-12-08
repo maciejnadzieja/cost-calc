@@ -35,7 +35,7 @@ class UserSettingsRestControllerTest : AbstractIntegrationTest() {
                 with(token(userId))
             }.andExpect {
                 status { isOk() }
-                jsonPath("$.currency") { value("USD") }
+                jsonPath("$.currency") { value("EUR") }
                 jsonPath("$.footerText") { value("") }
             }
     }
