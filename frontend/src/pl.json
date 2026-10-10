@@ -304,5 +304,21 @@
   },
   "main": {
     "description": "Witaj w Kalkulatorze Kosztów, narzędziu stworzonym, aby pomóc małym firmom w tworzeniu szczegółowych kalkulacji kosztów. Nasza aplikacja pomoże Ci zarządzać Twoimi usługami i materiałami oraz generować profesjonalne wyceny dla Twoich klientów."
+  },
+  "adminUsers": {
+    "title": "Użytkownicy",
+    "username": "Nazwa użytkownika",
+    "email": "Email",
+    "enabled": "Aktywny",
+    "yes": "Tak",
+    "no": "Nie",
+    "missingEmail": "—",
+    "loading": "Ładowanie użytkowników…",
+    "empty": "Brak użytkowników na tej stronie.",
+    "denied": "Nie masz dostępu do tej strony.",
+    "failure": "Nie udało się pobrać użytkowników. Spróbuj ponownie.",
+    "retry": "Spróbuj ponownie",
+    "pagination": "Strony użytkowników",
+    "page": "Strona {number}"
   }
 }

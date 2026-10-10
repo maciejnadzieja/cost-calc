@@ -6,6 +6,12 @@
     </a>
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
+      <li v-if="isRealmAdmin()">
+        <router-link to="/admin/users" class="nav-link text-white" active-class="active">
+          <i class="bi bi-people me-2"></i>
+          {{ t('adminUsers.title') }}
+        </router-link>
+      </li>
       <li class="nav-item">
         <router-link to="/dashboard" class="nav-link text-white" active-class="active">
           <i class="bi bi-speedometer2 me-2"></i>
@@ -59,6 +65,7 @@ import { useI18n } from 'vue-i18n';
 import { ref } from 'vue';
 import keycloak from '../services/keycloak';
 import { useRouter } from 'vue-router';
+import { isRealmAdmin } from '../services/adminAccess';
 
 const { t } = useI18n();
 const router = useRouter();

@@ -1,6 +1,7 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vue-router'
 import DefaultLayout from '../layouts/DefaultLayout.vue'
 import keycloak from '../services/keycloak'
+import { isRealmAdmin } from '../services/adminAccess'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -10,6 +11,17 @@ const router = createRouter({
       component: DefaultLayout,
       meta: { requiresAuth: true },
       children: [
+        {
+          path: 'admin/users',
+          name: 'admin-users',
+          meta: { requiresAdmin: true },
+          component: () => import('../views/AdminUsersView.vue')
+        },
+        {
+          path: 'access-denied',
+          name: 'access-denied',
+          component: () => import('../views/AccessDeniedView.vue')
+        },
         {
           path: '',
           redirect: '/dashboard'
@@ -84,16 +96,15 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach(async (to, from, next) => {
-  if (to.meta.requiresAuth) {
-    if (keycloak.authenticated) {
-      next()
-    } else {
-      keycloak.login()
-    }
-  } else {
-    next()
+export const navigationGuard = (to: RouteLocationNormalized) => {
+  if (to.meta.requiresAuth && !keycloak.authenticated) {
+    keycloak.login()
+    return false
   }
-})
+  if (to.meta.requiresAdmin && !isRealmAdmin()) return { name: 'access-denied' }
+  return true
+}
+
+router.beforeEach(navigationGuard)
 
 export default router

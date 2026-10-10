@@ -297,5 +297,21 @@
   },
   "main": {
     "description": "Welcome to Cost Calculator, a tool designed to help small businesses create detailed cost calculations. Our application helps you manage your services and materials, and generate professional estimates for your clients."
+  },
+  "adminUsers": {
+    "title": "Users",
+    "username": "Username",
+    "email": "Email",
+    "enabled": "Enabled",
+    "yes": "Yes",
+    "no": "No",
+    "missingEmail": "—",
+    "loading": "Loading users…",
+    "empty": "No users found on this page.",
+    "denied": "You do not have access to this page.",
+    "failure": "Users could not be loaded. Please try again.",
+    "retry": "Retry",
+    "pagination": "User pages",
+    "page": "Page {number}"
   }
 }
