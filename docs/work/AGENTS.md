@@ -2,7 +2,7 @@
 
 GitHub Issues in maciejnadzieja/cost-calc are authoritative for work records and history. Read README.md and workflow.md before refining requests or executing tasks. Preserve original requests, use issue numbers as IDs, and record decisions and evidence in issues. Do not create Markdown backlog records, boards, roadmaps, or migration logs that duplicate GitHub.
 
-User instructions determine authorization and priorities. Do not fabricate acceptance, tests, or decisions. Proposed roadmap items do not authorize implementation. Follow the root AGENTS.md's no-commit rule. This file does not authorize spawning agents or parallel implementation.
+User instructions determine authorization and priorities. Do not fabricate acceptance, tests, or decisions. Proposed roadmap items do not authorize implementation. Follow the root AGENTS.md's commit policy: agents may commit task-related changes on the task branch, but must never commit to main. This file does not authorize spawning agents or parallel implementation.
 
 Classify issues with maintenance (upkeep of existing behavior) or enhancement (new capabilities and ideas), using the existing Labels field. Child tasks inherit the parent's category. Add bug/documentation when relevant; labels do not authorize implementation or set priority.
 

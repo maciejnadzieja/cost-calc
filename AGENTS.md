@@ -101,7 +101,9 @@ Use the Project's existing Status options: Backlog, Ready, In progress, In revie
 
 *   **Coding Style:** The codebase follows standard Kotlin and Vue.js coding conventions.
 *   **Testing:** The project uses spring-boot-starter-test, JUnit, mockito and mockito-kotlin for backend testing, and Vitest for frontend testing. Testcontainers is used for testing with a real MongoDB instance.
-*   **Branching:** The project appears to use a feature-branching workflow, though no explicit branching strategy is documented.
-*   **Commits:** Do not commit anything to git
+*   **Branching:** Use one branch per GitHub task, named `codex/<issue-number>-<short-description>` (lowercase words separated by hyphens), for example `codex/4-admin-user-list`. Before implementation, create or switch to the task branch; follow [the branching workflow](docs/work/workflow.md#task-branches).
+*   **Commits:** Agents may commit task-related changes on the task branch named `codex/<issue-number>-<short-description>`. Before every commit, verify the current branch and staged diff. Never commit to `main`; include only changes belonging to the selected task. Read-only reviewers must not commit. Permission to commit does not authorize pushing, merging, publishing, or deploying.
+*   **Commit frequency:** Commit often, after each small, coherent change that can be reviewed on its own. Keep each commit focused on one purpose, include relevant tests with the behavior they verify, and use a clear message explaining the change. Run appropriate checks before committing. Avoid combining unrelated changes or splitting a change into arbitrary file-by-file commits.
+*   **Commit messages:** Format the subject as `#<task-id> | <description of changes>`, using the GitHub issue number for the task ID. Example: `#4 | Add admin user list pagination`.
 *   **Dependencies:** Backend dependencies are managed with Maven, and frontend dependencies are managed with NPM.
 *   **Running locally** Both backend and frontend will be running in separate processes - do not suggest to rerun them

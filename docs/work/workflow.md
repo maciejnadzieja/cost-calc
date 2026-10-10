@@ -32,6 +32,24 @@ Do not split every file into a task. Prefer complete behavior changes; split alo
 
 ## Execute and review
 
+### Task branches
+
+Use one branch per GitHub task. Name it `codex/<issue-number>-<short-description>`:
+
+- Use the GitHub issue number without `#`.
+- Use a concise description in lowercase, with words separated by hyphens.
+- Example for issue #4: `codex/4-admin-user-list`.
+
+Before implementation, check the current branch and working tree. Start new task branches from up-to-date `main` unless the task explicitly depends on another branch. Create and switch to the branch with `git switch -c codex/<issue-number>-<short-description>`; if it already exists, inspect and reuse it with `git switch <branch-name>`. Preserve unrelated local changes and do not reset the checkout to prepare a branch.
+
+Agents may commit task-related changes on the task branch under the root AGENTS.md's commit policy. Before every commit, verify the current branch is the selected task branch and inspect the staged diff; stage only changes belonging to that task. Never commit to `main`. Read-only reviewers must not commit. Branch creation and permission to commit do not authorize pushing, merging, publishing, deploying, or implementing work outside the selected task.
+
+Commit often so reviewers can follow the work in small, readable chunks. Make each commit a coherent change with one purpose, include relevant tests alongside the behavior they verify, and use a clear commit message. Run checks appropriate to the change before committing and record any verification limitations in the issue. Commit after meaningful completed steps rather than waiting for the entire task; avoid unrelated changes in one commit or arbitrary file-by-file splits.
+
+Format every commit subject as `#<task-id> | <description of changes>`. Use the task's GitHub issue number, retain the leading `#` and spaces around `|`, and describe the changes in that commit. Example: `#4 | Add admin user list pagination`.
+
+### Delivery steps
+
 1. Select a Ready task in owner-approved priority order. Confirm dependencies are satisfied.
 2. Set Project Status to In progress, record who is working, and add a dated issue comment.
 3. Implement within scope. Link new discoveries as follow-ups rather than silently expanding scope.
@@ -40,7 +58,7 @@ Do not split every file into a task. Prefer complete behavior changes; split alo
 6. Address findings. Return to In progress for repairs and repeat affected checks.
 7. Close the issue as completed and set Project Status to Done only when acceptance criteria are satisfied, verification is recorded, and the agreed review/acceptance requirement is met. Verify both issue state and Project status. Never infer owner acceptance.
 
-No commits are currently authorized under the root AGENTS.md. Record evidence in GitHub issues, identifying local changes that are not yet published; add commit or PR links only after authorization exists. Do not restart the existing backend or frontend as part of routine task handling.
+Record evidence in GitHub issues, including task-branch commit IDs when available and identifying local changes or commits that are not yet published. Add remote commit or PR links only when they exist. Commits on task branches are permitted; commits to `main` are forbidden. Pushing and merging require separate authorization. Do not restart the existing backend or frontend as part of routine task handling.
 
 ## Status rules
 

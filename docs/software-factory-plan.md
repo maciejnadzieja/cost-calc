@@ -6,7 +6,7 @@ We use [GitHub Issues](https://github.com/maciejnadzieja/cost-calc/issues) and t
 
 Build a repeatable process that turns a product request into a tested, reviewed change to Cost Calc. Start with human supervision and increase autonomy after the process produces reliable results.
 
-This is a proposal, not permission to implement features, commit, publish, or deploy. Repository instructions in the root AGENTS.md currently prohibit commits; preserve that restriction unless the owner explicitly changes it.
+This is a proposal, not permission to implement features, publish, or deploy. The owner permits agents to commit task-related changes on task branches and forbids agent commits to `main`; follow the root AGENTS.md's commit policy. Pushing and merging require separate authorization.
 
 ## Starting point
 
@@ -57,7 +57,7 @@ Maintain shared repository guidance in the root AGENTS.md and scoped work-tracki
 ## 4. Standard delivery loop
 
 1. **Specify:** coordinator drafts a task with a user outcome, scope, acceptance criteria, and expected checks. Ask the owner only about decisions that materially change scope or behavior.
-2. **Prepare:** inspect relevant code and establish the baseline. For parallel implementation, use separate worktrees or checkouts and one task per branch after the commit policy has been resolved.
+2. **Prepare:** inspect relevant code and establish the baseline. Use a task branch named `codex/<issue-number>-<short-description>`. For authorized parallel implementation, use separate worktrees or checkouts and one task per branch.
 3. **Implement:** make a bounded change and test the behavior that can regress. Record any discovered work outside scope as follow-up tasks.
 4. **Verify:** run appropriate automated checks and inspect the user flow when UI changes are involved. Record command results and any environment limitations.
 5. **Review:** a separate session reviews the actual diff against the task. For calculations and data access, require concrete edge cases and negative cases.
@@ -128,7 +128,7 @@ Advance to parallel implementation when tasks are clearly specified, checks are 
 
 1. Who is the first customer, and what is the smallest useful milestone?
 2. Should agents remain local, or should hosted agents also be considered?
-3. May agents create commits and pull requests, replacing the current no-commit rule?
+3. When should agents be authorized to push task branches and create pull requests? Task-branch commits are already permitted; agent commits to `main` are forbidden.
 4. What agent usage budget and review time are available?
 
-Recommended initial posture: local development, one implementation agent, independent review, owner-controlled product scope and releases, and the existing commit restriction until explicitly changed.
+Recommended initial posture: local development, one implementation agent, independent review, owner-controlled product scope and releases, and task-branch commits under the agreed policy.
