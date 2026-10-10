@@ -1,6 +1,6 @@
 # AI software factory: starting plan
 
-We use [GitHub Issues](https://github.com/maciejnadzieja/cost-calc/issues) and the private **Cost Calc delivery** Project owned by `maciejnadzieja`, with its existing fields. Follow the [CLI connection instructions](work/workflow.md#agent-access) to find and access it. CLI access, fields, and issue membership are verified; activation #1 is complete. Repository workflow rules remain in [docs/work](work/README.md); work records and decision history live in GitHub. Publication remains in [issue #2](https://github.com/maciejnadzieja/cost-calc/issues/2).
+We use [GitHub Issues](https://github.com/maciejnadzieja/cost-calc/issues) and the private **Cost Calc delivery** Project owned by `maciejnadzieja`, with its existing fields. Follow the [CLI connection instructions](work/workflow.md#agent-access) to find and access it. CLI access, fields, and issue membership are verified; activation #1 is complete. Repository workflow rules remain in [docs/work](work/README.md); work records and decision history live in GitHub. Guides and templates are published; verification is recorded in [issue #2](https://github.com/maciejnadzieja/cost-calc/issues/2).
 
 ## Purpose
 
