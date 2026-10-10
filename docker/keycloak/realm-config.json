@@ -25,6 +25,9 @@
     "realm": [
       {
         "name": "USER"
+      },
+      {
+        "name": "ADMIN"
       }
     ]
   },

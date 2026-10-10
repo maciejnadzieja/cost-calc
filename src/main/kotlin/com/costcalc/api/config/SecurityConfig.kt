@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
@@ -27,6 +28,8 @@ class SecurityConfig(
                 authorize
                     .requestMatchers("/")
                     .permitAll()
+                    .requestMatchers("/api/admin/**")
+                    .hasRole("ADMIN")
             }.authorizeHttpRequests { authorize ->
                 authorize
                     .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs", "/v3/api-docs/**")
@@ -34,7 +37,11 @@ class SecurityConfig(
                     .anyRequest()
                     .authenticated()
             }.oauth2ResourceServer { oauth2 ->
-                oauth2.jwt { }
+                oauth2.jwt { jwt ->
+                    jwt.jwtAuthenticationConverter(JwtAuthenticationConverter().apply {
+                        setJwtGrantedAuthoritiesConverter(RealmRoleAuthoritiesConverter())
+                    })
+                }
             }
         return http.build()
     }
