@@ -1,5 +1,9 @@
 # Cost Calc AI
 
+Work planning: the private **Cost Calc delivery** GitHub Project, [GitHub Issues](https://github.com/maciejnadzieja/cost-calc/issues), and [request workflow](docs/work/README.md). See [CLI connection instructions](docs/work/workflow.md#agent-access) to access the Project.
+
+Shared instructions for development agents: [AGENTS.md](AGENTS.md).
+
 Cost Calc AI is a powerful cost calculation and estimation application designed for small businesses and independent professionals. It leverages Artificial Intelligence to help users manage services, materials, and generate accurate quotes for clients.
 
 The application is built with a modern technology stack, featuring a robust Kotlin Spring Boot backend and a responsive Vue.js frontend, all containerized with Docker for seamless deployment.

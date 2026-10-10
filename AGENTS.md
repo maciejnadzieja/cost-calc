@@ -1,4 +1,8 @@
-# Project Overview
+# Agent instructions
+
+These instructions apply to all agents working in this repository. Follow additional directory-level AGENTS.md instructions for files in their scope. Explicit user instructions take precedence.
+
+## Project Overview
 
 This is a cost calculation and estimation web application named "Cost Calc AI". It is designed for small businesses and independent professionals to manage their services, materials, and generate quotes for clients. 
 The application is built with Kotlin and Spring Boot, using MongoDB for data storage and a Vue.js frontend. 
@@ -12,7 +16,7 @@ It is containerized with Docker for easy deployment and uses Keycloak for authen
 *   **Database:** MongoDB
 *   **Build Tool:** Maven, NPM
 *   **Containerization:** Docker, Docker Compose
-*   **Testing:** JUnit, MockK, Testcontainers, Vitest
+*   **Testing:** JUnit, Mockito/Mockito-Kotlin, Testcontainers, Vitest
 
 ## Architecture
 
@@ -48,14 +52,14 @@ The frontend is a Vue.js application located in the `frontend` directory.
 
 ## Prerequisites
 
-*   Java 17+
+*   Java 21 (as configured in pom.xml)
 *   Maven
-*   Node.js 20+
+*   Node.js ^20.19.0 or >=22.12.0 (as configured in frontend/package.json)
 *   Docker
 
 ## Running Locally
 
-To run the application locally, you need to start both the backend and the frontend.
+The backend and frontend run in separate processes in the current local environment. Do not start, restart, or suggest rerunning them as part of routine task handling. The commands below are setup reference for a new environment.
 
 ### Backend
 
@@ -86,6 +90,14 @@ docker-compose up --build
 This will start the application, a MongoDB container, and a Keycloak container. The application will be available at `http://localhost:5173`.
 
 # Development Conventions
+
+## Work tracking
+
+Use GitHub Issues in `maciejnadzieja/cost-calc` for requests, tasks, decisions, dependencies, and verification evidence. Use the private **Cost Calc delivery** Project owned by `maciejnadzieja` for live Status, Priority, and scheduling. Follow [the work management guide](docs/work/README.md) and [CLI connection instructions](docs/work/workflow.md#agent-access).
+
+Use the Project's existing Status options: Backlog, Ready, In progress, In review, Done. Priority, Size, Estimate, Start date, and Target date are available; do not add mandatory custom fields. GitHub CLI is installed and authenticated in the current local environment for Project operations. Verify field values after updates. Keep work records and history in GitHub; do not create duplicate Markdown backlog trackers.
+
+## Coding conventions
 
 *   **Coding Style:** The codebase follows standard Kotlin and Vue.js coding conventions.
 *   **Testing:** The project uses spring-boot-starter-test, JUnit, mockito and mockito-kotlin for backend testing, and Vitest for frontend testing. Testcontainers is used for testing with a real MongoDB instance.
