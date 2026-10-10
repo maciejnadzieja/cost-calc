@@ -5,19 +5,21 @@ import com.fasterxml.jackson.databind.JsonNode
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
+import org.springframework.http.StreamingHttpOutputMessage
 import org.springframework.stereotype.Component
-import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestClientException
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 class DirectoryUnavailableException : RuntimeException("User directory is unavailable")
 
 @Component
 class KeycloakDirectoryClient(
     private val properties: KeycloakDirectoryProperties,
-    @Value("\${spring.security.oauth2.resourceserver.jwt.issuer-uri}") issuer: String,
+    @Value("\${spring.security.oauth2.resourceserver.jwt.issuer-uri:}") issuer: String,
     @Qualifier("directoryRestClient") private val client: RestClient,
 ) {
     private val issuerUri = URI.create(issuer.trimEnd('/'))
@@ -30,13 +32,16 @@ class KeycloakDirectoryClient(
         if (realm.isBlank() || realm.contains('/') || properties.clientId.isBlank() || properties.clientSecret.isBlank()) {
             throw DirectoryUnavailableException()
         }
-        val form = LinkedMultiValueMap<String, String>().apply {
-            add("grant_type", "client_credentials")
-            add("client_id", properties.clientId)
-            add("client_secret", properties.clientSecret)
-        }
+        val form = listOf(
+            "grant_type" to "client_credentials",
+            "client_id" to properties.clientId,
+            "client_secret" to properties.clientSecret,
+        ).joinToString("&") { (key, value) -> "$key=${URLEncoder.encode(value, StandardCharsets.UTF_8)}" }
+        // The converter-based body(Object) API logs form values at DEBUG, which this app enables.
+        // Stream the encoded form so credentials never enter that request-body log path.
         val response = client.post().uri(url("realms", realm, "protocol", "openid-connect", "token"))
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED).body(form)
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .body(StreamingHttpOutputMessage.Body { it.write(form.toByteArray(StandardCharsets.UTF_8)) })
             .retrieve().body(JsonNode::class.java)
         response?.get("access_token")?.takeIf { it.isTextual && it.asText().isNotBlank() }?.asText()
             ?: throw DirectoryUnavailableException()

@@ -5,6 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
+import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.boot.test.system.OutputCaptureExtension
+import org.springframework.boot.test.system.CapturedOutput
+import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.Level
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -14,6 +22,7 @@ import org.springframework.test.web.client.response.MockRestResponseCreators.*
 import org.springframework.web.client.RestClient
 import java.net.SocketTimeoutException
 
+@ExtendWith(OutputCaptureExtension::class)
 class KeycloakDirectoryTest {
     private val mapper = ObjectMapper()
     private val builder = RestClient.builder()
@@ -106,10 +115,11 @@ class KeycloakDirectoryTest {
         server.verify()
     }
 
-    @Test
-    fun `upstream errors never expose raw body or causes`() {
+    @ParameterizedTest
+    @ValueSource(ints = [401, 403, 500, 503])
+    fun `upstream errors never expose raw body or causes`(status: Int) {
         token()
-        server.expect(anything()).andRespond(withStatus(HttpStatus.FORBIDDEN).body("sensitive upstream body"))
+        server.expect(anything()).andRespond(withStatus(HttpStatus.valueOf(status)).body("sensitive upstream body"))
         assertUnavailable { service.page(0) }
         server.verify()
     }
@@ -151,6 +161,53 @@ class KeycloakDirectoryTest {
         server.expect(requestTo("https://public.example/auth/realms/application/protocol/openid-connect/token"))
             .andRespond(withSuccess("{\"access_token\":\"test\"}", MediaType.APPLICATION_JSON))
         assertThat(directory.token()).isEqualTo("test")
+        server.verify()
+    }
+
+    @Test
+    fun `missing issuer disables directory without HTTP or breaking unrelated startup`() {
+        val directory = KeycloakDirectoryClient(properties, "", builder.build())
+        assertUnavailable { directory.token() }
+        server.verify()
+    }
+
+    @Test
+    fun `absent and blank emails and human service-like usernames are preserved`() {
+        token()
+        batch(0, listOf(
+            mapOf("username" to "service-account-human", "enabled" to true),
+            mapOf("username" to "ordinary", "email" to "", "enabled" to true, "serviceAccountClientId" to null),
+        ))
+        val page = service.page(0)
+        assertThat(page.content.map { it.username }).containsExactly("service-account-human", "ordinary")
+        assertThat(page.content.map { it.email }).containsOnlyNulls()
+        server.verify()
+    }
+
+    @Test
+    fun `debug HTTP logging does not print client secret or directory token`(output: CapturedOutput) {
+        val logger = LoggerFactory.getLogger("org.springframework.web.client.DefaultRestClient") as Logger
+        val previous = logger.level
+        try {
+            logger.level = Level.DEBUG
+            token()
+            batch(0, emptyList())
+            service.page(0)
+            assertThat(output.all).doesNotContain("synthetic-test-secret", "synthetic-directory-token")
+            server.verify()
+        } finally {
+            logger.level = previous
+        }
+    }
+
+    @Test
+    fun `reserved characters in client credentials are form encoded`() {
+        properties.clientId = "directory+client"
+        properties.clientSecret = "test&pass ="
+        server.expect(anything())
+            .andExpect(content().string("grant_type=client_credentials&client_id=directory%2Bclient&client_secret=test%26pass+%3D"))
+            .andRespond(withSuccess("{\"access_token\":\"test\"}", MediaType.APPLICATION_JSON))
+        assertThat(client.token()).isEqualTo("test")
         server.verify()
     }
 
