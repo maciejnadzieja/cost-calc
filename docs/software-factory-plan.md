@@ -57,7 +57,7 @@ Maintain shared repository guidance in the root AGENTS.md and scoped work-tracki
 ## 4. Standard delivery loop
 
 1. **Specify:** coordinator drafts a task with a user outcome, scope, acceptance criteria, and expected checks. Ask the owner only about decisions that materially change scope or behavior.
-2. **Prepare:** inspect relevant code and establish the baseline. Use a task branch named `codex/<issue-number>-<short-description>`. For authorized parallel implementation, use separate worktrees or checkouts and one task per branch.
+2. **Prepare:** inspect relevant code and establish the baseline. Use a task branch named `codex/<issue-number>-<short-description>`. Use [persist-implementation-plan](../.agents/skills/persist-implementation-plan/SKILL.md) to persist the implementation plan in the GitHub issue and verify it by reading it back before application code changes. For authorized parallel implementation, use separate worktrees or checkouts and one task per branch.
 3. **Implement:** make a bounded change and test the behavior that can regress. Record any discovered work outside scope as follow-up tasks.
 4. **Verify:** run appropriate automated checks and inspect the user flow when UI changes are involved. Record command results and any environment limitations.
 5. **Review:** a separate session reviews the actual diff against the task. For calculations and data access, require concrete edge cases and negative cases.

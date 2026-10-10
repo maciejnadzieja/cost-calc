@@ -52,11 +52,12 @@ Format every commit subject as `#<task-id> | <description of changes>`. Use the 
 
 1. Select a Ready task in owner-approved priority order. Confirm dependencies are satisfied.
 2. Set Project Status to In progress, record who is working, and add a dated issue comment.
-3. Implement within scope. Link new discoveries as follow-ups rather than silently expanding scope.
-4. Record changed files and exact verification results, including failures and limitations.
-5. Set In review when ready for review or owner acceptance. Request a separate review agent only when delegation is authorized; otherwise record the review method and its limitations.
-6. Address findings. Return to In progress for repairs and repeat affected checks.
-7. Close the issue as completed and set Project Status to Done only when acceptance criteria are satisfied, verification is recorded, and the agreed review/acceptance requirement is met. Verify both issue state and Project status. Never infer owner acceptance.
+3. Before changing application code, use [persist-implementation-plan](../../.agents/skills/persist-implementation-plan/SKILL.md) to inspect the baseline and save a concrete plan in the issue's `Implementation plan` section. Read it back to verify persistence. Include scope, implementation steps, acceptance checks, dependencies, and commit boundaries. On resumption, read the existing plan; update and verify it before materially changing the approach. If persistence fails or a blocking decision remains, resolve that before implementation. A saved plan does not require another approval when implementation is already authorized.
+4. Implement within scope and maintain plan progress in the issue. Link new discoveries as follow-ups rather than silently expanding scope.
+5. Record changed files and exact verification results, including failures and limitations.
+6. Set In review when ready for review or owner acceptance. Request a separate review agent only when delegation is authorized; otherwise record the review method and its limitations.
+7. Address findings. Return to In progress for repairs and repeat affected checks.
+8. Close the issue as completed and set Project Status to Done only when acceptance criteria are satisfied, verification is recorded, and the agreed review/acceptance requirement is met. Verify both issue state and Project status. Never infer owner acceptance.
 
 Record evidence in GitHub issues, including task-branch commit IDs when available and identifying local changes or commits that are not yet published. Add remote commit or PR links only when they exist. Commits on task branches are permitted; commits to `main` are forbidden. Pushing and merging require separate authorization. Do not restart the existing backend or frontend as part of routine task handling.
 

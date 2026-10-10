@@ -99,6 +99,8 @@ Use the Project's existing Status options: Backlog, Ready, In progress, In revie
 
 ## Coding conventions
 
+Before starting implementation, use [persist-implementation-plan](.agents/skills/persist-implementation-plan/SKILL.md) to save a concrete implementation plan in the task's GitHub issue and verify it by reading it back. Resume from the persisted plan and update it before materially changing the approach. Do not begin application code changes until the plan is persisted and blocking decisions are resolved. This does not add a separate approval gate when implementation is already authorized.
+
 *   **Coding Style:** The codebase follows standard Kotlin and Vue.js coding conventions.
 *   **Testing:** The project uses spring-boot-starter-test, JUnit, mockito and mockito-kotlin for backend testing, and Vitest for frontend testing. Testcontainers is used for testing with a real MongoDB instance.
 *   **Branching:** Use one branch per GitHub task, named `codex/<issue-number>-<short-description>` (lowercase words separated by hyphens), for example `codex/4-admin-user-list`. Before implementation, create or switch to the task branch; follow [the branching workflow](docs/work/workflow.md#task-branches).
