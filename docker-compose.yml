@@ -29,6 +29,9 @@ services:
       - SPRING_DATA_MONGODB_PASSWORD=cost_calc_password
       - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://host.docker.internal:9090/realms/cost-calc-realm
       - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI=http://host.docker.internal:9090/realms/cost-calc-realm/protocol/openid-connect/certs
+      - KEYCLOAK_DIRECTORY_CLIENT_ID=${KEYCLOAK_DIRECTORY_CLIENT_ID:-cost-calc-directory}
+      - KEYCLOAK_DIRECTORY_CLIENT_SECRET=${KEYCLOAK_DIRECTORY_CLIENT_SECRET:-}
+      - KEYCLOAK_DIRECTORY_SERVER_URL=${KEYCLOAK_DIRECTORY_SERVER_URL:-http://keycloak:8080}
       - APP_CORS_ALLOWED_ORIGINS=http://localhost:5173
       - APP_CORS_ALLOWED_METHODS=*
       - APP_CORS_ALLOWED_HEADERS=*

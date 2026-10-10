@@ -84,6 +84,7 @@ The frontend development server will start at `http://localhost:5173`.
 -   **Backend**: Main configuration is located in `src/main/resources/application.properties`.
 -   **Database**: MongoDB initialization scripts are in `docker/mongodb/init-mongo.js`.
 -   **Environment**: You can customize environment variables in `docker-compose.yml`.
+-   **Admin user directory**: See [Keycloak roles and backend directory credentials](docs/admin-user-directory.md) before using the admin-only user list.
 
 ## 🧪 Testing
 
