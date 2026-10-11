@@ -82,6 +82,8 @@ These calculations use the tester's fixed Keycloak ID and appear after signing i
 
 Initialization runs only for a new MongoDB data directory. Rebuilding images or recreating containers with existing data does not add or restore fixtures, overwrite edits, or duplicate calculations. An existing installation keeps its current data; there is no migration or manual seeding command for these samples.
 
+Fresh local installations also include the ordinary Polish tester `testowy@cost-calc.eu` (same local password as the English tester), with fixed UUID `00000000-0000-0000-0000-000000000001`. Its separate fixtures are Polish counterparts of the English tester's 20 materials, 20 services and three calculations, using PLN with the same nominal totals (175.00, 185.00 and 509.50) and a Polish print footer. Select Polish manually using the existing language switch. The account and data are imported only into fresh Keycloak/MongoDB stores; existing stores are unchanged.
+
 For an existing installation using `mongodb_data/`, stop MongoDB before copying that directory's contents into an empty `data/mongodb/db/`; retain the original as a backup. Do not copy live database files or overwrite an already populated destination. The new path otherwise starts an empty database. Existing Keycloak data inside an old container must likewise be preserved before replacing that container; see the migration note in the guide. These paths contain local application data and credentials, so keep them out of source control.
 
 ### Running Locally

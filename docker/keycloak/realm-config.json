@@ -21,6 +21,22 @@
       "realmRoles": ["USER"]
     },
     {
+      "id": "00000000-0000-0000-0000-000000000001",
+      "username": "testowy@cost-calc.eu",
+      "email": "testowy@cost-calc.eu",
+      "firstName": "Testowy",
+      "lastName": "Użytkownik",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "tester-password"
+        }
+      ],
+      "realmRoles": ["USER"]
+    },
+    {
       "username": "admin@cost-calc.eu",
       "email": "admin@cost-calc.eu",
       "firstName": "Admin",

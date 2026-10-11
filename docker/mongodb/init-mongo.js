@@ -77,7 +77,7 @@ db.user_settings.insertOne({
 
 // Development samples: the Docker entrypoint runs this script only for a fresh database.
 // Items are embedded snapshots, matching the application's calculation model.
-db.calculations.insertMany([
+const calculations = [
     {
         _id: UUID("60000000-0000-0000-0000-000000000001"),
         name: "Weekly lawn care",
@@ -144,4 +144,106 @@ db.calculations.insertMany([
         createdAt: new Date(),
         updatedAt: new Date()
     }
-]);
+];
+db.calculations.insertMany(calculations);
+
+// Polish counterparts belong to a separate fixed-ID tester in the local realm.
+const polishUserId = UUID("00000000-0000-0000-0000-000000000001");
+const polishNames = {
+    "Lawn Mowing": "Koszenie trawnika",
+    "Fertilizer": "Nawóz",
+    "Weed Killer": "Środek chwastobójczy",
+    "Grass Seed": "Nasiona trawy",
+    "Topsoil": "Ziemia ogrodowa",
+    "Mulch": "Kora do ściółkowania",
+    "Rose Bush": "Krzew róży",
+    "Oak Tree": "Dąb",
+    "Garden Hose": "Wąż ogrodowy",
+    "Shovel": "Łopata",
+    "Work Gloves": "Rękawice robocze",
+    "Pesticide": "Środek ochrony roślin",
+    "Hedge Trimmer": "Nożyce do żywopłotu",
+    "Flower Pot": "Doniczka",
+    "Gardening Soil": "Podłoże ogrodnicze",
+    "Watering Can": "Konewka",
+    "Pruning Shears": "Sekator",
+    "Wheelbarrow": "Taczka",
+    "Rake": "Grabie",
+    "Lawn Edger": "Podkaszarka",
+    "Garden Design": "Projektowanie ogrodu",
+    "Tree Trimming": "Przycinanie drzew",
+    "Hedge Trimming": "Przycinanie żywopłotu",
+    "Weed Control": "Usuwanie chwastów",
+    "Fertilization": "Nawożenie",
+    "Pest Control": "Zwalczanie szkodników",
+    "Garden Cleanup": "Porządkowanie ogrodu",
+    "Planting": "Sadzenie roślin",
+    "Irrigation System Installation": "Montaż systemu nawadniania",
+    "Leaf Removal": "Grabienie liści",
+    "Snow Removal": "Odśnieżanie",
+    "Hardscaping": "Budowa ścieżek i tarasów",
+    "Landscape Lighting": "Oświetlenie ogrodu",
+    "Soil Testing": "Badanie gleby",
+    "Aeration": "Aeracja trawnika",
+    "Overseeding": "Dosiewanie trawy",
+    "Mulching": "Ściółkowanie",
+    "Gutter Cleaning": "Czyszczenie rynien",
+    "Pressure Washing": "Mycie ciśnieniowe",
+    "Lawn Care": "Pielęgnacja trawnika",
+    "Gardening": "Ogrodnictwo",
+    "Plants": "Rośliny",
+    "Tools": "Narzędzia",
+    "Weekly lawn care": "Cotygodniowa pielęgnacja trawnika",
+    "Routine maintenance": "Regularna pielęgnacja",
+    "Spring planting supplies": "Materiały do wiosennych nasadzeń",
+    "Planting supplies": "Materiały do sadzenia",
+    "Garden renovation": "Modernizacja ogrodu",
+    "Preparation": "Przygotowanie",
+    "Planting and finishing": "Sadzenie i wykończenie"
+};
+const polishDescriptions = {
+    "": "",
+    "Weekly lawn mowing service": "Cotygodniowe koszenie trawnika",
+    "Custom garden design and planning": "Indywidualny projekt i planowanie ogrodu",
+    "Patios, walkways, retaining walls": "Tarasy, ścieżki i murki oporowe",
+    "Services-only sample for a small garden.": "Przykładowa wycena usług dla małego ogrodu.",
+    "Materials-only sample for replenishing garden beds.": "Przykładowa wycena materiałów do uzupełnienia rabat.",
+    "Two-stage sample combining labour and materials.": "Dwuetapowa wycena obejmująca robociznę i materiały."
+};
+
+db.materials.insertMany(materials.map(material => ({
+    ...material,
+    _id: UUID(),
+    userId: polishUserId,
+    name: polishNames[material.name],
+    description: polishDescriptions[material.description],
+    category: polishNames[material.category]
+})));
+db.services.insertMany(services.map(service => ({
+    ...service,
+    _id: UUID(),
+    userId: polishUserId,
+    name: polishNames[service.name],
+    description: polishDescriptions[service.description]
+})));
+db.user_settings.insertOne({
+    _id: polishUserId,
+    currency: "PLN",
+    footerText: "Przykładowa wycena prac ogrodniczych.",
+    createdAt: new Date(),
+    updatedAt: new Date()
+});
+db.calculations.insertMany(calculations.map((calculation, index) => ({
+    ...calculation,
+    _id: UUID(`61000000-0000-0000-0000-${String(index + 1).padStart(12, '0')}`),
+    userId: polishUserId,
+    currency: "PLN",
+    name: polishNames[calculation.name],
+    description: polishDescriptions[calculation.description],
+    stages: calculation.stages.map(stage => ({
+        ...stage,
+        name: polishNames[stage.name],
+        services: stage.services.map(item => ({ ...item, name: polishNames[item.name] })),
+        materials: stage.materials.map(item => ({ ...item, name: polishNames[item.name] }))
+    }))
+})));
