@@ -57,6 +57,8 @@ docker-compose up --build
 -   **Frontend**: [http://localhost:5173](http://localhost:5173)
 -   **Backend API**: [http://localhost:8888](http://localhost:8888)
 
+For browser checks against the running local stack, see [local regression tests](docs/local-regression-tests.md). The default `npm run test:e2e` command (from `frontend/`) is read-only; pagination fixtures require a separate opt-in command.
+
 Local container state is stored in the ignored project `data/` directory:
 
 | Service | Host storage | Contents |
