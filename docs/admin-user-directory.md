@@ -13,6 +13,8 @@ An operator must configure the existing realm. This feature does not provision o
 
 The backend authenticates the application caller first, then obtains a client-credentials token. Human app administrators do not authenticate to the Keycloak Admin REST API directly.
 
+The local realm import assigns `USER` and `ADMIN` to the bundled tester account. This is a development fixture, not a default administrator role for other accounts. The import includes only the public application client; the dedicated directory client and its secret must be configured separately.
+
 See the [Keycloak Admin REST API](https://www.keycloak.org/docs-api/latest/rest-api/index.html) and [server administration guide](https://www.keycloak.org/docs/latest/server_admin/) for client service accounts and effective administrative permissions. Match those references to the deployed version (Compose currently uses 26.4.0).
 
 ## Backend configuration
@@ -26,6 +28,16 @@ See the [Keycloak Admin REST API](https://www.keycloak.org/docs-api/latest/rest-
 The realm is always derived from `spring.security.oauth2.resourceserver.jwt.issuer-uri` (`SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI`), which must end in `/realms/<realm>`. The optional server URL changes connectivity, not the realm. Without an override, an issuer such as `https://login.example/auth/realms/company` uses `https://login.example/auth` for directory calls. For the Compose network, the override can be `http://keycloak:8080` while issuer validation retains the externally issued URL.
 
 The Compose API service forwards these three environment variables. Supply the secret externally; never use `VITE_*` variables for it, commit it, or include it in issue evidence. Use trusted HTTPS endpoints outside local development. Missing credentials, invalid directory responses, timeouts and upstream failures produce HTTP 503 with a generic message; ordinary application routes do not need directory credentials.
+
+## Local setup and troubleshooting
+
+If Users appears but shows “Users could not be loaded”, assigning the human `ADMIN` role alone is insufficient. Check that the API has `KEYCLOAK_DIRECTORY_CLIENT_SECRET` configured and that the dedicated client exists with effective read permissions.
+
+In the Keycloak Admin Console, select `cost-calc-realm` and create the OpenID Connect client `cost-calc-directory`. Enable **Client authentication** and **Service accounts roles**, and disable Standard flow, Direct access grants, and other interactive flows. In **Service accounts roles**, assign the `realm-management` client role `view-users`. In **Credentials**, obtain the client secret and supply it as `KEYCLOAK_DIRECTORY_CLIENT_SECRET` in the backend's Compose environment (for example, the ignored local `.env` file). Keep the public `cost-calc-client` unchanged.
+
+An API container already running with an empty secret does not pick up a later environment change. Applying that change requires recreating the API container through the operator's normal Compose workflow. Agent verification must not restart the running application automatically. After the configuration is applied, retry Users. A continuing failure requires checking client credentials, effective `view-users` access, and backend connectivity to Keycloak; the browser deliberately receives a generic error.
+
+Updating `realm-config.json` also does not change an existing realm. Keep the tester's live `ADMIN` assignment made through the console; the import change ensures future fresh development realms have it.
 
 ## API contract and limits
 
