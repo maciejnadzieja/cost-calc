@@ -27,7 +27,22 @@ verified it by reading back. Resume from that plan; update it before material
 approach changes. A Ready/In progress status is not implementation authorization.
 Carry forward existing authorization without adding routine confirmation gates.
 
-Delegate only when the owner explicitly authorizes agent work for this task.
+Root AGENTS.md grants standing read-only reviewer delegation for coordinator-managed
+work unless the owner explicitly opts out for the selected task. For review or
+assessment assignments, dispatch substantive inspection to a reviewer at work
+start. For implementation assignments, obtain independent reviewer assessment
+of the completed changes before presenting them for owner acceptance. Scope
+approval or start work activates these steps without renewed reviewer permission.
+Use review-task in each handoff. Supply issue/criteria, requested stage, exact
+repository base/head or local diff and exact issue/document version reviewed.
+Wait for results, record findings, resolve them, and request focused rereview
+of material corrections. A changed review target requires version reconciliation;
+do not claim a stale review covers later edits. Coordinator inspection cannot
+replace this reviewer. If delegation is unavailable, report the limitation and
+leave review pending. Record explicit owner opt-outs and their review limits;
+never silently waive review or invent a delegation exclusion.
+
+Delegate developer work only with explicit owner authorization for the task.
 Use developer for implementation and reviewer for independent requirements or
 implementation review. Provide issue/plan links, authorized scope, acceptance
 criteria, baseline, branch, file ownership, checks, prerequisites and expected
@@ -61,6 +76,10 @@ evidence and agreed review/owner acceptance is recorded. Explicit owner requests
 to close count as acceptance; do not ask again. If a material criterion remains
 unsupported, report it instead of claiming completion. Verify both issue state
 and Project status. Closure and local commits do not imply merge, push or release.
+
+Before owner-acceptance handoff, verify reviewer dispatched, result received,
+findings resolved or explicitly outstanding, and final reviewed version recorded,
+or record the owner's explicit opt-out. Unavailable review remains pending.
 
 At handoff, report the outcome, issue/plan, branch/commits, checks and practical
 limits, review status, and next owner action. Leave a durable issue summary so

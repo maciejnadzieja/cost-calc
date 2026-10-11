@@ -99,7 +99,7 @@ Use the Project's existing Status options: Backlog, Ready, In progress, In revie
 
 ## Coding conventions
 
-For software factory coordination, follow [the coordinator role guide](docs/work/coordinator.md) and its [agent instructions](.codex/agents/coordinator.toml). Use the role when assigned; this reference does not authorize delegation or change every agent's role. The owner retains product priorities and final acceptance.
+For software factory coordination, follow [the coordinator role guide](docs/work/coordinator.md) and its [agent instructions](.codex/agents/coordinator.toml). Use the role when assigned; this reference does not change every agent's role. The owner grants standing authorization for read-only reviewer subagents in coordinator-managed work, unless explicitly opting out for the selected task. Delegate substantive review/assessment inspection when work starts, and obtain independent review of implementation before presenting it for owner acceptance. Scope approval or "start work" activates these review steps without another routine permission request. Developer delegation, implementation, messaging other user-owned chats, pushing, merging, publishing and deployment retain their separate authorization requirements. The owner retains product priorities and final acceptance.
 
 Use [coordinate-delivery](.agents/skills/coordinate-delivery/SKILL.md) when asked to coordinate or resume GitHub delivery. It loads the role into the current conversation; explicit invocation is `$coordinate-delivery` with the selected issue and stage. The skill does not grant additional action authorization.
 
