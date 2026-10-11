@@ -13,7 +13,14 @@ Local Compose imports the required configuration for a fresh development realm. 
 
 The backend authenticates the application caller first, then obtains a client-credentials token. Human app administrators do not authenticate to the Keycloak Admin REST API directly.
 
-The local realm import assigns `USER` and `ADMIN` to the bundled tester account and creates a separate confidential directory client whose service account has only `view-users`. The directory client has interactive login flows disabled. The tester's administrator assignment is a development fixture, not a default role for other accounts.
+The local realm import creates two human development fixtures:
+
+| Account | Password | Application realm role |
+| --- | --- | --- |
+| `tester@cost-calc.eu` | `tester-password` | `USER` |
+| `admin@cost-calc.eu` | `admin-password` | `ADMIN` |
+
+It also creates a separate confidential directory client whose service account has only `view-users` and interactive login flows disabled. Administrator access is not a default role for other accounts.
 
 See the [Keycloak Admin REST API](https://www.keycloak.org/docs-api/latest/rest-api/index.html) and [server administration guide](https://www.keycloak.org/docs/latest/server_admin/) for client service accounts and effective administrative permissions. Match those references to the deployed version (Compose currently uses 26.4.0).
 
@@ -31,7 +38,7 @@ The Compose API service forwards these three environment variables. Local Compos
 
 ## Local setup and troubleshooting
 
-For a fresh local installation, `docker compose up --build` sets up the tester's roles, directory client, service-account read permission, and matching API credentials without console changes. The API waits until the imported realm's discovery endpoint responds successfully. Sign in with the bundled tester account to open Users.
+For a fresh local installation, `docker compose up --build` sets up both accounts, directory client, service-account read permission, and matching API credentials without console changes. The API waits until the imported realm's discovery endpoint responds successfully. Sign in with `admin@cost-calc.eu` to open Users; the tester must not have access.
 
 Compose binds Keycloak's development database directory `/opt/keycloak/data/h2` to project `data/keycloak`. Realm changes, additional accounts, and client secrets survive container recreation. Startup import skips an existing realm; use the manual procedure below to update it without replacing its data. Changing a secret override also requires updating the existing directory client's secret.
 
@@ -43,7 +50,7 @@ In the Keycloak Admin Console, select `cost-calc-realm` and create the OpenID Co
 
 An API container already running with an empty secret does not pick up a later environment change. Applying that change requires recreating the API container through the operator's normal Compose workflow. Agent verification must not restart the running application automatically. After the configuration is applied, retry Users. A continuing failure requires checking client credentials, effective `view-users` access, and backend connectivity to Keycloak; the browser deliberately receives a generic error.
 
-Updating `realm-config.json` also does not change an existing realm. Keep the tester's live `ADMIN` assignment made through the console; the import change ensures future fresh development realms have it.
+Updating `realm-config.json` does not change an existing persistent realm. To apply the two-account fixture there, remove `ADMIN` from the tester and create the separate administrator with realm role `ADMIN` through the console. Obtain new tokens after changing roles. The fixture file applies automatically to fresh realms.
 
 To verify the import independently on Windows, run `./docker/keycloak/test-local-realm.ps1`. It creates an isolated Keycloak 26.4.0 container with a random localhost port and a unique test directory under `data/`, and removes both afterward. It verifies directory authentication, human-only reads, tester roles, denial of user creation, and preservation of an added account after container recreation without changing the running stack. Its parameters allow checking a custom client ID and secret; use synthetic test values.
 

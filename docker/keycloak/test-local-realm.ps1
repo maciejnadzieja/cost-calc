@@ -64,8 +64,9 @@ try {
     $directoryHeaders = @{ Authorization = 'Bearer ' + $directoryToken.access_token }
     $users = Invoke-RestMethod "$testBase/admin/realms/cost-calc-realm/users?first=0&max=100&briefRepresentation=false" -Headers $directoryHeaders
     $users = @($users)
-    if ($users.Count -ne 1 -or $users[0].username -ne 'tester@cost-calc.eu') {
-        throw 'Directory read did not return exactly the imported human tester.'
+    if ($users.Count -ne 2 -or $users.username -notcontains 'tester@cost-calc.eu' -or
+        $users.username -notcontains 'admin@cost-calc.eu') {
+        throw 'Directory read did not return exactly the two imported human accounts.'
     }
 
     # A read-only client must not be able to create a user.
@@ -81,9 +82,15 @@ try {
     $adminToken = Invoke-RestMethod "$testBase/realms/master/protocol/openid-connect/token" -Method Post `
         -Body @{ grant_type = 'password'; client_id = 'admin-cli'; username = 'admin'; password = 'admin' }
     $adminHeaders = @{ Authorization = 'Bearer ' + $adminToken.access_token }
-    $roles = @(Invoke-RestMethod "$testBase/admin/realms/cost-calc-realm/users/$($users[0].id)/role-mappings/realm" -Headers $adminHeaders)
-    if ($roles.name -notcontains 'ADMIN' -or $roles.name -notcontains 'USER') {
-        throw 'Tester is missing ADMIN or USER.'
+    foreach ($fixture in $users) {
+        $roles = Invoke-RestMethod "$testBase/admin/realms/cost-calc-realm/users/$($fixture.id)/role-mappings/realm" -Headers $adminHeaders
+        if ($fixture.username -eq 'tester@cost-calc.eu') {
+            if ($roles.name -notcontains 'USER' -or $roles.name -contains 'ADMIN') {
+                throw 'Tester must have USER without ADMIN.'
+            }
+        } elseif ($roles.name -notcontains 'ADMIN' -or $roles.name -contains 'USER') {
+            throw 'Administrator must have ADMIN without USER.'
+        }
     }
     Write-Output 'PASS: realm import, Compose readiness and matching credentials, directory token, human user read, tester roles, and write denial.'
 
@@ -102,8 +109,8 @@ try {
     $directoryHeaders = @{ Authorization = 'Bearer ' + $directoryToken.access_token }
     $users = Invoke-RestMethod "$testBase/admin/realms/cost-calc-realm/users" -Headers $directoryHeaders
     $users = @($users)
-    if ($users.Count -ne 2 -or $users.username -notcontains 'persisted-local-test' -or
-        $users.username -notcontains 'tester@cost-calc.eu') {
+    if ($users.Count -ne 3 -or $users.username -notcontains 'persisted-local-test' -or
+        $users.username -notcontains 'tester@cost-calc.eu' -or $users.username -notcontains 'admin@cost-calc.eu') {
         throw 'Realm state was lost on container recreation.'
     }
     Write-Output 'PASS: added human account and directory credentials survive container recreation.'

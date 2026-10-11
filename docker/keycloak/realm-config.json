@@ -18,7 +18,22 @@
           "value": "tester-password"
         }
       ],
-      "realmRoles": ["USER", "ADMIN"]
+      "realmRoles": ["USER"]
+    },
+    {
+      "username": "admin@cost-calc.eu",
+      "email": "admin@cost-calc.eu",
+      "firstName": "Admin",
+      "lastName": "Admin",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin-password"
+        }
+      ],
+      "realmRoles": ["ADMIN"]
     },
     {
       "username": "service-account-${KEYCLOAK_DIRECTORY_CLIENT_ID}",
