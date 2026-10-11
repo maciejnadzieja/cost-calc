@@ -1,0 +1,9 @@
+.git/
+.codex/
+.agents/
+data/
+mongodb_data/
+.env
+.env.*
+target/
+frontend/node_modules/

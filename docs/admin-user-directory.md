@@ -33,7 +33,9 @@ The Compose API service forwards these three environment variables. Local Compos
 
 For a fresh local installation, `docker compose up --build` sets up the tester's roles, directory client, service-account read permission, and matching API credentials without console changes. The API waits until the imported realm's discovery endpoint responds successfully. Sign in with the bundled tester account to open Users.
 
-The current Compose configuration stores Keycloak's development database inside its container, without a persistent data volume. Recreating that container starts from the import and loses console changes and extra accounts in the old container. Preserve any local data you need before recreating it. Merely restarting an existing container does not reimport an existing realm. If you add persistent storage, import also skips an existing realm; use the manual procedure below to update it without replacing its data. Changing a secret override in that case also requires updating the existing directory client's secret.
+Compose binds Keycloak's development database directory `/opt/keycloak/data/h2` to project `data/keycloak`. Realm changes, additional accounts, and client secrets survive container recreation. Startup import skips an existing realm; use the manual procedure below to update it without replacing its data. Changing a secret override also requires updating the existing directory client's secret.
+
+When migrating from the earlier container-local setup, preserve its database before replacing that container. Stop Keycloak so its database is closed, then copy `/opt/keycloak/data/h2/.` from the stopped container into an empty `data/keycloak/` directory (Docker's `cp` supports stopped containers). Keep a backup and do not merge or overwrite existing database files. Starting with empty `data/keycloak/` instead imports the development fixture and does not retain the previous accounts or console changes. The local H2 database remains intended for development.
 
 If Users appears but shows “Users could not be loaded”, assigning the human `ADMIN` role alone is insufficient. Check that the API has `KEYCLOAK_DIRECTORY_CLIENT_SECRET` configured and that the dedicated client exists with effective read permissions.
 
@@ -43,7 +45,7 @@ An API container already running with an empty secret does not pick up a later e
 
 Updating `realm-config.json` also does not change an existing realm. Keep the tester's live `ADMIN` assignment made through the console; the import change ensures future fresh development realms have it.
 
-To verify the import independently on Windows, run `./docker/keycloak/test-local-realm.ps1`. It creates an isolated Keycloak 26.4.0 container with a random localhost port and removes it afterward. It verifies directory authentication, human-only reads, tester roles, and denial of user creation without changing the running stack. Its parameters allow checking a custom client ID and secret; use synthetic test values.
+To verify the import independently on Windows, run `./docker/keycloak/test-local-realm.ps1`. It creates an isolated Keycloak 26.4.0 container with a random localhost port and a unique test directory under `data/`, and removes both afterward. It verifies directory authentication, human-only reads, tester roles, denial of user creation, and preservation of an added account after container recreation without changing the running stack. Its parameters allow checking a custom client ID and secret; use synthetic test values.
 
 ## API contract and limits
 

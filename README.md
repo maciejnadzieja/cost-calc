@@ -57,6 +57,19 @@ docker-compose up --build
 -   **Frontend**: [http://localhost:5173](http://localhost:5173)
 -   **Backend API**: [http://localhost:8888](http://localhost:8888)
 
+Local container state is stored in the ignored project `data/` directory:
+
+| Service | Host storage | Contents |
+| --- | --- | --- |
+| MongoDB | `data/mongodb/db`, `data/mongodb/configdb` | Database files |
+| Keycloak | `data/keycloak` | Local development realm database |
+| API | `data/api/logs` | Rolling application logs |
+| Frontend | `data/frontend/vite`, `data/frontend/npm` | Vite and npm caches |
+
+Docker creates the directories on first use. Database state survives container recreation and `docker compose down`. Application binaries stay in images; frontend sources remain mounted from the repository. Runtime data is excluded from Git and the API image build context. For local administrator and directory-client configuration, see [the admin directory guide](docs/admin-user-directory.md).
+
+For an existing installation using `mongodb_data/`, stop MongoDB before copying that directory's contents into an empty `data/mongodb/db/`; retain the original as a backup. Do not copy live database files or overwrite an already populated destination. The new path otherwise starts an empty database. Existing Keycloak data inside an old container must likewise be preserved before replacing that container; see the migration note in the guide. These paths contain local application data and credentials, so keep them out of source control.
+
 ### Running Locally
 
 If you prefer to run services individually for development:

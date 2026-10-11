@@ -41,7 +41,7 @@ build/
 ### Environment Variables ###
 .env
 
-### MongoDB data ###
+### Local container state (databases, logs, caches) ###
 data/
 mongodb_data/
 
