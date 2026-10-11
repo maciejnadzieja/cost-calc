@@ -1,0 +1,4 @@
+interface:
+  display_name: "Coordinate Delivery"
+  short_description: "Coordinate Cost Calc requests and GitHub delivery"
+  default_prompt: "Use $coordinate-delivery to coordinate the selected Cost Calc issue at the stage I specify."

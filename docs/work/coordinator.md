@@ -39,7 +39,17 @@ Follow root AGENTS.md for frequent coherent task-branch commits, commit subjects
 
 ## Using the role
 
-To keep coordination in the main conversation, ask:
+Start a new chat in this repository and invoke the [coordinate-delivery skill](../../.agents/skills/coordinate-delivery/SKILL.md):
+
+> $coordinate-delivery Refine issue #N. Do not start implementation yet.
+
+For authorized implementation with agents:
+
+> $coordinate-delivery Coordinate implementation of issue #N. You may delegate to developer and independent reviewer. Leave final acceptance to me; do not push or merge.
+
+The skill loads the coordinator instructions into the current conversation. It supports implicit discovery when the request matches its description; explicit invocation makes the intended role clear. Invocation alone does not authorize implementation or delegation. Ensure the skill and role files are present in the checkout used by the new chat. See [official skill documentation](https://learn.chatgpt.com/docs/build-skills).
+
+Without skill invocation, ask:
 
 > Act as the software factory coordinator. Read `.codex/agents/coordinator.toml` and `docs/work/coordinator.md`, then refine issue #N. Do not start implementation yet.
 

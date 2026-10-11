@@ -6,6 +6,8 @@ Start with **Cost Calc delivery** through the [CLI connection instructions](work
 
 The [coordinator role](coordinator.md) defines request refinement, developer/reviewer handoffs, verification records and owner acceptance. Project-scoped role configurations live under `.codex/agents/`.
 
+Use the [coordinate-delivery skill](../../.agents/skills/coordinate-delivery/SKILL.md) to activate coordination in a new repository chat, for example `$coordinate-delivery Refine issue #N`.
+
 Repository Markdown holds workflow rules, agent guidance, and the software factory plan. Work records, decision history, the board, and roadmap live in GitHub; do not create parallel Markdown trackers.
 
 | Work | GitHub representation | Purpose |
