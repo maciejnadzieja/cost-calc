@@ -52,8 +52,6 @@ An API container already running with an empty secret does not pick up a later e
 
 Updating `realm-config.json` does not change an existing persistent realm. To apply the two-account fixture there, remove `ADMIN` from the tester and create the separate administrator with realm role `ADMIN` through the console. Obtain new tokens after changing roles. The fixture file applies automatically to fresh realms.
 
-To verify the import independently on Windows, run `./docker/keycloak/test-local-realm.ps1`. It creates an isolated Keycloak 26.4.0 container with a random localhost port and a unique test directory under `data/`, and removes both afterward. It verifies directory authentication, human-only reads, tester roles, denial of user creation, and preservation of an added account after container recreation without changing the running stack. Its parameters allow checking a custom client ID and secret; use synthetic test values.
-
 ## API contract and limits
 
 `GET /api/admin/users?page=0` returns:
