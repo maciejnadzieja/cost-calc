@@ -29,7 +29,7 @@ Each test gets a fresh browser context. Tokens are captured from actual applicat
 
 ## Pagination suite (creates temporary accounts)
 
-Run this only on a local realm containing exactly the two human fixtures above. The explicit opt-in prevents account provisioning during the default smoke command:
+Run this only on a local realm containing exactly the two human fixtures above plus the Polish tester `testowy@cost-calc.eu` imported on fresh installations (see the [fixture guide](../README.md#running-with-docker)). The explicit opt-in prevents account provisioning during the default smoke command:
 
 ```powershell
 $env:E2E_ALLOW_FIXTURES = '1'
@@ -37,7 +37,7 @@ try { npm run test:e2e:pagination }
 finally { Remove-Item Env:E2E_ALLOW_FIXTURES -ErrorAction SilentlyContinue }
 ```
 
-This test authenticates the local master administrator, verifies the baseline, and creates 23 uniquely named synthetic humans to reach 25. It verifies API and browser pages of 20 and 5, Next/Previous, complete unique coverage, no service accounts, and inclusion of a disabled human with missing email. It deletes only IDs created by that run after checking their usernames, then confirms cleanup. Existing accounts, passwords, roles, and databases are not modified. If the realm has additional humans, the test fails before creating fixtures.
+This test authenticates the local master administrator, verifies the three-human baseline, and creates 22 uniquely named synthetic humans to reach 25. It verifies API and browser pages of 20 and 5, Next/Previous, complete unique coverage, no service accounts, and inclusion of a disabled human with missing email. It deletes only IDs created by that run after checking their usernames, then confirms cleanup. Existing accounts, passwords, roles, and databases are not modified. If the realm has additional or missing humans, the test fails before creating fixtures.
 
 Cleanup runs on normal success and test failure. Force-killing the process or losing Keycloak connectivity can prevent cleanup; the test-owned usernames have a `regression-<run UUID>-` prefix. Review those accounts in the console before removing leftovers; the tests never delete unrelated accounts to make the baseline fit. Run one pagination process at a time.
 
@@ -58,4 +58,4 @@ The suite runs serially without automatic retries. HTML reports are in `frontend
 
 Run `npm run test:e2e:types` to type-check the regression code separately. The normal `npm run test:unit -- --run` and `npm run build` remain unchanged; Vitest excludes `e2e/`.
 
-A dedicated Compose test stack with separate ports and `data/regression/` is the next step when adding tests that change application data or when the everyday realm contains more than these two fixtures. The initial suite uses the existing stack and does not create that separate environment.
+A dedicated Compose test stack with separate ports and `data/regression/` is the next step when adding tests that change application data or when the everyday realm contains more than these three fixtures. The initial suite uses the existing stack and does not create that separate environment.

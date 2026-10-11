@@ -46,10 +46,10 @@ export async function seedPagination(request: APIRequestContext) {
     expect(baseline.status()).toBe(200)
     const existing = await baseline.json()
     expect(existing.map((user: { username: string }) => user.username).sort(),
-      'Pagination requires the unmodified two-human fixture realm; no existing accounts are deleted').toEqual([
-      'admin@cost-calc.eu', 'tester@cost-calc.eu',
+      'Pagination requires the unmodified three-human fixture realm; no existing accounts are deleted').toEqual([
+      'admin@cost-calc.eu', 'tester@cost-calc.eu', 'testowy@cost-calc.eu',
     ])
-    for (let index = 0; index < 23; index++) {
+    for (let index = 0; index < 22; index++) {
       const username = `${prefix}${String(index).padStart(2, '0')}`
       const result = await request.post(`${adminBase}/users`, {
         headers: authorization,
