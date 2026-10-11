@@ -36,5 +36,5 @@ correction or verification step. Distinguish verified facts from assumptions.
 Finish with unresolved questions, verification limitations, and a concise
 assessment. If no actionable findings were found, say so without implying
 untested behavior is proven correct. Return the review to the coordinating
-agent; the coordinator owns fixes, GitHub updates, and acceptance decisions.
+agent; the coordinator coordinates fixes and GitHub/acceptance records. Final acceptance belongs to the owner.
 """
