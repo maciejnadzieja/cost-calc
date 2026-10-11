@@ -19,7 +19,9 @@ Before implementation, establish `codex/<issue-number>-<short-description>` and 
 
 ## Developer and reviewer handoffs
 
-Delegate when the owner explicitly authorizes agent work for the selected task. Existing authorization persists; do not request it again. Creating this role file does not authorize automatic delegation or messaging other user-owned chats.
+Root AGENTS.md records the owner's standing authorization for read-only reviewer subagents in coordinator-managed work. Unless the owner explicitly opts out for the selected task, dispatch substantive inspection to a reviewer when a review/assessment assignment starts. For implementation assignments, obtain independent review of completed changes before presenting them for owner acceptance. Scope approval or "start work" activates these steps without another routine permission request. Developer delegation still requires explicit task authorization; messaging other user-owned chats remains separately authorized.
+
+Include review-task, the issue and criteria, requested stage, exact repository base/head or local diff, and an exact issue/document version in the reviewer handoff. For a changing issue, identify the reviewed snapshot by timestamp and section/content; tell the reviewer when the target changes. Wait for the result, record findings, resolve them, and request focused rereview after material corrections. Reconcile later edits with the reviewed version before claiming coverage. If delegation is unavailable, report the limitation and leave review pending. Record explicit owner opt-outs and their limits; do not silently waive review or invent a delegation exclusion.
 
 Give a developer the issue/plan links, approved scope, acceptance criteria, branch/baseline, file ownership, relevant contracts, checks, prerequisites and expected report. State that other agents may share the repository and their edits must be preserved. Use one developer at a time by default. Authorized parallel work needs isolated checkouts and clear contracts. Do not switch a shared checkout's branch or edit a developer's owned files while it is active.
 
@@ -35,6 +37,13 @@ Maintain dated decisions and verification evidence in the issue, preserving prio
 
 At handoff, report changed behavior, branch/commits, checks and limits, review status and next action. Leave enough issue context for a different coordinator to resume. Passing tests or an agent's completion message does not establish owner acceptance.
 
+Before presenting work for owner acceptance, verify and record:
+
+- Reviewer dispatched for the required stage, or an explicit owner opt-out recorded.
+- Reviewer result received; unavailable or unfinished review remains pending.
+- Findings resolved, or outstanding findings clearly identified for the owner.
+- Final reviewed version identified, with focused rereview of material corrections.
+
 Close an issue and mark Done when criteria have supporting evidence and agreed review/acceptance is recorded. An explicit owner request to close counts as acceptance; report any material unmet criterion instead of claiming success. Verify both issue state and Project status. Issue closure, local commits, merge, push and release are separate events; record only those actually performed or reported.
 
 Follow root AGENTS.md for frequent coherent task-branch commits, commit subjects and environment constraints. Never commit to `main`; pushing, merging, publishing and deploying need separate owner authorization. Do not start/restart or suggest rerunning the existing backend/frontend. Keep secrets and real user data out of records.
@@ -49,7 +58,17 @@ For authorized implementation with agents:
 
 > $coordinate-delivery Coordinate implementation of issue #N. You may delegate to developer and independent reviewer. Leave final acceptance to me; do not push or merge.
 
-The skill loads the coordinator instructions into the current conversation. It supports implicit discovery when the request matches its description; explicit invocation makes the intended role clear. Invocation alone does not authorize implementation or delegation. Ensure the skill and role files are present in the checkout used by the new chat. See [official skill documentation](https://learn.chatgpt.com/docs/build-skills).
+The skill loads the coordinator instructions and the reviewer workflow already authorized in root AGENTS.md. It supports implicit discovery when the request matches its description; explicit invocation makes the intended role clear. Invocation alone does not authorize implementation, developer delegation or release. Ensure the skill and role files are present in the checkout used by the new chat. See [official skill documentation](https://learn.chatgpt.com/docs/build-skills).
+
+Validate changes to this workflow against these fresh-session scenarios:
+
+| Owner request | Expected coordinator behavior |
+| --- | --- |
+| "Review the testing approach in #N" | Dispatch a reviewer at work start for substantive inspection; coordinate scope, records and synthesis; wait for findings. |
+| "I accept scope; start implementation of #N" | Follow the authorized implementation path; obtain independent review before owner acceptance without asking again for reviewer permission. Developer delegation retains its own authorization. |
+| "Review #N without subagents" | Honor and record the explicit opt-out; perform the requested direct assessment and disclose its independence limits. |
+
+If reviewer tools are unavailable, report pending review and preserve the existing scope rather than substituting coordinator inspection for required independent review.
 
 Without skill invocation, ask:
 
