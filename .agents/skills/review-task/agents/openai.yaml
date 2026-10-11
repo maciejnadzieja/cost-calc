@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Task"
+  short_description: "Review Cost Calc requirements or changes read-only"
+  default_prompt: "Use $review-task to review the assigned Cost Calc issue at the requested stage without modifying files."

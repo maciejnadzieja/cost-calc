@@ -1,0 +1,4 @@
+interface:
+  display_name: "Develop Task"
+  short_description: "Implement a Cost Calc task from its persisted plan"
+  default_prompt: "Use $develop-task to implement the assigned Cost Calc issue within its confirmed scope."

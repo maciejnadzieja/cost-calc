@@ -103,6 +103,8 @@ For software factory coordination, follow [the coordinator role guide](docs/work
 
 Use [coordinate-delivery](.agents/skills/coordinate-delivery/SKILL.md) when asked to coordinate or resume GitHub delivery. It loads the role into the current conversation; explicit invocation is `$coordinate-delivery` with the selected issue and stage. The skill does not grant additional action authorization.
 
+Use [develop-task](.agents/skills/develop-task/SKILL.md) for assigned implementation and [review-task](.agents/skills/review-task/SKILL.md) for requested read-only review. Keep reviews independent by using a separate reviewer session; do not label inspection of your own implementation as independent. Skill invocation does not spawn agents or change runtime permissions.
+
 Before starting implementation, use [persist-implementation-plan](.agents/skills/persist-implementation-plan/SKILL.md) to save a concrete implementation plan in the task's GitHub issue and verify it by reading it back. Resume from the persisted plan and update it before materially changing the approach. Do not begin application code changes until the plan is persisted and blocking decisions are resolved. This does not add a separate approval gate when implementation is already authorized.
 
 *   **Coding Style:** The codebase follows standard Kotlin and Vue.js coding conventions.

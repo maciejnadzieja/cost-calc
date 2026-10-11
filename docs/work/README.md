@@ -8,6 +8,14 @@ The [coordinator role](coordinator.md) defines request refinement, developer/rev
 
 Use the [coordinate-delivery skill](../../.agents/skills/coordinate-delivery/SKILL.md) to activate coordination in a new repository chat, for example `$coordinate-delivery Refine issue #N`.
 
+| Skill | Entry point | Example assignment |
+| --- | --- | --- |
+| [coordinate-delivery](../../.agents/skills/coordinate-delivery/SKILL.md) | Coordinate the selected delivery stage | `$coordinate-delivery Refine issue #N` |
+| [develop-task](../../.agents/skills/develop-task/SKILL.md) | Implement an assigned task from its persisted plan | `$develop-task Implement issue #N` |
+| [review-task](../../.agents/skills/review-task/SKILL.md) | Review requirements or a specified implementation diff, read-only | `$review-task Review requirements and testability for issue #N` |
+
+For implementation review, supply the issue and exact comparison scope, such as `BASE..HEAD`. Use a separate reviewer session for an independent assessment. Skills load workflow instructions into the current conversation; they do not spawn agents or change runtime permissions. Existing role TOMLs define named custom agents for authorized delegation.
+
 Repository Markdown holds workflow rules, agent guidance, and the software factory plan. Work records, decision history, the board, and roadmap live in GitHub; do not create parallel Markdown trackers.
 
 | Work | GitHub representation | Purpose |

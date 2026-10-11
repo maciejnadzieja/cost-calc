@@ -23,6 +23,8 @@ Delegate when the owner explicitly authorizes agent work for the selected task. 
 
 Give a developer the issue/plan links, approved scope, acceptance criteria, branch/baseline, file ownership, relevant contracts, checks, prerequisites and expected report. State that other agents may share the repository and their edits must be preserved. Use one developer at a time by default. Authorized parallel work needs isolated checkouts and clear contracts. Do not switch a shared checkout's branch or edit a developer's owned files while it is active.
 
+Include [develop-task](../../.agents/skills/develop-task/SKILL.md) in developer handoffs and [review-task](../../.agents/skills/review-task/SKILL.md) in reviewer handoffs. These entry points load the existing role instructions; role TOMLs remain the definitions for named subagents. A directly assigned developer/reviewer conversation can invoke the same skill without spawning an agent.
+
 Check the returned diff and evidence before reporting completion. Give an independent reviewer the issue, requested review stage and exact base/head or local-change scope. Reviewers remain read-only; checks that write files or provision fixtures require a separately authorized verification actor. Keep findings and verification limits in the issue, then route authorized repairs back to the developer and repeat affected checks/review. Coordinator inspection does not count as independent review.
 
 The coordinator can maintain workflow guidance and configuration. When the owner asks it to implement application changes directly, it explicitly adopts the developer role for that work; it still cannot independently review its own implementation.
