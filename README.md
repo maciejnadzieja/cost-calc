@@ -70,6 +70,18 @@ Local container state is stored in the ignored project `data/` directory:
 
 Docker creates the directories on first use. Database state survives container recreation and `docker compose down`. Application binaries stay in images; frontend sources remain mounted from the repository. Runtime data is excluded from Git and the API image build context. For local administrator and directory-client configuration, see [the admin directory guide](docs/admin-user-directory.md).
 
+On a fresh MongoDB installation (an empty `data/mongodb/db`), `docker/mongodb/init-mongo.js` seeds materials, services, settings, and three synthetic calculations for `tester@cost-calc.eu`:
+
+| Calculation | Contents | Total (USD) |
+| --- | --- | --- |
+| Weekly lawn care | Services only | 175.00 |
+| Spring planting supplies | Materials only | 185.00 |
+| Garden renovation | Two stages with services and materials | 509.50 |
+
+These calculations use the tester's fixed Keycloak ID and appear after signing in as the tester. Other accounts, including the application administrator, do not gain access to the tester's calculations. Items are embedded snapshots of the example services and materials; totals are calculated by the application.
+
+Initialization runs only for a new MongoDB data directory. Rebuilding images or recreating containers with existing data does not add or restore fixtures, overwrite edits, or duplicate calculations. An existing installation keeps its current data; there is no migration or manual seeding command for these samples.
+
 For an existing installation using `mongodb_data/`, stop MongoDB before copying that directory's contents into an empty `data/mongodb/db/`; retain the original as a backup. Do not copy live database files or overwrite an already populated destination. The new path otherwise starts an empty database. Existing Keycloak data inside an old container must likewise be preserved before replacing that container; see the migration note in the guide. These paths contain local application data and credentials, so keep them out of source control.
 
 ### Running Locally
