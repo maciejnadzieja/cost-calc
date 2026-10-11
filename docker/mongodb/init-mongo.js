@@ -74,3 +74,74 @@ db.user_settings.insertOne({
     "defaultCurrency": "USD",
     "language": "en"
 });
+
+// Development samples: the Docker entrypoint runs this script only for a fresh database.
+// Items are embedded snapshots, matching the application's calculation model.
+db.calculations.insertMany([
+    {
+        _id: UUID("60000000-0000-0000-0000-000000000001"),
+        name: "Weekly lawn care",
+        description: "Services-only sample for a small garden.",
+        userId: userId,
+        currency: "USD",
+        stages: [{
+            name: "Routine maintenance",
+            services: [
+                { name: "Lawn Mowing", quantity: NumberDecimal("200"), unit: "SQUARE_METER", unitPrice: NumberDecimal("0.50"), type: "SERVICE" },
+                { name: "Hedge Trimming", quantity: NumberDecimal("50"), unit: "LINEAR_METER", unitPrice: NumberDecimal("1.50"), type: "SERVICE" }
+            ],
+            materials: []
+        }],
+        createdAt: new Date(),
+        updatedAt: new Date()
+    },
+    {
+        _id: UUID("60000000-0000-0000-0000-000000000002"),
+        name: "Spring planting supplies",
+        description: "Materials-only sample for replenishing garden beds.",
+        userId: userId,
+        currency: "USD",
+        stages: [{
+            name: "Planting supplies",
+            services: [],
+            materials: [
+                { name: "Rose Bush", quantity: NumberDecimal("3"), unit: "PIECE", unitPrice: NumberDecimal("30.00"), type: "MATERIAL" },
+                { name: "Mulch", quantity: NumberDecimal("5"), unit: "KILOGRAM", unitPrice: NumberDecimal("15.00"), type: "MATERIAL" },
+                { name: "Topsoil", quantity: NumberDecimal("2"), unit: "KILOGRAM", unitPrice: NumberDecimal("10.00"), type: "MATERIAL" }
+            ]
+        }],
+        createdAt: new Date(),
+        updatedAt: new Date()
+    },
+    {
+        _id: UUID("60000000-0000-0000-0000-000000000003"),
+        name: "Garden renovation",
+        description: "Two-stage sample combining labour and materials.",
+        userId: userId,
+        currency: "USD",
+        stages: [
+            {
+                name: "Preparation",
+                services: [
+                    { name: "Garden Cleanup", quantity: NumberDecimal("2.5"), unit: "HOUR", unitPrice: NumberDecimal("50.00"), type: "SERVICE" }
+                ],
+                materials: [
+                    { name: "Topsoil", quantity: NumberDecimal("10"), unit: "KILOGRAM", unitPrice: NumberDecimal("10.00"), type: "MATERIAL" }
+                ]
+            },
+            {
+                name: "Planting and finishing",
+                services: [
+                    { name: "Planting", quantity: NumberDecimal("3"), unit: "HOUR", unitPrice: NumberDecimal("25.00"), type: "SERVICE" }
+                ],
+                materials: [
+                    { name: "Rose Bush", quantity: NumberDecimal("4"), unit: "PIECE", unitPrice: NumberDecimal("30.00"), type: "MATERIAL" },
+                    { name: "Mulch", quantity: NumberDecimal("5"), unit: "KILOGRAM", unitPrice: NumberDecimal("15.00"), type: "MATERIAL" },
+                    { name: "Grass Seed", quantity: NumberDecimal("0.58"), unit: "KILOGRAM", unitPrice: NumberDecimal("25.00"), type: "MATERIAL" }
+                ]
+            }
+        ],
+        createdAt: new Date(),
+        updatedAt: new Date()
+    }
+]);
