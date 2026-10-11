@@ -29,7 +29,7 @@ Each test gets a fresh browser context. Tokens are captured from actual applicat
 
 ## Pagination suite (creates temporary accounts)
 
-Run this only on a local realm containing exactly the two human fixtures above plus the Polish tester `testowy@cost-calc.eu` imported on fresh installations (see the [fixture guide](../README.md#running-with-docker)). The explicit opt-in prevents account provisioning during the default smoke command:
+Run this only on a local realm containing exactly the two human fixtures above plus the Polish tester `testowy@cost-calc.eu` imported on fresh installations (see the [fixture guide](../README.md#running-with-docker-recommended)). The explicit opt-in prevents account provisioning during the default smoke command:
 
 ```powershell
 $env:E2E_ALLOW_FIXTURES = '1'
