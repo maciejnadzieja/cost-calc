@@ -35,9 +35,9 @@ Roles are responsibilities, not permanently running agents. One agent may plan a
 | Role | Responsibility | Output |
 | --- | --- | --- |
 | You: product owner | Priorities, product decisions, acceptance, release authorization | Approved scope and feedback |
-| Coordinator | Inspect the code, turn requests into bounded tasks, identify dependencies, integrate results | Task briefs and delivery report |
-| Implementation agent | Complete one task, add appropriate tests, run checks, explain changes | Reviewable diff and validation evidence |
-| Review agent | Examine the diff and requirements independently; inspect correctness, regression risks, and test gaps | Actionable findings or explicit review result |
+| [Coordinator](work/coordinator.md) | Refine requests, identify dependencies, coordinate authorized developer/reviewer handoffs, maintain GitHub records and evidence | Task briefs and delivery report |
+| Developer | Complete one task, add appropriate tests, run checks, explain changes | Reviewable diff and validation evidence |
+| Reviewer | Examine the diff and requirements independently; inspect correctness, regression risks, and test gaps | Actionable findings or explicit review result |
 
 Start with one implementation task at a time. Add a second implementation agent only when tasks have clear boundaries and isolated checkouts. Split backend and frontend work when an API contract is agreed first. Avoid several agents editing the same checkout concurrently.
 

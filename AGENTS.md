@@ -99,6 +99,8 @@ Use the Project's existing Status options: Backlog, Ready, In progress, In revie
 
 ## Coding conventions
 
+For software factory coordination, follow [the coordinator role guide](docs/work/coordinator.md) and its [agent instructions](.codex/agents/coordinator.toml). Use the role when assigned; this reference does not authorize delegation or change every agent's role. The owner retains product priorities and final acceptance.
+
 Before starting implementation, use [persist-implementation-plan](.agents/skills/persist-implementation-plan/SKILL.md) to save a concrete implementation plan in the task's GitHub issue and verify it by reading it back. Resume from the persisted plan and update it before materially changing the approach. Do not begin application code changes until the plan is persisted and blocking decisions are resolved. This does not add a separate approval gate when implementation is already authorized.
 
 *   **Coding Style:** The codebase follows standard Kotlin and Vue.js coding conventions.

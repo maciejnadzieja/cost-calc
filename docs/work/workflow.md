@@ -32,6 +32,8 @@ Do not split every file into a task. Prefer complete behavior changes; split alo
 
 ## Execute and review
 
+The [coordinator](coordinator.md) maintains workflow records and authorized developer/reviewer handoffs. The owner retains priorities, product decisions, final acceptance and release authorization.
+
 ### Task branches
 
 Use one branch per GitHub task. Name it `codex/<issue-number>-<short-description>`:
