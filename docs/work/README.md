@@ -14,7 +14,7 @@ Use the [coordinate-delivery skill](../../.agents/skills/coordinate-delivery/SKI
 | [develop-task](../../.agents/skills/develop-task/SKILL.md) | Implement an assigned task from its persisted plan | `$develop-task Implement issue #N` |
 | [review-task](../../.agents/skills/review-task/SKILL.md) | Review requirements or a specified implementation diff, read-only | `$review-task Review requirements and testability for issue #N` |
 
-For implementation review, supply the issue and exact comparison scope, such as `BASE..HEAD`. Use a separate reviewer session for an independent assessment. Skills load workflow instructions into the current conversation; they do not spawn agents or change runtime permissions. Existing role TOMLs define named custom agents for authorized delegation.
+For implementation review, supply the issue and exact comparison scope, such as `BASE..HEAD`. Use a separate reviewer session for an independent assessment. Skills load workflow instructions into the current conversation; invocation does not automatically spawn agents or change runtime permissions. The coordinate-delivery workflow requires the coordinator to dispatch reviewer subagents under the standing read-only authorization in root AGENTS.md unless the owner explicitly opts out for the selected task. Existing role TOMLs define named custom agents for authorized delegation.
 
 Repository Markdown holds workflow rules, agent guidance, and the software factory plan. Work records, decision history, the board, and roadmap live in GitHub; do not create parallel Markdown trackers.
 
