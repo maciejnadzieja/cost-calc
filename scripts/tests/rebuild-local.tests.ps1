@@ -3,6 +3,8 @@
 $ErrorActionPreference = 'Stop'
 $sourceScript = Join-Path (Split-Path -Parent $PSScriptRoot) 'rebuild-local.ps1'
 $testRoot = Join-Path ([IO.Path]::GetTempPath()) ('cost calc rebuild tests ' + [guid]::NewGuid())
+$fixtureRepository = Join-Path $testRoot 'repository with spaces'
+$callerDirectory = Join-Path $testRoot 'separate caller directory'
 $originalLocation = Get-Location
 $originalDocker = Get-Item Function:\docker -ErrorAction SilentlyContinue
 $global:rebuildTestCalls = [Collections.Generic.List[object]]::new()
@@ -31,23 +33,23 @@ function Invoke-Scenario {
     try { & $testScript @Parameters *>&1 | Out-Null }
     catch { $failed = $true }
     Assert-True ($failed -eq $ExpectFailure) "Unexpected failure result for '$FailOn'."
-    Assert-True ((Get-Location).Path -eq $testRoot) 'Script changed the caller working directory.'
+    Assert-True ((Get-Location).Path -eq $callerDirectory) 'Script changed the caller working directory.'
 }
 
 try {
-    New-Item -ItemType Directory -Path (Join-Path $testRoot 'scripts') -Force | Out-Null
-    $testScript = Join-Path $testRoot 'scripts/rebuild-local.ps1'
+    New-Item -ItemType Directory -Path (Join-Path $fixtureRepository 'scripts'), $callerDirectory -Force | Out-Null
+    $testScript = Join-Path $fixtureRepository 'scripts/rebuild-local.ps1'
     Copy-Item -LiteralPath $sourceScript -Destination $testScript
-    $testCompose = Join-Path $testRoot 'docker-compose.yml'
+    $testCompose = Join-Path $fixtureRepository 'docker-compose.yml'
     Set-Content -LiteralPath $testCompose -Value 'services: {}'
-    Set-Location -LiteralPath $testRoot
+    Set-Location -LiteralPath $callerDirectory
 
     Invoke-Scenario -Parameters @{ WaitTimeoutSeconds = 42 }
     $calls = $global:rebuildTestCalls
     Assert-True ($calls.Count -eq 6) 'Expected version, info, config, build, up and ps.'
     Assert-True ($calls[0][1] -eq 'version' -and $calls[1][0] -eq 'info') 'Preflight order differs.'
     foreach ($call in @($calls[2], $calls[3], $calls[4], $calls[5])) {
-        Assert-True ($call[1] -eq '--project-directory' -and $call[2] -eq $testRoot) 'Wrong project directory.'
+        Assert-True ($call[1] -eq '--project-directory' -and $call[2] -eq $fixtureRepository) 'Wrong project directory.'
         Assert-True ($call[3] -eq '--file' -and $call[4] -eq $testCompose) 'Wrong Compose path.'
     }
     Assert-True (($calls[3][5..7] -join ',') -eq 'build,api,frontend') 'Both images must build first.'
