@@ -69,15 +69,23 @@ workflow documentation/configuration under the assigned authorization.
 
 Follow task-branch naming and frequent coherent commits from AGENTS.md, including
 #<task-id> | <description of changes>. Inspect branch and staged diff before
-each commit. Never commit to main. Do not push, merge, publish or deploy without
-separate owner authorization. Do not start/restart or suggest rerunning the
+each commit. Author implementation on task branches; acceptance-authorized
+integration may create merge commits on main. Do not push, delete branches,
+publish or deploy without separate owner authorization. Do not start/restart or suggest rerunning the
 existing backend/frontend. Keep secrets and real user data out of artifacts.
 
-Close an issue and mark Done only when acceptance criteria have supporting
-evidence and agreed review/owner acceptance is recorded. Explicit owner requests
-to close count as acceptance; do not ask again. If a material criterion remains
-unsupported, report it instead of claiming completion. Verify both issue state
-and Project status. Closure and local commits do not imply merge, push or release.
+After final owner acceptance, follow docs/work/workflow.md under Acceptance and
+local merge without asking for renewed merge permission. Merge only the accepted
+version into local main, honor explicit merge holds, and preserve the procedure's
+clean-checkout, synchronization, review, conflict and evidence requirements.
+Scope approval/start work is not final acceptance. A direct developer chat may
+adopt this coordinator responsibility for acceptance follow-up.
+Close and mark Done only with supported criteria, required review, owner acceptance
+and successful integration, or the documented no-code/explicit-hold exception.
+Blocked integration remains In review. Explicit owner requests to close count
+as acceptance, but unsupported material criteria still require reporting.
+Verify both issue state and Project status; local integration does not imply
+push, publication or release.
 
 Before owner-acceptance handoff, verify reviewer dispatched, result received,
 findings resolved or explicitly outstanding, and final reviewed version recorded,

@@ -46,9 +46,9 @@ Before presenting work for owner acceptance, verify and record:
 - Findings resolved, or outstanding findings clearly identified for the owner.
 - Final reviewed version identified, with focused rereview of material corrections.
 
-Close an issue and mark Done when criteria have supporting evidence and agreed review/acceptance is recorded. An explicit owner request to close counts as acceptance; report any material unmet criterion instead of claiming success. Verify both issue state and Project status. Issue closure, local commits, merge, push and release are separate events; record only those actually performed or reported.
+On final acceptance, perform [acceptance and local merge](workflow.md#acceptance-and-local-merge) without another routine merge confirmation. It defines exact-version checks, safe preparation, conflict handling, holds and completion exceptions. An explicit owner request to close counts as acceptance; report any material unmet criterion instead of claiming success. For source changes, complete tracking after successful integration unless the owner records an explicit merge hold. Blocked integration stays In review. Verify both issue state and Project status; report local integration separately from remote publication.
 
-Follow root AGENTS.md for frequent coherent task-branch commits, commit subjects and environment constraints. Never commit to `main`; pushing, merging, publishing and deploying need separate owner authorization. Do not start/restart or suggest rerunning the existing backend/frontend. Keep secrets and real user data out of records.
+Follow root AGENTS.md for frequent coherent task-branch commits, commit subjects and environment constraints. Author implementation on task branches; accepted integration may create coordinator merge commits on `main`. Pushing, branch deletion, publishing and deploying need separate owner authorization. Do not start/restart or suggest rerunning the existing backend/frontend. Keep secrets and real user data out of records.
 
 ## Using the role
 
