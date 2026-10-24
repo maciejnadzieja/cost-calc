@@ -2,6 +2,8 @@
 
 The coordinator carries a selected request through the [delivery workflow](workflow.md), keeping scope, handoffs, evidence and GitHub history consistent. Its instructions are in [coordinator.toml](../../.codex/agents/coordinator.toml). Roles are responsibilities used when needed; they are not background services.
 
+Use the [Cost Calc engineering layer](engineering-guidance.md) when selecting Matt Pocock practices. Existing role handoffs remain authoritative: imported review criteria do not authorize nested subagents, and imported implementation guidance does not authorize integration merges or release.
+
 | Role | Owns | Hands off |
 | --- | --- | --- |
 | Owner | Priorities, product decisions, final acceptance, release authorization | Authorized scope and decisions |

@@ -1,22 +1,14 @@
 ---
 name: develop-task
-description: Implement or repair an assigned Cost Calc GitHub task using its persisted plan, task branch, appropriate checks, and frequent coherent commits. Use for developer assignments or authorized task implementation; not for request refinement or independent read-only review.
+description: Implement or repair an assigned Cost Calc GitHub task from its persisted plan, using selected engineering guidance, appropriate checks and frequent task-branch commits.
 ---
 
 # Develop a task
 
-Apply the developer role to the assigned implementation. Read root/applicable AGENTS.md, [developer.toml](../../../.codex/agents/developer.toml), and the [delivery workflow](../../../docs/work/workflow.md). Follow the role's developer_instructions as workflow guidance; its configuration fields do not change this conversation's runtime permissions.
+Read root/applicable AGENTS.md, the [Cost Calc layer](../../../docs/work/engineering-guidance.md), [developer role](../../../.codex/agents/developer.toml) and [delivery workflow](../../../docs/work/workflow.md). Role configuration does not change runtime permissions.
 
-## Prepare or resume
+Reconcile the assigned issue/decisions, acceptance criteria, checkout and authorization. Use [persist-implementation-plan](../persist-implementation-plan/SKILL.md) before edits; resume the verified plan and update it before material approach changes. Use the selected task branch and preserve unrelated work.
 
-Read the assigned issue, decisions, acceptance criteria and coordinator handoff. Inspect relevant code, branch, working tree and baseline. Confirm the requested scope is authorized, preserving existing authorization rather than asking again. Resolve a missing task, blocking decision or conflicting ownership before dependent edits; continue independent investigation when useful.
+Select TDD for behavior changes, diagnosis for hard bugs, and design/domain guidance when needed through the layer. Implement small coherent changes, run appropriate checks and commit under the task's branch/subject rules. No additional confirmation is needed for routine choices within authorized scope.
 
-Use [persist-implementation-plan](../persist-implementation-plan/SKILL.md) to save the implementation plan and verify it by reading back before application code changes. Resume an accurate existing plan and update it before materially changing the approach. Use the issue's `codex/<issue-number>-<short-description>` branch; do not switch a shared checkout while another developer is active.
-
-## Implement and hand off
-
-Implement within the assigned scope and ownership, preserving other agents' edits. Follow the existing developer role for architecture, meaningful tests, environment limits, credential handling, and frequent coherent task-branch commits. Inspect the branch/staged diff and run appropriate checks before committing. Do not push, merge, publish, deploy or spawn agents without the required owner authorization.
-
-Update the issue's plan and verification evidence under the assigned authorization and read mutations back. Return issue/plan links, branch/baseline, commits, changed behavior, exact checks/results, limitations and remaining work to the coordinator or owner. Leave Project status, acceptance records and closure to the coordinator; final acceptance belongs to the owner. Do not claim independent review of your own implementation.
-
-An invocation such as `$develop-task Implement issue #N` is an implementation assignment within the stated scope. A request for a plan only remains planning. Do not extend either request into unrelated implementation or release actions.
+Keep plan progress and actual verification evidence in the issue with readback. Return issue/plan, branch/baseline, commits, changed behavior, exact checks/results, limitations and remaining work for independent review. Leave Project status, closure and acceptance records to the coordinator; final acceptance belongs to the owner. Do not delegate, message other chats, push, merge, publish or deploy without applicable authorization.

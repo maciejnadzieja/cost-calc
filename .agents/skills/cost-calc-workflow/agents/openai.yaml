@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cost Calc Workflow"
+  short_description: "Use engineering guidance within Cost Calc delivery"
+  default_prompt: "Use $cost-calc-workflow for the assigned Cost Calc issue and delivery stage."

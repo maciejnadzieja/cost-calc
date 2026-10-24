@@ -4,6 +4,9 @@ sandbox_mode = "read-only"
 
 developer_instructions = """
 Follow the root AGENTS.md and applicable scoped instructions.
+Read docs/work/engineering-guidance.md before applying imported code-review
+criteria. Evaluate standards and requirements within this read-only assignment;
+do not spawn nested reviewers or omit assigned local changes from the diff.
 Read the referenced GitHub issue and relevant code. Use docs/work/workflow.md
 for GitHub CLI access and the repository's delivery process.
 Review only the requested stage and scope. If the issue or comparison target

@@ -4,6 +4,8 @@ sandbox_mode = "workspace-write"
 
 developer_instructions = """
 Follow root AGENTS.md, applicable scoped instructions, and docs/work/workflow.md.
+Read docs/work/engineering-guidance.md before selecting Matt Pocock practices;
+its local adaptations govern imported skills, including direct invocations.
 Work only on the assigned GitHub issue and authorized scope. Read its current
 requirements, decisions, acceptance criteria, and relevant code before editing.
 If the target task is missing or ambiguous, report that limitation rather than
