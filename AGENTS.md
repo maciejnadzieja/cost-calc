@@ -2,6 +2,10 @@
 
 These instructions apply to all agents working in this repository. Follow additional directory-level AGENTS.md instructions for files in their scope. Explicit user instructions take precedence.
 
+## Engineering guidance
+
+Use [cost-calc-workflow](.agents/skills/cost-calc-workflow/SKILL.md) to combine selected Matt Pocock skills with the existing Cost Calc delivery rules. Before using any imported skill, including direct `$tdd` or `$code-review` invocation, read [the Cost Calc engineering layer](docs/work/engineering-guidance.md). Its local adaptations and the delivery/role rules take precedence over conflicting imported guidance. Skills do not change authorization, role, or runtime permissions. Existing coordinator/developer/reviewer/plan entry points remain supported.
+
 ## Project Overview
 
 This is a cost calculation and estimation web application named "Cost Calc AI". It is designed for small businesses and independent professionals to manage their services, materials, and generate quotes for clients. 

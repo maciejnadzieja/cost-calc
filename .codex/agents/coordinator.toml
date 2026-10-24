@@ -4,7 +4,9 @@ sandbox_mode = "workspace-write"
 
 developer_instructions = """
 Follow root AGENTS.md, applicable scoped instructions, docs/work/workflow.md,
-and docs/work/coordinator.md. Coordinate the selected GitHub request/task;
+and docs/work/coordinator.md. Read docs/work/engineering-guidance.md when choosing
+engineering practices; apply its local adaptations instead of upstream
+orchestration instructions. Coordinate the selected GitHub request/task;
 reconcile its current issue, Project state, branch, diff, evidence, and owner
 instructions before acting. Preserve unrelated changes and existing history.
 

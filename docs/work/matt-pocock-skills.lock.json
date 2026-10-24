@@ -1,0 +1,131 @@
+{
+  "repository": "https://github.com/mattpocock/skills",
+  "commit": "5beb35b040e3de97e54fa9e386d7e42d15c295c2",
+  "license": {
+    "source": "LICENSE",
+    "destination": ".agents/skills/matt-pocock.LICENSE",
+    "git_blob_sha": "f1dd2c09108dde1a5f56097cee8461b3ea834499"
+  },
+  "files": [
+    {
+      "source": "skills/engineering/code-review/SKILL.md",
+      "destination": ".agents/skills/code-review/SKILL.md",
+      "git_blob_sha": "373a4f26e6cfa3617778397945bb069d9cb184bc"
+    },
+    {
+      "source": "skills/engineering/code-review/agents/openai.yaml",
+      "destination": ".agents/skills/code-review/agents/openai.yaml",
+      "git_blob_sha": "9076774ba327f49068db9273feceda03bfe940fa"
+    },
+    {
+      "source": "skills/engineering/codebase-design/DEEPENING.md",
+      "destination": ".agents/skills/codebase-design/DEEPENING.md",
+      "git_blob_sha": "cd94075cfd754d147555c5d747a16431ed4c7dd8"
+    },
+    {
+      "source": "skills/engineering/codebase-design/DESIGN-IT-TWICE.md",
+      "destination": ".agents/skills/codebase-design/DESIGN-IT-TWICE.md",
+      "git_blob_sha": "d0990138c35c800bd821289a73115e52680c1620"
+    },
+    {
+      "source": "skills/engineering/codebase-design/SKILL.md",
+      "destination": ".agents/skills/codebase-design/SKILL.md",
+      "git_blob_sha": "3f63c8146dd2604b419c929e9876b90c30d410e9"
+    },
+    {
+      "source": "skills/engineering/codebase-design/agents/openai.yaml",
+      "destination": ".agents/skills/codebase-design/agents/openai.yaml",
+      "git_blob_sha": "3180715edb37f6e96bec42f92f00169faa8886ef"
+    },
+    {
+      "source": "skills/engineering/diagnosing-bugs/SKILL.md",
+      "destination": ".agents/skills/diagnosing-bugs/SKILL.md",
+      "git_blob_sha": "d039541ddd1c46e6ddbd662fe99d49b686fc5e12"
+    },
+    {
+      "source": "skills/engineering/diagnosing-bugs/agents/openai.yaml",
+      "destination": ".agents/skills/diagnosing-bugs/agents/openai.yaml",
+      "git_blob_sha": "a13a755a77634ce61a649a3a0d905a66d3865b35"
+    },
+    {
+      "source": "skills/engineering/diagnosing-bugs/scripts/hitl-loop.template.sh",
+      "destination": ".agents/skills/diagnosing-bugs/scripts/hitl-loop.template.sh",
+      "git_blob_sha": "243198464a8401a7ba1d63b3708fa43c3d067665"
+    },
+    {
+      "source": "skills/engineering/domain-modeling/ADR-FORMAT.md",
+      "destination": ".agents/skills/domain-modeling/ADR-FORMAT.md",
+      "git_blob_sha": "d7e61f30a9fd8ca70d9ee68f019c2a9ebf2d13f7"
+    },
+    {
+      "source": "skills/engineering/domain-modeling/GLOSSARY-FORMAT.md",
+      "destination": ".agents/skills/domain-modeling/GLOSSARY-FORMAT.md",
+      "git_blob_sha": "9c0b4c7a2e8507c23cbb5e0baa66d81699321cc6"
+    },
+    {
+      "source": "skills/engineering/domain-modeling/SKILL.md",
+      "destination": ".agents/skills/domain-modeling/SKILL.md",
+      "git_blob_sha": "a4438c6879c517d1a08e2b5fbca049b632688dfe"
+    },
+    {
+      "source": "skills/engineering/domain-modeling/agents/openai.yaml",
+      "destination": ".agents/skills/domain-modeling/agents/openai.yaml",
+      "git_blob_sha": "7f1522d2f11506ee205275ab7c282aa52366ecf6"
+    },
+    {
+      "source": "skills/engineering/retro/SKILL.md",
+      "destination": ".agents/skills/retro/SKILL.md",
+      "git_blob_sha": "12149acf2dd23b4514dec57b04a6293eaa1352fa"
+    },
+    {
+      "source": "skills/engineering/retro/agents/openai.yaml",
+      "destination": ".agents/skills/retro/agents/openai.yaml",
+      "git_blob_sha": "a2f0bac3f9cebf29beee2e79960cb876e0adc65d"
+    },
+    {
+      "source": "skills/engineering/tdd/SKILL.md",
+      "destination": ".agents/skills/tdd/SKILL.md",
+      "git_blob_sha": "01eadaa34e7c9a63a67d6dc3cce1cc81b0e49985"
+    },
+    {
+      "source": "skills/engineering/tdd/agents/openai.yaml",
+      "destination": ".agents/skills/tdd/agents/openai.yaml",
+      "git_blob_sha": "651b838a7663e027b1b8884491e867f26bb9a021"
+    },
+    {
+      "source": "skills/engineering/tdd/mocking.md",
+      "destination": ".agents/skills/tdd/mocking.md",
+      "git_blob_sha": "71cbfee674d93244ce81d1830b930ca9a69200bd"
+    },
+    {
+      "source": "skills/engineering/tdd/tests.md",
+      "destination": ".agents/skills/tdd/tests.md",
+      "git_blob_sha": "7ab86479f925a1f9e8ba680af33cb3b12e015381"
+    },
+    {
+      "source": "skills/productivity/handoff/SKILL.md",
+      "destination": ".agents/skills/handoff/SKILL.md",
+      "git_blob_sha": "a224edc643a20ddb989f9bca1547440169159810"
+    },
+    {
+      "source": "skills/productivity/handoff/agents/openai.yaml",
+      "destination": ".agents/skills/handoff/agents/openai.yaml",
+      "git_blob_sha": "6e1d8da121beceddc2f9ec7fa8714c1d914dd11a"
+    },
+    {
+      "source": "skills/productivity/writing-for-agents/SKILL-MECHANICS.md",
+      "destination": ".agents/skills/writing-for-agents/SKILL-MECHANICS.md",
+      "git_blob_sha": "9cdbdb22aadc438755392216e75ad9a14cc9832e"
+    },
+    {
+      "source": "skills/productivity/writing-for-agents/SKILL.md",
+      "destination": ".agents/skills/writing-for-agents/SKILL.md",
+      "git_blob_sha": "a37608daf6e835e767deecfb498facecaaba82ba"
+    },
+    {
+      "source": "skills/productivity/writing-for-agents/agents/openai.yaml",
+      "destination": ".agents/skills/writing-for-agents/agents/openai.yaml",
+      "git_blob_sha": "079c933b75743dec18b5d0c01006def20b6aad26"
+    }
+  ]
+}

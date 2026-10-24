@@ -2,6 +2,8 @@
 
 GitHub Issues hold scope, decisions, dependencies, history, and evidence. The Cost Calc delivery Project holds live status, priority, and scheduling. Use issue numbers as IDs; do not maintain local backlog records or duplicate Status fields in issue descriptions.
 
+Use selected Matt Pocock engineering practices through [the Cost Calc layer](engineering-guidance.md). This workflow remains the delivery authority; upstream skills do not replace its plan, branch, authorization, review or acceptance requirements.
+
 ## Capture
 
 Create a GitHub request issue. Preserve the user's original words with attribution; keep summaries separate. Record the problem, desired outcome, constraints, and unresolved questions. Search existing issues before creating duplicates; link related work.
@@ -49,6 +51,21 @@ Agents may commit task-related changes on the task branch under the root AGENTS.
 Commit often so reviewers can follow the work in small, readable chunks. Make each commit a coherent change with one purpose, include relevant tests alongside the behavior they verify, and use a clear commit message. Run checks appropriate to the change before committing and record any verification limitations in the issue. Commit after meaningful completed steps rather than waiting for the entire task; avoid unrelated changes in one commit or arbitrary file-by-file splits.
 
 Format every commit subject as `#<task-id> | <description of changes>`. Use the task's GitHub issue number, retain the leading `#` and spaces around `|`, and describe the changes in that commit. Example: `#4 | Add admin user list pagination`.
+
+### Persisted implementation plans
+
+Use [persist-implementation-plan](../../.agents/skills/persist-implementation-plan/SKILL.md) before implementation. Read the issue and decision history, inspect relevant code/tests and establish the task branch/baseline. For resumed work, reconcile the existing plan with the current issue and checkout; preserve completed steps and prior decisions.
+
+Save a concrete `## Implementation plan` section in the task issue body. Scale detail to the task and include:
+
+- Task ID, Europe/Warsaw date, branch and inspected baseline commit.
+- Outcome, confirmed scope/exclusions, relevant code/contracts and blocking prerequisites; distinguish observations from proposals.
+- Ordered steps and dependencies mapped to acceptance criteria, with small coherent commit boundaries using the required subject format.
+- Verification for each outcome, including meaningful negative/edge cases and manual/environment prerequisites. Planned checks are not results.
+
+Fetch the latest issue before editing; preserve its original request, criteria, decisions and unrelated sections. Read it back and verify the saved plan and preserved content before editing application code. If persistence/readback fails or a blocking decision remains, continue independent investigation but do not start dependent implementation. A verified plan adds no renewed approval gate when work is already authorized.
+
+Before materially changing the approach, revise and read back the plan with a dated reason, preserving decision history. Maintain progress, commit IDs, actual verification results and limitations in the issue; keep secrets and real user data out of it. Do not substitute a local plan/backlog file. A plan does not authorize additional scope, release or owner acceptance.
 
 ### Delivery steps
 

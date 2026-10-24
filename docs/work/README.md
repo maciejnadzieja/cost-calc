@@ -6,6 +6,8 @@ Start with **Cost Calc delivery** through the [CLI connection instructions](work
 
 The [coordinator role](coordinator.md) defines request refinement, developer/reviewer handoffs, verification records and owner acceptance. Project-scoped role configurations live under `.codex/agents/`.
 
+The [Cost Calc engineering layer](engineering-guidance.md) combines pinned Matt Pocock guidance with this delivery process. Use `$cost-calc-workflow` with an issue and stage, or the existing entry points below. It documents local adaptations, direct skill invocation, attribution and deliberate upstream updates.
+
 Use the [coordinate-delivery skill](../../.agents/skills/coordinate-delivery/SKILL.md) to activate coordination in a new repository chat, for example `$coordinate-delivery Refine issue #N`.
 
 | Skill | Entry point | Example assignment |
