@@ -143,6 +143,16 @@ The frontend development server will start at `http://localhost:5173`.
 -   **Environment**: You can customize environment variables in `docker-compose.yml`.
 -   **Admin user directory**: See [Keycloak roles and backend directory credentials](docs/admin-user-directory.md) before using the admin-only user list.
 
+For local browser authentication, Keycloak is published at `http://localhost:9090`.
+The frontend Keycloak URL and API JWT issuer must use this same external address;
+the issuer must match the `iss` claim in browser-issued tokens. The API container
+fetches signing keys at `http://keycloak:8080` over the Compose network, while
+the host-run backend defaults to `localhost:9090` for both issuer and signing keys.
+Do not use `host.docker.internal` as the browser-facing Keycloak address: it may
+not be reachable from the host browser. For a separately run Vite frontend, set
+the ignored `frontend/.env` file's `VITE_KEYCLOAK_URL` to `http://localhost:9090`.
+Compose supplies that value through its frontend environment settings.
+
 ## 🧪 Testing
 
 ### Backend Tests
