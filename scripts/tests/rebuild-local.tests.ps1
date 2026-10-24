@@ -21,6 +21,7 @@ function global:docker {
         else { $commandArguments[5] }
     $global:LASTEXITCODE = if ($command -eq $global:rebuildTestFailure) { 23 } else { 0 }
 }
+$dockerStub = ${function:global:docker}
 
 function Invoke-Scenario {
     param([hashtable] $Parameters = @{}, [string] $FailOn = '', [bool] $ExpectFailure = $false)
@@ -50,7 +51,7 @@ try {
         Assert-True ($call[3] -eq '--file' -and $call[4] -eq $testCompose) 'Wrong Compose path.'
     }
     Assert-True (($calls[3][5..7] -join ',') -eq 'build,api,frontend') 'Both images must build first.'
-    Assert-True (($calls[4][5..14] -join ',') -eq 'up,--detach,--no-build,--force-recreate,--wait,--wait-timeout,42,api,frontend') 'Unexpected restart command.'
+    Assert-True (($calls[4][5..13] -join ',') -eq 'up,--detach,--no-build,--force-recreate,--wait,--wait-timeout,42,api,frontend') 'Unexpected restart command.'
     Assert-True ($calls[5][5] -eq 'ps') 'Missing final status.'
 
     Invoke-Scenario -Parameters @{ BuildOnly = $true }
@@ -66,15 +67,27 @@ try {
     Invoke-Scenario -Parameters @{ WaitTimeoutSeconds = 0 } -ExpectFailure $true
     Assert-True ($global:rebuildTestCalls.Count -eq 0) 'Invalid timeout must fail before Docker.'
 
+    $originalPath = $env:PATH
+    try {
+        Remove-Item Function:\docker
+        $env:PATH = ''
+        Invoke-Scenario -ExpectFailure $true
+        Assert-True ($global:rebuildTestCalls.Count -eq 0) 'Missing Docker must fail before any command.'
+    }
+    finally {
+        $env:PATH = $originalPath
+        $function:global:docker = $dockerStub
+    }
+
     Remove-Item -LiteralPath $testCompose
     Invoke-Scenario -ExpectFailure $true
     Assert-True ($global:rebuildTestCalls.Count -eq 0) 'Missing Compose file must fail before Docker.'
-    Write-Host 'Passed: command sequence, space-containing paths, non-script working directory, BuildOnly, WhatIf, six failure boundaries, invalid timeout and missing Compose file.'
+    Write-Host 'Passed: command sequence, space-containing paths, non-script working directory, BuildOnly, WhatIf, six failure boundaries, invalid timeout, missing Docker and missing Compose file.'
 }
 finally {
     Set-Location -LiteralPath $originalLocation.Path
     if ($null -eq $originalDocker) { Remove-Item Function:\docker -ErrorAction SilentlyContinue }
-    else { Set-Item Function:\global:docker -Value $originalDocker.ScriptBlock }
+    else { $function:global:docker = $originalDocker.ScriptBlock }
     Remove-Variable rebuildTestCalls, rebuildTestFailure -Scope Global -ErrorAction SilentlyContinue
     # Resolve and validate this exact temporary subtree before recursive cleanup.
     $resolvedRoot = [IO.Path]::GetFullPath($testRoot)

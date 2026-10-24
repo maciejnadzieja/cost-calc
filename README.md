@@ -57,6 +57,34 @@ docker-compose up --build
 -   **Frontend**: [http://localhost:5173](http://localhost:5173)
 -   **Backend API**: [http://localhost:8888](http://localhost:8888)
 
+#### Build images and restart locally (PowerShell)
+
+From the repository root:
+
+```powershell
+./scripts/rebuild-local.ps1
+```
+
+The script checks Docker Compose v2, the Docker daemon and the Compose configuration, then builds the `api` and `frontend` images. Compilation happens inside Docker: the API Dockerfile runs Maven packaging (with tests skipped), and the frontend Dockerfile runs `npm run build`, including the existing Vue/TypeScript check. Java, Maven and Node do not need to be installed on the host. The frontend continues to run the local Vite development server with the existing source mounts; this does not switch local hosting to a production static server.
+
+Only after both images build successfully does the script run `docker compose up` with `--no-build --force-recreate` for the API/frontend services and a bounded running/healthy wait. Compose also starts or reconciles their MongoDB/Keycloak dependencies as needed. Existing `data/` bind mounts are retained; the script never runs `down`, deletes data/volumes or prunes Docker resources. A failed preflight or build exits before container recreation. A startup failure exits with an error and may leave partially started containers; it does not automatically roll back.
+
+```powershell
+./scripts/rebuild-local.ps1 -BuildOnly                  # Prepare images without changing containers
+./scripts/rebuild-local.ps1 -WhatIf                     # Describe the operation without invoking Docker
+./scripts/rebuild-local.ps1 -WaitTimeoutSeconds 300     # Allow longer for local startup (default: 180)
+```
+
+Use `pwsh -File ./scripts/rebuild-local.ps1` if you prefer an explicit PowerShell invocation. The script requires PowerShell 5.1 or later and Docker Compose v2 with `--wait`/`--wait-timeout` support. It resolves the Compose file/project directory from its own location, so an absolute script path works from another working directory. It uses the current Docker context and Compose environment/project-name settings; select your local Docker Desktop context before running it. It does not stop independently running host Java/Vite processes: if they occupy ports 8888/5173, resolve that conflict before choosing container startup.
+
+The final wait reports Compose running/healthy state. Only services with configured health checks are checked for health; this is not an authenticated API or browser smoke test. See the regression guide below for those checks. No services need to be restarted merely to develop or validate this script.
+
+Run the command-boundary tests without Docker or service changes:
+
+```powershell
+pwsh -NoProfile -File ./scripts/tests/rebuild-local.tests.ps1
+```
+
 For browser checks against the running local stack, see [local regression tests](docs/local-regression-tests.md). The default `npm run test:e2e` command (from `frontend/`) is read-only; pagination fixtures require a separate opt-in command.
 
 Local container state is stored in the ignored project `data/` directory:
