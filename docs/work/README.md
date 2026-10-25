@@ -8,6 +8,8 @@ The [coordinator role](coordinator.md) defines request refinement, developer/rev
 
 The [Cost Calc engineering layer](engineering-guidance.md) combines pinned Matt Pocock guidance with this delivery process. Use `$cost-calc-workflow` with an issue and stage, or the existing entry points below. It documents local adaptations, direct skill invocation, attribution and deliberate upstream updates.
 
+Final acceptance of delivered changes triggers the coordinator's [local merge into main](workflow.md#acceptance-and-local-merge), without another merge confirmation. Scope approval is not final acceptance. Pushing and service operations remain separate; explicit owner merge holds are respected.
+
 Use the [coordinate-delivery skill](../../.agents/skills/coordinate-delivery/SKILL.md) to activate coordination in a new repository chat, for example `$coordinate-delivery Refine issue #N`.
 
 | Skill | Entry point | Example assignment |

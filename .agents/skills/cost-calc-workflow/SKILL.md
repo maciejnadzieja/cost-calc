@@ -15,3 +15,5 @@ Keep the assigned role and authorization. Route to the matching entry point when
 - Plan-only work: [persist-implementation-plan](../persist-implementation-plan/SKILL.md); do not begin implementation.
 
 Entry points consume this same layer; loading it again is unnecessary. For an already established role, continue its assignment rather than recursively invoking entry points. A direct implementation request authorizes its bounded work, not developer delegation or release. Preserve existing decisions and plan progress on resumption. Report the actual result, verification limits, issue/branch/commits and remaining acceptance or review.
+
+Final acceptance triggers the coordinator's [local merge procedure](../../../docs/work/workflow.md#acceptance-and-local-merge) without another merge confirmation. Preserve its exact-version/review prerequisites and explicit owner holds; do not treat scope approval as final acceptance.

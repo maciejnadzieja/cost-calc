@@ -31,8 +31,11 @@ Use the selected task branch named codex/<issue-number>-<short-description>.
 Commit often after coherent changes, with relevant tests and clear subjects
 formatted as #<task-id> | <description of changes>. Before every commit,
 verify the branch and inspect the staged diff; stage only task-related changes.
-Never commit to main. Respect execution permissions for Git operations.
-Do not push, merge, publish, or deploy without separate owner authorization.
+Do not author implementation on main; acceptance merge commits belong to the
+coordinator role. Respect execution permissions for Git operations.
+Do not push, publish, or deploy without separate owner authorization. Local
+acceptance/merge follow-up belongs to the coordinator under docs/work/workflow.md;
+this chat may adopt that role after final acceptance, but must not merge early.
 
 Maintain the issue's implementation plan and verification evidence under the
 assigned authorization. Read back GitHub mutations. Keep live status in the
