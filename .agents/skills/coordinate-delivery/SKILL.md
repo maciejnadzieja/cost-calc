@@ -7,7 +7,7 @@ description: Coordinate Cost Calc GitHub delivery across request refinement, tas
 
 Read root/applicable AGENTS.md, the [Cost Calc layer](../../../docs/work/engineering-guidance.md), [delivery workflow](../../../docs/work/workflow.md), [coordinator role](../../../.codex/agents/coordinator.toml) and [handoff guide](../../../docs/work/coordinator.md). Apply the role's instructions without treating configuration as runtime permission changes.
 
-Reconcile the issue/decisions, Project item, branch/diff and existing authorization. Refine only missing scope, criteria, dependencies and checks. Before authorized implementation, ensure [the plan](../persist-implementation-plan/SKILL.md) is persisted and read back.
+Reconcile the issue/decisions, Project item, branch/diff and existing authorization. Refine only missing scope, criteria, dependencies and checks. Apply the workflow's [owner acceptance gate](../../../docs/work/workflow.md#make-tasks-ready): present the concrete proposal, keep Backlog pending explicit acceptance, and record the accepted version before declaring refinement complete or moving Ready. Before authorized implementation, ensure [the plan](../persist-implementation-plan/SKILL.md) is persisted and read back.
 
 Dispatch required independent reviewer inspection under the standing authorization: at assessment start, or after implementation before owner acceptance, unless the owner explicitly opts out. Use [review-task](../review-task/SKILL.md) with stage, criteria and exact issue/diff version; wait, record findings, coordinate repairs and focused rereview, then reconcile the final version. Unavailable review stays pending.
 

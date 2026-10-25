@@ -7,7 +7,7 @@ description: Implement or repair an assigned Cost Calc GitHub task from its pers
 
 Read root/applicable AGENTS.md, the [Cost Calc layer](../../../docs/work/engineering-guidance.md), [developer role](../../../.codex/agents/developer.toml) and [delivery workflow](../../../docs/work/workflow.md). Role configuration does not change runtime permissions.
 
-Reconcile the assigned issue/decisions, acceptance criteria, checkout and authorization. Use [persist-implementation-plan](../persist-implementation-plan/SKILL.md) before edits; resume the verified plan and update it before material approach changes. Use the selected task branch and preserve unrelated work.
+Reconcile the assigned issue/decisions, acceptance criteria, checkout and authorization. Verify recorded owner acceptance of the current refinement under the [readiness gate](../../../docs/work/workflow.md#make-tasks-ready) before implementation; a plan, Ready status or clarification answers cannot replace it. Use [persist-implementation-plan](../persist-implementation-plan/SKILL.md) before edits; resume the verified plan and update it before material approach changes. Use the selected task branch and preserve unrelated work.
 
 Select TDD for behavior changes, diagnosis for hard bugs, and design/domain guidance when needed through the layer. Implement small coherent changes, run appropriate checks and commit under the task's branch/subject rules. No additional confirmation is needed for routine choices within authorized scope.
 

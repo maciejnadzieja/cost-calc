@@ -16,9 +16,15 @@ Inspect relevant code and existing behavior. Propose observable acceptance crite
 
 For a small fix or documentation change, create a task directly under the request. For a larger user outcome, create a feature and split it into tasks. Use investigation tasks when implementation cannot yet be specified; give them a concrete expected finding or decision.
 
-Do not invent product priorities, acceptance, or approval. An explicit user instruction can already authorize implementation; record that evidence rather than asking again. The owner sets roadmap priorities. Agents may suggest changes with reasons.
+Present the concrete refined proposal for owner review. Complete refinement only after explicit owner acceptance under [the readiness gate](#make-tasks-ready). An explicit instruction may accept the presented refinement and authorize implementation together; record both rather than asking again. The owner sets roadmap priorities. Agents may suggest changes with reasons.
 
 ## Make tasks ready
+
+Refinement is complete, and an issue may move to Ready, only after the owner explicitly accepts its current refined proposal. The coordinator prepares scope, exclusions, acceptance criteria, dependencies and verification, presents that concrete version, then waits for acceptance. Keep issues being refined or awaiting this acceptance in Backlog; independent reviewer approval and agent assessment do not substitute for the owner.
+
+Record the owner's acceptance in the issue with the Europe/Warsaw date, their words or an accurate attribution, and the accepted version (issue update timestamp, linked proposal, or identifiable sections). Clarification answers, silence and a generic "start work" before the proposal was presented do not establish acceptance of that proposal. On resumption, reuse recorded acceptance for unchanged scope; materially changed scope, criteria, exclusions, dependencies or verification returns to refinement and needs acceptance of the revised proposal before implementation proceeds. Preserve prior decisions and explain the change.
+
+Refinement acceptance permits Ready once all criteria below are met. Implementation still requires owner authorization, and final delivery acceptance remains separate. One explicit owner message may supply refinement acceptance and implementation authorization together; do not add another routine confirmation in that case. A saved implementation plan alone establishes neither.
 
 A Ready task must contain:
 
@@ -29,6 +35,7 @@ A Ready task must contain:
 - Dependencies with their required completion conditions.
 - Verification appropriate to the change.
 - No unresolved question that prevents implementation.
+- Recorded explicit owner acceptance of the current refined proposal.
 
 Do not split every file into a task. Prefer complete behavior changes; split along genuine dependencies or independent deliverables. A task may cover both backend and frontend.
 
@@ -69,7 +76,7 @@ Before materially changing the approach, revise and read back the plan with a da
 
 ### Delivery steps
 
-1. Select a Ready task in owner-approved priority order. Confirm dependencies are satisfied.
+1. Select a Ready task in owner-approved priority order. Verify recorded owner acceptance of the current refinement, implementation authorization and satisfied dependencies. A stale Ready status cannot replace missing acceptance evidence; return unaccepted refinement to Backlog.
 2. Set Project Status to In progress, record who is working, and add a dated issue comment.
 3. Before changing application code, use [persist-implementation-plan](../../.agents/skills/persist-implementation-plan/SKILL.md) to inspect the baseline and save a concrete plan in the issue's `Implementation plan` section. Read it back to verify persistence. Include scope, implementation steps, acceptance checks, dependencies, and commit boundaries. On resumption, read the existing plan; update and verify it before materially changing the approach. If persistence fails or a blocking decision remains, resolve that before implementation. A saved plan does not require another approval when implementation is already authorized.
 4. Implement within scope and maintain plan progress in the issue. Link new discoveries as follow-ups rather than silently expanding scope.
@@ -99,12 +106,14 @@ Check these instruction paths when changing this procedure: final acceptance wit
 | Project Status | Meaning |
 | --- | --- |
 | Backlog | Captured, being refined, deferred, or not selected yet |
-| Ready | Meets readiness criteria and can be implemented when selected |
+| Ready | Owner explicitly accepted the current refinement; all readiness criteria met; implementation requires authorization |
 | In progress | Active implementation or investigation |
 | In review | Awaiting agreed review or acceptance |
 | Done | Completed outcome with verification evidence |
 
 For blocked work, record the blocker and action needed in the issue; retain the appropriate existing Project status. Deferred work returns to Backlog with a reason. Cancelled work is closed as not planned, with a reason, and may be archived from active views; do not describe it as delivered. Reopened issues record new evidence and return to an active status. A feature is Done only when its outcome is verified; completed child tasks alone do not prove it. Milestones require evidence for their exit criteria.
+
+Validate the readiness gate with these scenarios: proposal awaiting acceptance or clarification answers only -> Backlog, refinement pending; accepted refinement without implementation authorization -> Ready, wait to implement; explicit acceptance plus start -> proceed without another routine confirmation after prerequisites; material proposal change -> Backlog and renewed acceptance; unchanged accepted resumption -> retain acceptance. Final delivery acceptance continues to follow the separate local-merge procedure.
 
 ## History and roadmap
 

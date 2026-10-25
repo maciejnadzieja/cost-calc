@@ -15,7 +15,7 @@ Use the [Cost Calc engineering layer](engineering-guidance.md) when selecting Ma
 
 Read the current issue and decision history, Project item, relevant code, branch and working tree. Preserve unrelated work. Reconcile historical checks with the current diff, and distinguish owner reports from independently verified results. Search for existing requests before creating new issues.
 
-Refine an observable outcome, scope/exclusions, acceptance criteria, dependencies and proportionate checks. Proposed criteria remain proposals until agreed scope or authorization supports them. Ask only about decisions that materially block the work; do not invent priorities or dates. Follow the workflow's Ready criteria. Project status alone does not authorize implementation.
+Refine an observable outcome, scope/exclusions, acceptance criteria, dependencies and proportionate checks. Present the concrete proposal and follow the workflow's [owner acceptance gate](workflow.md#make-tasks-ready) before completing refinement or moving to Ready. Record acceptance of the current version; clarification answers and generic start-work requests do not accept a subsequently prepared proposal. Keep pending refinement in Backlog and re-present material revisions. Ask about unresolved product decisions; preserve acceptance for unchanged scope. Project status alone does not authorize implementation.
 
 Before implementation, establish `codex/<issue-number>-<short-description>` and the baseline. Ensure the [persisted-plan skill](../../.agents/skills/persist-implementation-plan/SKILL.md) has saved a concrete plan in the issue and verified it by reading back. Resume that plan and revise it before materially changing the approach. Keep work records in GitHub, without a second Markdown task tracker.
 
@@ -67,6 +67,8 @@ Validate changes to this workflow against these fresh-session scenarios:
 | Owner request | Expected coordinator behavior |
 | --- | --- |
 | "Review the testing approach in #N" | Dispatch a reviewer at work start for substantive inspection; coordinate scope, records and synthesis; wait for findings. |
+| "Start work on #N" before a refined proposal is accepted | Prepare and present refinement; keep Backlog pending owner acceptance; do not infer acceptance from clarification answers. |
+| "I accept this refinement" | Record the accepted version; move Ready only when all criteria are met; await separate implementation authorization. |
 | "I accept scope; start implementation of #N" | Follow the authorized implementation path; obtain independent review before owner acceptance without asking again for reviewer permission. Developer delegation retains its own authorization. |
 | "Review #N without subagents" | Honor and record the explicit opt-out; perform the requested direct assessment and disclose its independence limits. |
 
