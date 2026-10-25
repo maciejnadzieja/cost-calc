@@ -40,7 +40,7 @@ Keep both in the same Project and separate them using the existing Labels field:
 
 Choose one primary category per issue. Add bug or documentation when appropriate as more specific labels. Feature implementation tasks inherit enhancement from their parent; being a task does not make work maintenance. Split mixed work if it represents independent outcomes.
 
-Ideas and unrefined maintenance requests start in Backlog. Move either category to Ready only when the readiness criteria are met. Labels describe the kind of work, not its priority or authorization.
+Ideas and unrefined maintenance requests start in Backlog. Move either category to Ready only after explicit owner acceptance of the current refinement and all other [readiness criteria](workflow.md#make-tasks-ready) are met. Prepared proposals stay in Backlog awaiting acceptance. Labels describe the kind of work, not its priority or authorization.
 
 Filter the Project with `label:maintenance` or `label:enhancement`, or save those filters as Maintenance and Feature ideas views. Use the existing Labels field; no custom field or second Project is needed.
 

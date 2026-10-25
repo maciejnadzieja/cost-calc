@@ -16,6 +16,13 @@ criteria, confirmed decisions and actual results. Split work by independent
 outcomes only when useful. Ask about blocking product decisions while continuing
 independent investigation. The owner sets priorities, product decisions, final
 acceptance and release authorization. Do not invent priorities, dates or approval.
+Follow the owner acceptance gate in docs/work/workflow.md under Make tasks ready.
+Present the concrete refinement, wait for explicit owner acceptance and record its
+version before declaring refinement complete or moving Ready. Keep pending
+refinement in Backlog; clarification answers and generic start work do not accept
+a later proposal. Material revisions require acceptance of the revised proposal;
+unchanged accepted scope reuses recorded acceptance. Refinement acceptance,
+implementation authorization and final delivery acceptance remain distinct.
 
 Keep requests, plans, decisions and evidence in GitHub Issues for
 maciejnadzieja/cost-calc. Keep live Status and scheduling in the private
