@@ -4,12 +4,15 @@
     <div class="d-flex justify-content-between mb-3">
       <div class="input-group" style="width: auto;">
         <input type="text" class="form-control" v-model="query" @keyup.enter="search">
-        <button class="btn btn-primary" type="button" @click="search">{{ t('common.search') }}</button>
+        <button class="btn btn-primary" type="button" :disabled="loading" @click="search">{{ t('common.search') }}</button>
       </div>
       <router-link to="/services/create" class="btn btn-primary">{{ t('services.new') }}</router-link>
     </div>
-    <div class="border rounded" style="overflow:hidden">
-      <table class="table table-striped table-hover">
+    <div class="border rounded" style="overflow:hidden" :aria-busy="loading">
+      <p v-if="loading" class="p-4 mb-0 text-center" role="status"><span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>{{ t('services.list.loading') }}</p>
+      <div v-else-if="failed" class="alert alert-danger m-3" role="alert">{{ t('services.list.failure') }} <button class="btn btn-outline-danger ms-2" type="button" @click="retry">{{ t('services.list.retry') }}</button></div>
+      <p v-else-if="services.length === 0" class="p-4 mb-0 text-center">{{ t('services.list.empty') }}</p>
+      <table v-else class="table table-striped table-hover">
       <thead>
         <tr>
           <th>{{ t('services.form.name') }}</th>
@@ -33,7 +36,7 @@
       </tbody>
       </table>
     </div>
-    <nav aria-label="Page navigation" class="mt-3">
+    <nav v-if="!loading && !failed && totalPages > 1" aria-label="Page navigation" class="mt-3">
       <ul class="pagination">
         <li class="page-item" :class="{ disabled: currentPage === 0 }">
           <a class="page-link" href="#" @click.prevent="fetchServices(currentPage - 1)">{{ t('common.previous') }}</a>
@@ -65,12 +68,19 @@ const query = ref(route.query.query || '');
 const services = ref<Service[]>([]);
 const currentPage = ref(parseInt(route.query.page as string) || 0);
 const totalPages = ref(0);
+const loading = ref(false);
+const failed = ref(false);
+const requested = ref({ page: currentPage.value, query: String(query.value) });
 
-const fetchServices = async (page = 0) => {
+const fetchServices = async (page = 0, queryText = String(query.value)) => {
+  if (loading.value) return;
+  requested.value = { page, query: queryText };
+  loading.value = true;
+  failed.value = false;
   try {
     const response = await apiClient.get('/services', {
       params: {
-        query: query.value,
+        query: queryText,
         page: page,
         size: 10,
       },
@@ -79,18 +89,22 @@ const fetchServices = async (page = 0) => {
     currentPage.value = response.data.number;
     totalPages.value = response.data.totalPages;
 
-    const queryParams: any = {};
-    if (query.value) {
-      queryParams.query = query.value;
+    const queryParams: { query?: string; page?: number } = {};
+    if (queryText) {
+      queryParams.query = queryText;
     }
     if (currentPage.value > 0) {
       queryParams.page = currentPage.value;
     }
     router.push({ query: queryParams });
-  } catch (error) {
-    console.error(error);
+  } catch {
+    failed.value = true;
+  } finally {
+    loading.value = false;
   }
 };
+
+const retry = () => fetchServices(requested.value.page, requested.value.query);
 
 const search = () => {
   fetchServices(0);

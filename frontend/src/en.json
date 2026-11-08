@@ -87,7 +87,10 @@
     },
     "new": "New Service",
     "list": {
-      "empty": "No services found. Click \"Add New Service\" to create one."
+      "empty": "No services found. Click \"Add New Service\" to create one.",
+      "loading": "Loading services…",
+      "failure": "Services could not be loaded. Please try again.",
+      "retry": "Retry"
     },
     "form": {
       "name": "Service Name",
@@ -113,7 +116,10 @@
     },
     "new": "New Material",
     "list": {
-      "empty": "No materials found. Click \"Add New Material\" to create one."
+      "empty": "No materials found. Click \"Add New Material\" to create one.",
+      "loading": "Loading materials…",
+      "failure": "Materials could not be loaded. Please try again.",
+      "retry": "Retry"
     },
     "form": {
       "name": "Material Name",
@@ -219,6 +225,9 @@
     "list": {
       "no_calculations": "No calculations found",
       "empty": "No calculations found",
+      "loading": "Loading calculations…",
+      "failure": "Calculations could not be loaded. Please try again.",
+      "retry": "Retry",
       "name": "Name",
       "description": "Description",
       "currency": "Currency",
