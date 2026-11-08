@@ -57,6 +57,22 @@ describe('calculation item totals', () => {
     wrapper.unmount()
   })
 
+  it('matches the saved decimal stage total at a half-cent boundary', () => {
+    const decimal = stage()
+    decimal.services = [
+      { name: 'Fraction', quantity: 0.7, unit: 'HOUR', unitPrice: 0.05, type: ItemType.SERVICE },
+    ]
+    decimal.materials = []
+    decimal.totalAmount = 0.035
+    const wrapper = mount(CalculationStage, {
+      props: { stage: decimal, stageIndex: 0, isExpanded: true, currency: 'USD' },
+      global: { plugins: [createI18n({ legacy: false, locale: 'en', messages: { en } })] },
+    })
+
+    expect(wrapper.find('.card-header .badge').text()).toBe('0.04 USD')
+    wrapper.unmount()
+  })
+
   it('shows a total for both service and material rows', () => {
     const wrapper = render()
     const tables = wrapper.element.querySelectorAll('table')

@@ -121,6 +121,44 @@ describe('live calculation totals', () => {
     wrapper.unmount()
   })
 
+  it('matches the saved decimal calculation total at a half-cent boundary', async () => {
+    const decimal = calculation()
+    decimal.stages = [{
+      ...decimal.stages[0]!,
+      services: [{ name: 'Fraction', quantity: 0.7, unit: 'HOUR', unitPrice: 0.05, type: ItemType.SERVICE }],
+      materials: [],
+      servicesTotalAmount: 0.035,
+      materialsTotalAmount: 0,
+      totalAmount: 0.035,
+    }]
+    decimal.totalAmount = 0.035
+    api.getCalculationById.mockResolvedValue({ data: decimal })
+
+    const wrapper = await render()
+    expect(stageBadges(wrapper.element)).toEqual(['0.04 USD'])
+    expect(calculationBadge(wrapper.element)).toBe('0.04 USD')
+    wrapper.unmount()
+  })
+
+  it('sums fractional stage amounts before rounding the calculation total', async () => {
+    const fractional = calculation()
+    for (const stage of fractional.stages) {
+      stage.services[0]!.quantity = 0.5
+      stage.services[0]!.unitPrice = 0.01
+      stage.materials = []
+      stage.servicesTotalAmount = 0.005
+      stage.materialsTotalAmount = 0
+      stage.totalAmount = 0.005
+    }
+    fractional.totalAmount = 0.01
+    api.getCalculationById.mockResolvedValue({ data: fractional })
+
+    const wrapper = await render()
+    expect(stageBadges(wrapper.element)).toEqual(['0.01 USD', '0.01 USD'])
+    expect(calculationBadge(wrapper.element)).toBe('0.01 USD')
+    wrapper.unmount()
+  })
+
   it('shows saved totals consistently after reopening the form and print view', async () => {
     const saved = calculation()
     saved.stages[0]!.services[0]!.quantity = 3
