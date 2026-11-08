@@ -135,8 +135,16 @@ describe.each(cases)('$name list loading', ({ name, component, endpoint, row, la
     await flushPromises()
     expect(wrapper.find('[role="status"]').exists()).toBe(true)
     expect(get).toHaveBeenLastCalledWith(endpoint, { params: { query: '', page: 1, size: 10 } })
-    refresh.resolve(page([], 1, 2))
+    refresh.resolve(page([], 1, 1))
     await flushPromises()
+    if (name !== 'calculations') {
+      expect(wrapper.find('nav a').exists()).toBe(true)
+      get.mockResolvedValueOnce(page([row], 0, 1) as never)
+      await wrapper.find('nav a').trigger('click')
+      await flushPromises()
+      expect(get).toHaveBeenLastCalledWith(endpoint, { params: { query: '', page: 0, size: 10 } })
+      expect(wrapper.text()).toContain(label)
+    }
     wrapper.unmount()
   })
 })

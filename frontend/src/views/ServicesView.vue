@@ -36,7 +36,7 @@
       </tbody>
       </table>
     </div>
-    <nav v-if="!loading && !failed && totalPages > 1" aria-label="Page navigation" class="mt-3">
+    <nav v-if="!loading && !failed" aria-label="Page navigation" class="mt-3">
       <ul class="pagination">
         <li class="page-item" :class="{ disabled: currentPage === 0 }">
           <a class="page-link" href="#" @click.prevent="fetchServices(currentPage - 1)">{{ t('common.previous') }}</a>
