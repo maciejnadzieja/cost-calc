@@ -11,7 +11,7 @@
         ></i>
         <h6 class="m-0 fw-bold">{{ stage.name || `${t('calculations.form.stage.index')} ${stageIndex + 1}` }}</h6>
         <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill">
-          {{ stage.totalAmount?.toFixed(2) }}
+          {{ stageTotal }}
         </span>
       </div>
       <button type="button" class="btn btn-outline-danger btn-sm py-0 px-2" @click.stop="$emit('remove-stage')">
@@ -100,11 +100,12 @@
           <table class="table table-sm table-hover align-middle mb-0">
             <thead class="table-light">
               <tr>
-                <th style="width: 40%">{{ t('calculations.form.name') }}</th>
-                <th style="width: 15%">{{ t('calculations.form.quantity') }}</th>
-                <th style="width: 15%">{{ t('calculations.form.unit') }}</th>
-                <th style="width: 20%">{{ t('calculations.form.price') }}</th>
-                <th style="width: 10%"></th>
+                <th style="width: 35%">{{ t('calculations.form.name') }}</th>
+                <th style="width: 12%">{{ t('calculations.form.quantity') }}</th>
+                <th style="width: 12%">{{ t('calculations.form.unit') }}</th>
+                <th style="width: 16%">{{ t('calculations.form.price') }}</th>
+                <th class="text-end" style="width: 20%">{{ t('calculations.form.total') }}</th>
+                <th style="width: 5%"></th>
               </tr>
             </thead>
             <tbody>
@@ -142,6 +143,7 @@
                     v-model="item.unitPrice"
                   />
                 </td>
+                <td class="text-end">{{ formatItemTotal(item) }}</td>
                 <td class="text-end">
                   <button type="button" class="btn btn-link text-danger p-0" @click="removeService(item)">
                     <i class="bi bi-x-lg"></i>
@@ -160,11 +162,12 @@
           <table class="table table-sm table-hover align-middle mb-0">
             <thead class="table-light">
               <tr>
-                <th style="width: 40%">{{ t('calculations.form.name') }}</th>
-                <th style="width: 15%">{{ t('calculations.form.quantity') }}</th>
-                <th style="width: 15%">{{ t('calculations.form.unit') }}</th>
-                <th style="width: 20%">{{ t('calculations.form.price') }}</th>
-                <th style="width: 10%"></th>
+                <th style="width: 35%">{{ t('calculations.form.name') }}</th>
+                <th style="width: 12%">{{ t('calculations.form.quantity') }}</th>
+                <th style="width: 12%">{{ t('calculations.form.unit') }}</th>
+                <th style="width: 16%">{{ t('calculations.form.price') }}</th>
+                <th class="text-end" style="width: 20%">{{ t('calculations.form.total') }}</th>
+                <th style="width: 5%"></th>
               </tr>
             </thead>
             <tbody>
@@ -202,6 +205,7 @@
                     v-model="item.unitPrice"
                   />
                 </td>
+                <td class="text-end">{{ formatItemTotal(item) }}</td>
                 <td class="text-end">
                   <button type="button" class="btn btn-link text-danger p-0" @click="removeMaterial(item)">
                     <i class="bi bi-x-lg"></i>
@@ -217,18 +221,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { ItemType, type CalculationStage, type CalculationItem } from '../models/calculation'
 import { searchServices, searchMaterials } from '../services/api'
 import type { Service } from '../models/service'
 import type { Material } from '../models/material'
 import { useI18n } from 'vue-i18n'
+import { formatAmount, itemAmount, stageAmount } from '../models/calculationTotals'
 
 const { t } = useI18n()
 
 const props = defineProps<{ 
   stage: CalculationStage; 
   stageIndex: number;
+  currency: string;
   isExpanded: boolean;
 }>()
 
@@ -238,6 +244,7 @@ const serviceSearchQuery = ref('')
 const materialSearchQuery = ref('')
 const serviceSearchResults = ref<Service[]>([])
 const materialSearchResults = ref<Material[]>([])
+const stageTotal = computed(() => formatAmount(stageAmount(props.stage), props.currency))
 
 const serviceUnits = [
   'HOUR',
@@ -261,6 +268,10 @@ const materialUnits = [
   'ROLL',
   'TON'
 ]
+
+const formatItemTotal = (item: CalculationItem) => {
+  return formatAmount(itemAmount(item), props.currency)
+}
 
 const getUnitSymbol = (type: 'service' | 'material', unit: string) => {
   if (!unit) return ''

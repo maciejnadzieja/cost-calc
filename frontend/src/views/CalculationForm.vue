@@ -3,8 +3,8 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div class="d-flex align-items-center gap-3">
         <h2 class="h3 mb-0">{{ calculation.id ? t('calculations.edit.title') : t('calculations.new.title') }}</h2>
-        <span class="badge bg-primary fs-6" v-if="calculation.totalAmount">
-          {{ calculation.totalAmount.toFixed(2) }} {{ calculation.currency }}
+        <span class="badge bg-primary fs-6">
+          {{ calculationTotal }}
         </span>
       </div>
       <div class="d-flex gap-2">
@@ -67,6 +67,7 @@
           :key="`${stageIndex}-${stage.totalAmount}`"
           :stage="stage"
           :stage-index="stageIndex"
+          :currency="calculation.currency"
           :is-expanded="expandedStages.includes(stageIndex)"
           @update:stage="updateStage(stageIndex, $event)"
           @remove-stage="removeStage(stageIndex)"
@@ -83,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import {
   type Calculation,
@@ -97,6 +98,7 @@ import {
 import CalculationStage from '@/components/CalculationStage.vue'
 import { useI18n } from 'vue-i18n'
 import apiClient from '@/services/api'
+import { calculationAmount, formatAmount } from '../models/calculationTotals'
 
 const { t } = useI18n()
 
@@ -108,6 +110,9 @@ const calculation = ref<Calculation>({
   currency: 'USD',
   totalAmount: 0
 })
+const calculationTotal = computed(() =>
+  formatAmount(calculationAmount(calculation.value.stages), calculation.value.currency)
+)
 
 const currencies = ref<string[]>([])
 const calculationSaved = ref(false)
