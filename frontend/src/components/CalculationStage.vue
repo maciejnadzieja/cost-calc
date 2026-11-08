@@ -11,7 +11,7 @@
         ></i>
         <h6 class="m-0 fw-bold">{{ stage.name || `${t('calculations.form.stage.index')} ${stageIndex + 1}` }}</h6>
         <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill">
-          {{ stage.totalAmount?.toFixed(2) }}
+          {{ stageTotal }}
         </span>
       </div>
       <button type="button" class="btn btn-outline-danger btn-sm py-0 px-2" @click.stop="$emit('remove-stage')">
@@ -221,12 +221,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { ItemType, type CalculationStage, type CalculationItem } from '../models/calculation'
 import { searchServices, searchMaterials } from '../services/api'
 import type { Service } from '../models/service'
 import type { Material } from '../models/material'
 import { useI18n } from 'vue-i18n'
+import { formatAmount, itemAmount, stageAmount } from '../models/calculationTotals'
 
 const { t } = useI18n()
 
@@ -243,6 +244,7 @@ const serviceSearchQuery = ref('')
 const materialSearchQuery = ref('')
 const serviceSearchResults = ref<Service[]>([])
 const materialSearchResults = ref<Material[]>([])
+const stageTotal = computed(() => formatAmount(stageAmount(props.stage), props.currency))
 
 const serviceUnits = [
   'HOUR',
@@ -268,12 +270,7 @@ const materialUnits = [
 ]
 
 const formatItemTotal = (item: CalculationItem) => {
-  if (typeof item.quantity !== 'number' || !Number.isFinite(item.quantity) || item.quantity <= 0 ||
-      typeof item.unitPrice !== 'number' || !Number.isFinite(item.unitPrice) || item.unitPrice <= 0) {
-    return '—'
-  }
-  const total = item.quantity * item.unitPrice
-  return Number.isFinite(total) ? `${total.toFixed(2)} ${props.currency}` : '—'
+  return formatAmount(itemAmount(item), props.currency)
 }
 
 const getUnitSymbol = (type: 'service' | 'material', unit: string) => {

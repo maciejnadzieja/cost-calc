@@ -25,6 +25,38 @@ const rowTotal = (element: Element, tableIndex: number) => {
 }
 
 describe('calculation item totals', () => {
+  it('updates the stage badge from current service and material values', async () => {
+    const wrapper = render()
+    const badge = wrapper.find('.card-header .badge')
+    const quantity = wrapper.findAll('table')[0]!.find('input[type="number"]')
+
+    await quantity.setValue('3')
+    expect(badge.text()).toBe('67.50 USD')
+    await wrapper.setProps({ currency: 'PLN' })
+    expect(badge.text()).toBe('67.50 PLN')
+
+    await quantity.setValue('')
+    expect(badge.text()).toBe('—')
+    wrapper.unmount()
+  })
+
+  it('sums fractional item amounts before rounding the stage total', () => {
+    const fractional = stage()
+    fractional.services = [
+      { name: 'First', quantity: 0.5, unit: 'HOUR', unitPrice: 0.01, type: ItemType.SERVICE },
+      { name: 'Second', quantity: 0.5, unit: 'HOUR', unitPrice: 0.01, type: ItemType.SERVICE },
+    ]
+    fractional.materials = []
+    fractional.totalAmount = 999
+    const wrapper = mount(CalculationStage, {
+      props: { stage: fractional, stageIndex: 0, isExpanded: true, currency: 'USD' },
+      global: { plugins: [createI18n({ legacy: false, locale: 'en', messages: { en } })] },
+    })
+
+    expect(wrapper.find('.card-header .badge').text()).toBe('0.01 USD')
+    wrapper.unmount()
+  })
+
   it('shows a total for both service and material rows', () => {
     const wrapper = render()
     const tables = wrapper.element.querySelectorAll('table')
