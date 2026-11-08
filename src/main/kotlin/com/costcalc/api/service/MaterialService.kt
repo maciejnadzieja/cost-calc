@@ -4,6 +4,7 @@ import com.costcalc.api.model.Material
 import com.costcalc.api.model.MaterialUnit
 import com.costcalc.api.model.UserId
 import com.costcalc.api.repository.MaterialRepository
+import com.costcalc.api.search.AccentFolding
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -22,7 +23,7 @@ class MaterialService(
         if (query.isNullOrBlank()) {
             materialRepository.findByUserId(userId, pageable)
         } else {
-            materialRepository.findByUserIdAndQuery(userId, Regex.escape(query), pageable)
+            materialRepository.findByUserIdAndQuery(userId, Regex.escape(AccentFolding.fold(query)), pageable)
         }
 
     fun findByIdAndUserId(

@@ -4,6 +4,7 @@ import com.costcalc.api.model.Service
 import com.costcalc.api.model.UserId
 import com.costcalc.api.model.WorkUnit
 import com.costcalc.api.repository.ServiceRepository
+import com.costcalc.api.search.AccentFolding
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import java.math.BigDecimal
@@ -22,7 +23,7 @@ class ServiceService(
         if (query.isNullOrBlank()) {
             serviceRepository.findByUserId(userId, pageable)
         } else {
-            serviceRepository.findByUserIdAndQuery(userId, Regex.escape(query), pageable)
+            serviceRepository.findByUserIdAndQuery(userId, Regex.escape(AccentFolding.fold(query)), pageable)
         }
 
     fun findByIdAndUserId(

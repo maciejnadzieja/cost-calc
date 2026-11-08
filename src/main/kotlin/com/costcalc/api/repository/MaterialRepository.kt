@@ -16,7 +16,7 @@ interface MaterialRepository : MongoRepository<Material, MaterialId> {
         pageable: Pageable,
     ): Page<Material>
 
-    @Query("{ 'userId': ?0, \$or: [ { 'name': { \$regex: ?1, \$options: 'i' } }, { 'description': { \$regex: ?1, \$options: 'i' } } ] }")
+    @Query("{ 'userId': ?0, \$or: [ { 'searchName': { \$regex: ?1 } }, { 'searchDescription': { \$regex: ?1 } } ] }")
     fun findByUserIdAndQuery(
         userId: UserId,
         query: String,

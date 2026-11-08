@@ -18,7 +18,7 @@ interface ServiceRepository : MongoRepository<Service, ServiceId> {
         pageable: Pageable,
     ): Page<Service>
 
-    @Query("{ 'userId': ?0, \$or: [ { 'name': { \$regex: ?1, \$options: 'i' } }, { 'description': { \$regex: ?1, \$options: 'i' } } ] }")
+    @Query("{ 'userId': ?0, \$or: [ { 'searchName': { \$regex: ?1 } }, { 'searchDescription': { \$regex: ?1 } } ] }")
     fun findByUserIdAndQuery(
         userId: UserId,
         query: String,

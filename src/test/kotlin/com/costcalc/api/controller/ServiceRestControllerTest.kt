@@ -5,10 +5,14 @@ import com.costcalc.api.model.Service
 import com.costcalc.api.model.UserId
 import com.costcalc.api.model.WorkUnit
 import com.costcalc.api.repository.ServiceRepository
+import com.costcalc.api.migration.BackfillSearchFieldsChangeUnit
+import com.mongodb.client.model.Filters
+import com.mongodb.client.model.Updates
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
+import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
@@ -24,6 +28,9 @@ class ServiceRestControllerTest : AbstractIntegrationTest() {
 
     @Autowired
     private lateinit var serviceRepository: ServiceRepository
+
+    @Autowired
+    private lateinit var mongoTemplate: MongoTemplate
 
     @BeforeEach
     fun setUp() {
@@ -306,6 +313,139 @@ class ServiceRestControllerTest : AbstractIntegrationTest() {
                 status { isOk() }
                 jsonPath("$.content.length()") { value(2) }
             }
+    }
+
+    @Test
+    fun `should find a service by a fragment inside its name or description`() {
+        val userId = UUID.randomUUID()
+        serviceRepository.save(createTestService(userId = userId, name = "Instalacja", description = ""))
+        serviceRepository.save(createTestService(userId = userId, name = "Other", description = "Montaż instalacji"))
+
+        mockMvc
+            .get("/api/services?query=stal") {
+                with(token(userId))
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.content.length()") { value(2) }
+                jsonPath("$.page.totalElements") { value(2) }
+            }
+    }
+
+    @Test
+    fun `should find services with or without Polish accents in either direction`() {
+        val userId = UUID.randomUUID()
+        serviceRepository.save(createTestService(userId = userId, name = "Łódź (a+b)", description = ""))
+        serviceRepository.save(createTestService(userId = userId, name = "Lodz", description = ""))
+
+        for (query in listOf("lodz", "Łódź")) {
+            mockMvc
+                .get("/api/services") {
+                    with(token(userId))
+                    param("query", query)
+                }.andExpect {
+                    status { isOk() }
+                    jsonPath("$.content.length()") { value(2) }
+                    jsonPath("$.page.totalElements") { value(2) }
+                }
+        }
+
+        mockMvc
+            .get("/api/services") {
+                with(token(userId))
+                param("query", "lodz (a+b)")
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.content.length()") { value(1) }
+                jsonPath("$.content[0].name") { value("Łódź (a+b)") }
+            }
+    }
+
+    @Test
+    fun `should match every Polish letter in paged user scoped service search`() {
+        val userId = UUID.randomUUID()
+        serviceRepository.save(createTestService(userId = userId, name = "ZAŻÓŁĆ GĘŚLĄ JAŹŃ", description = ""))
+        serviceRepository.save(createTestService(userId = userId, name = "Other", description = "Zazolc gesla jazn"))
+        serviceRepository.save(createTestService(userId = UUID.randomUUID(), name = "Zażółć gęślą jaźń", description = ""))
+
+        for (query in listOf("zazolc gesla jazn", "ZAŻÓŁĆ GĘŚLĄ JAŹŃ")) {
+            for (page in 0..1) {
+                mockMvc
+                    .get("/api/services") {
+                        with(token(userId))
+                        param("query", query)
+                        param("page", page.toString())
+                        param("size", "1")
+                    }.andExpect {
+                        status { isOk() }
+                        jsonPath("$.content.length()") { value(1) }
+                        jsonPath("$.page.totalElements") { value(2) }
+                        jsonPath("$.page.totalPages") { value(2) }
+                    }
+            }
+        }
+    }
+
+    @Test
+    fun `should match accents from other languages in service names`() {
+        val userId = UUID.randomUUID()
+        serviceRepository.save(createTestService(userId = userId, name = "Café Düsseldorf", description = ""))
+
+        mockMvc
+            .get("/api/services") {
+                with(token(userId))
+                param("query", "CAFE DUSSELDORF")
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.content[0].name") { value("Café Düsseldorf") }
+            }
+    }
+
+    @Test
+    fun `should backfill search fields for an existing service`() {
+        val userId = UUID.randomUUID()
+        serviceRepository.save(createTestService(userId = userId, name = "Łódź", description = "Café"))
+        mongoTemplate.db.getCollection("services").updateOne(
+            Filters.eq("name", "Łódź"),
+            Updates.combine(Updates.unset("searchName"), Updates.unset("searchDescription")),
+        )
+
+        BackfillSearchFieldsChangeUnit().execute(mongoTemplate)
+
+        for (query in listOf("lodz", "cafe")) {
+            mockMvc
+                .get("/api/services") {
+                    with(token(userId))
+                    param("query", query)
+                }.andExpect {
+                    status { isOk() }
+                    jsonPath("$.content.length()") { value(1) }
+                }
+        }
+    }
+
+    @Test
+    fun `should refresh service search fields after an edit`() {
+        val userId = UUID.randomUUID()
+        val service = serviceRepository.save(createTestService(userId = userId, name = "Łódź", description = ""))
+        mockMvc
+            .put("/api/services/{id}", service.id) {
+                with(token(userId))
+                contentType = MediaType.APPLICATION_JSON
+                content = updateServiceJson(name = "Café", description = "Düsseldorf")
+            }.andExpect {
+                status { isOk() }
+            }
+
+        for ((query, expected) in listOf("lodz" to 0, "cafe" to 1, "dusseldorf" to 1)) {
+            mockMvc
+                .get("/api/services") {
+                    with(token(userId))
+                    param("query", query)
+                }.andExpect {
+                    status { isOk() }
+                    jsonPath("$.content.length()") { value(expected) }
+                }
+        }
     }
 
     private fun token(

@@ -28,11 +28,11 @@ apiClient.interceptors.request.use(async (config) => {
 });
 
 export const searchServices = (query: string) => {
-  return apiClient.get(`/services?query=${query}`);
+  return apiClient.get('/services', { params: { query } });
 };
 
 export const searchMaterials = (query: string) => {
-  return apiClient.get(`/materials?query=${query}`);
+  return apiClient.get('/materials', { params: { query } });
 };
 
 export const createCalculation = (calculation: any) => {
