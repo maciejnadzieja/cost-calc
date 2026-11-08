@@ -54,13 +54,23 @@ class MaterialHtmlExtractorTest {
 
     @Test
     fun rejectsLoginPagesAndKeepsOverlengthDescriptionForReview() {
-        val error = assertThrows(ExternalMaterialSearchException::class.java) {
-            extract("atlas.example", "<title>Logowanie | Atlas</title><main><h1>Logowanie</h1><form><input type=password></form></main>")
+        for (heading in listOf("Logowanie | Atlas", "Sign in to continue", "Verify you are human")) {
+            val error = assertThrows(ExternalMaterialSearchException::class.java) {
+                extract("atlas.example", "<main><h1>$heading</h1><p>Please authenticate.</p><form><input type=password></form></main>")
+            }
+            assertEquals(ExternalMaterialSearchError.UNSUPPORTED_PAGE, error.error)
         }
-        assertEquals(ExternalMaterialSearchError.UNSUPPORTED_PAGE, error.error)
         val longText = "x".repeat(501)
         val details = extract("atlas.example", "<main><h1>Plant</h1><p>$longText</p></main>")
         assertEquals(longText, details.description)
+    }
+
+    @Test
+    fun rejectsAnImageOnAnotherHostEvenIfItIsTheWwwAliasOfTheSource() {
+        val details = extract("catalog.example", """
+            <main><h1>Spiraea alba</h1><img alt="Spiraea alba" src="https://www.catalog.example/photo.jpg"></main>
+        """)
+        assertNull(details.imageUrl)
     }
 
     private fun extract(domain: String, html: String) = MaterialHtmlExtractor.extract(

@@ -36,7 +36,10 @@ data class ExternalMaterialSource(
 
     init {
         require(label.isNotBlank() && label.length <= 100)
-        require(domain.matches(Regex("[a-z0-9-]+(?:[.][a-z0-9-]+)*[.][a-z]{2,63}")) && domain.length <= 253)
+        val dnsLabel = "[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?"
+        require(domain.length <= 253 && domain.matches(Regex("(?:$dnsLabel[.])+[a-z]{2,63}"))) {
+            "External material source requires a valid DNS domain"
+        }
         require(itemPath.startsWith("/") && itemPath.length <= 256 && !eligiblePath.matches("/"))
     }
 
@@ -47,7 +50,10 @@ data class ExternalMaterialSource(
             uri.path.orEmpty().split('/').none { it == "." || it == ".." } &&
             eligiblePath.matches(uri.path.orEmpty())
 
-    fun allowsOrigin(uri: URI): Boolean =
+    fun allowsImage(page: URI, image: URI): Boolean =
+        allowsOrigin(image) && image.host.equals(page.host, ignoreCase = true) && image.path.orEmpty().startsWith('/')
+
+    private fun allowsOrigin(uri: URI): Boolean =
         uri.scheme.equals("https", ignoreCase = true) &&
             uri.host?.lowercase(Locale.ROOT) in setOf(domain, "www.$domain") &&
             uri.port in setOf(-1, 443) && uri.userInfo == null && uri.fragment == null &&

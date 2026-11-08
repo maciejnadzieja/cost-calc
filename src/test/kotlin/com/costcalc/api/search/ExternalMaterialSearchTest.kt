@@ -100,6 +100,15 @@ class ExternalMaterialSearchTest {
     }
 
     @Test
+    fun malformedConfiguredDomainsFailAtStartup() {
+        for (domain in listOf("-catalog.example", "catalog-.example", "x".repeat(64) + ".example")) {
+            assertThrows(IllegalArgumentException::class.java) {
+                ExternalMaterialSource("Catalogue", domain, "/plants/[0-9]+")
+            }
+        }
+    }
+
+    @Test
     fun resultEntriesExpireAndStayBounded() {
         var time = 0L
         val entries = BoundedMaterialEntries<String>(Duration.ofNanos(100), 1) { time }

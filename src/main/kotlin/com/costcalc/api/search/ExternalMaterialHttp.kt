@@ -1,6 +1,7 @@
 package com.costcalc.api.search
 
 import jakarta.annotation.PreDestroy
+import org.apache.hc.client5.http.DnsResolver
 import org.apache.hc.client5.http.classic.methods.HttpGet
 import org.apache.hc.client5.http.config.ConnectionConfig
 import org.apache.hc.client5.http.config.RequestConfig
@@ -33,14 +34,16 @@ data class ExternalHttpResponse(
 )
 
 @Component
-class ApacheExternalMaterialHttp : ExternalMaterialHttp {
+class ApacheExternalMaterialHttp internal constructor(dnsResolver: DnsResolver) : ExternalMaterialHttp {
+    constructor() : this(PublicExternalDnsResolver())
+
     private val workers = ThreadPoolExecutor(4, 4, 0L, TimeUnit.SECONDS, SynchronousQueue()) { task ->
         Thread(task, "external-material-http").apply { isDaemon = true }
     }
     private val client = HttpClients.custom()
         .setConnectionManager(
             PoolingHttpClientConnectionManagerBuilder.create()
-                .setDnsResolver(PublicExternalDnsResolver())
+                .setDnsResolver(dnsResolver)
                 .setMaxConnTotal(4)
                 .setMaxConnPerRoute(4)
                 .setDefaultConnectionConfig(

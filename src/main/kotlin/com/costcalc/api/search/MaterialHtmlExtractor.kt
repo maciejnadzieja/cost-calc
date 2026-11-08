@@ -14,7 +14,7 @@ internal data class ExtractedMaterial(val name: String, val description: String,
 
 internal object MaterialHtmlExtractor {
     private val blockedHeading = Regex(
-        """^(?:(?:error|błąd)(?:\s+[45]\d\d)?|[45]\d\d(?:\s+\w+)*|access denied|forbidden|page not found|not found|logowanie|zaloguj się|sign in|log\s?in|captcha|just a moment)(?:\s*$|\s*[-–—|:!.])""",
+        """^(?:(?:please\s+)?(?:sign\s*in|log\s*in|zaloguj się)|logowanie|access denied|forbidden|page not found|not found|brak dostępu|captcha|verify you are human|checking your browser|just a moment|(?:error|błąd)(?:\s+[45]\d\d)?|[45]\d\d)(?=$|[\s,–—|:!.-])""",
         RegexOption.IGNORE_CASE,
     )
     private val hiddenStyle = Regex("""\b(?:display\s*:\s*none|visibility\s*:\s*hidden)\b""", RegexOption.IGNORE_CASE)
@@ -136,7 +136,7 @@ internal object MaterialHtmlExtractor {
 
     private fun imageUri(value: String, page: FetchedMaterialPage): URI? =
         parseUri(value.trim())?.let(page.url::resolve)?.takeIf {
-            page.source.allowsOrigin(it) && !it.path.orEmpty().endsWith(".svg", ignoreCase = true) &&
+            page.source.allowsImage(page.url, it) && !it.path.orEmpty().endsWith(".svg", ignoreCase = true) &&
                 !nonPhoto.containsMatchIn(it.path.orEmpty().replace('_', ' '))
         }
 

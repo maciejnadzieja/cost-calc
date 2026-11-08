@@ -11,7 +11,7 @@ class MaterialSourceLinks(private val properties: ExternalMaterialSearchProperti
             ?: throw IllegalArgumentException("Invalid material source URL")
         if (imageUrl != null) {
             val image = parseUri(imageUrl)
-            require(image != null && source.allowsOrigin(image) && image.path.orEmpty().startsWith('/')) {
+            require(image != null && source.allowsImage(page, image)) {
                 "Invalid material image URL"
             }
         }

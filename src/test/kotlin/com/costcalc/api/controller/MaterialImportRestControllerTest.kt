@@ -84,6 +84,8 @@ class MaterialImportRestControllerTest : AbstractIntegrationTest() {
             .andExpect { status { isBadRequest() } }
         create(owner, payload("Imported", description, source, "https://atlas-roslin.pl/photo.jpg"))
             .andExpect { status { isBadRequest() } }
+        create(owner, payload("Imported", description, source, "https://www.e-katalogroslin.pl/photo.jpg"))
+            .andExpect { status { isBadRequest() } }
         create(owner, payload("Imported", description, imageUrl = image)).andExpect { status { isBadRequest() } }
         create(owner, payload("Imported", description + "b", source, image)).andExpect { status { isBadRequest() } }
         create(owner, payload("Imported", description, source, image, price = 0)).andExpect { status { isBadRequest() } }
