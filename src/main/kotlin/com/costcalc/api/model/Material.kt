@@ -24,6 +24,8 @@ data class Material(
     val updatedAt: Instant,
     val searchName: String = AccentFolding.fold(name),
     val searchDescription: String = AccentFolding.fold(description),
+    val sourceUrl: String? = null,
+    val imageUrl: String? = null,
 ) {
     fun update(
         name: String,
@@ -54,6 +56,8 @@ data class Material(
             unit: MaterialUnit,
             category: String,
             userId: UserId,
+            sourceUrl: String? = null,
+            imageUrl: String? = null,
         ): Material {
             require(price > BigDecimal.ZERO)
             require(name.isNotBlank())
@@ -67,6 +71,8 @@ data class Material(
                 userId = userId,
                 createdAt = Instant.now(),
                 updatedAt = Instant.now(),
+                sourceUrl = sourceUrl,
+                imageUrl = imageUrl,
             )
         }
     }

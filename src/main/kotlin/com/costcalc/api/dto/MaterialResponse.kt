@@ -11,4 +11,6 @@ data class MaterialResponse(
     val price: BigDecimal,
     val unit: MaterialUnit,
     val category: String?,
+    val sourceUrl: String?,
+    val imageUrl: String?,
 )

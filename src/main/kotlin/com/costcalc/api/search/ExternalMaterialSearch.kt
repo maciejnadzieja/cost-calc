@@ -4,6 +4,7 @@ import com.costcalc.api.model.UserId
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.jsoup.Jsoup
 import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.context.annotation.PropertySource
 import org.springframework.stereotype.Service
 import org.springframework.web.util.UriComponentsBuilder
 import java.io.IOException
@@ -21,8 +22,7 @@ data class ExternalMaterialResult(
     val sourceUrl: String,
 )
 
-data class ExternalMaterialDraft(
-    val id: UUID,
+data class ExternalMaterialDetails(
     val name: String,
     val description: String,
     val sourceUrl: String,
@@ -31,16 +31,15 @@ data class ExternalMaterialDraft(
 
 @Service
 @EnableConfigurationProperties(ExternalMaterialSearchProperties::class)
+@PropertySource("classpath:external-material-search.properties")
 class ExternalMaterialSearch(
     private val properties: ExternalMaterialSearchProperties,
     private val http: ExternalMaterialHttp,
     private val mapper: ObjectMapper,
 ) {
     private data class IssuedResult(val category: String, val sourceId: String, val url: URI)
-    private data class DraftSource(val sourceUrl: String, val imageUrl: String?)
 
     private val results = BoundedMaterialEntries<IssuedResult>(Duration.ofMinutes(15), 1_000)
-    private val drafts = BoundedMaterialEntries<DraftSource>(Duration.ofMinutes(30), 500)
     private var lastSearch: Long? = null
 
     fun sources(category: String): List<ExternalMaterialSourceOption> =
@@ -93,12 +92,10 @@ class ExternalMaterialSearch(
         }.take(10).toList()
     }
 
-    fun draft(userId: UserId, category: String, resultId: UUID): ExternalMaterialDraft {
+    fun details(userId: UserId, category: String, resultId: UUID): ExternalMaterialDetails {
         val page = fetchPage(userId, category, resultId)
         val details = MaterialHtmlExtractor.extract(page)
-        val sourceUrl = page.url.toASCIIString()
-        val id = drafts.issue(userId, DraftSource(sourceUrl, details.imageUrl))
-        return ExternalMaterialDraft(id, details.name, details.description, sourceUrl, details.imageUrl)
+        return ExternalMaterialDetails(details.name, details.description, page.url.toASCIIString(), details.imageUrl)
     }
 
     private fun fetchPage(userId: UserId, category: String, resultId: UUID): FetchedMaterialPage {

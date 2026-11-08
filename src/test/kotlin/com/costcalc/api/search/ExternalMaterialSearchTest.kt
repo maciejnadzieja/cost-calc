@@ -63,7 +63,7 @@ class ExternalMaterialSearchTest {
     )
 
     @Test
-    fun draftRejectsOtherUsersAndRedirectsOutsideTheSource() {
+    fun detailsRejectOtherUsersAndRedirectsOutsideTheSource() {
         val calls = mutableListOf<URI>()
         val search = ExternalMaterialSearch(properties(), ExternalMaterialHttp { uri, headers, _ ->
             calls += uri
@@ -79,11 +79,11 @@ class ExternalMaterialSearchTest {
         val id = search.search(owner, "plants", "plant", null).single().id
 
         assertEquals(ExternalMaterialSearchError.RESULT_EXPIRED, assertThrows(ExternalMaterialSearchException::class.java) {
-            search.draft(UUID.randomUUID(), "plants", id)
+            search.details(UUID.randomUUID(), "plants", id)
         }.error)
         assertEquals(1, calls.size)
         assertEquals(ExternalMaterialSearchError.UNSUPPORTED_PAGE, assertThrows(ExternalMaterialSearchException::class.java) {
-            search.draft(owner, "plants", id)
+            search.details(owner, "plants", id)
         }.error)
         assertEquals(2, calls.size)
         assertEquals(ExternalMaterialSearchError.SEARCH_BUSY, assertThrows(ExternalMaterialSearchException::class.java) {

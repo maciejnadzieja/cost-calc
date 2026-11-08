@@ -6,7 +6,7 @@ import java.time.Duration
 import java.util.Locale
 
 @ConfigurationProperties("costcalc.external-material-search")
-data class ExternalMaterialSearchProperties(
+class ExternalMaterialSearchProperties(
     val braveApiKey: String = "",
     val minRequestInterval: Duration = Duration.ofSeconds(1),
     val categories: Map<String, List<String>> = emptyMap(),

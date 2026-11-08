@@ -29,12 +29,12 @@ class ExternalMaterialSearchController(private val search: ExternalMaterialSearc
         @CurrentUser user: User,
     ) = search.search(user.id, category, request.query, request.sourceIds)
 
-    @PostMapping("/results/{resultId}/draft")
-    fun draft(
+    @PostMapping("/results/{resultId}/details")
+    fun details(
         @PathVariable category: String,
         @PathVariable resultId: UUID,
         @CurrentUser user: User,
-    ) = search.draft(user.id, category, resultId)
+    ) = search.details(user.id, category, resultId)
 }
 
 data class OnlineMaterialSearchRequest(

@@ -10,7 +10,6 @@ enum class ExternalMaterialSearchError(val status: HttpStatus, val message: Stri
     RESULT_EXPIRED(HttpStatus.NOT_FOUND, "The result is unavailable. Search again."),
     SOURCE_UNAVAILABLE(HttpStatus.BAD_GATEWAY, "The selected page is unavailable"),
     UNSUPPORTED_PAGE(HttpStatus.UNPROCESSABLE_ENTITY, "The selected page could not be used as a material draft"),
-    DRAFT_EXPIRED(HttpStatus.BAD_REQUEST, "The online draft is unavailable. Select the result again."),
 }
 
 class ExternalMaterialSearchException(val error: ExternalMaterialSearchError) : RuntimeException(error.message)

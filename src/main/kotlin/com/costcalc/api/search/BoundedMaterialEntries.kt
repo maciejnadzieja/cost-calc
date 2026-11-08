@@ -26,8 +26,4 @@ internal class BoundedMaterialEntries<T>(
         ?.takeIf { it.owner == owner && nanoTime() - it.issuedAt < ttl.toNanos() }
         ?.value
 
-    @Synchronized
-    fun remove(id: UUID) {
-        entries.remove(id)
-    }
 }
