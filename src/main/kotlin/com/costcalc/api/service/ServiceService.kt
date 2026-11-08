@@ -22,7 +22,13 @@ class ServiceService(
         if (query.isNullOrBlank()) {
             serviceRepository.findByUserId(userId, pageable)
         } else {
-            serviceRepository.findByUserIdAndQuery(userId, Regex.escape(query), pageable)
+            AccentInsensitiveSearch.filterAndPage(
+                serviceRepository.findByUserId(userId),
+                query,
+                pageable,
+                Service::name,
+                Service::description,
+            )
         }
 
     fun findByIdAndUserId(

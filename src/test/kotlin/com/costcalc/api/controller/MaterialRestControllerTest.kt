@@ -309,6 +309,93 @@ class MaterialRestControllerTest : AbstractIntegrationTest() {
     }
 
     @Test
+    fun `should find a material by a fragment inside its name or description`() {
+        val userId = UUID.randomUUID()
+        materialRepository.save(createTestMaterial(userId, name = "Instalacja", description = ""))
+        materialRepository.save(createTestMaterial(userId, name = "Other", description = "Montaż instalacji"))
+
+        mockMvc
+            .get("/api/materials?query=stal") {
+                with(token(userId))
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.content.length()") { value(2) }
+                jsonPath("$.page.totalElements") { value(2) }
+            }
+    }
+
+    @Test
+    fun `should find materials with or without Polish accents in either direction`() {
+        val userId = UUID.randomUUID()
+        materialRepository.save(createTestMaterial(userId, name = "Łódź (a+b)", description = ""))
+        materialRepository.save(createTestMaterial(userId, name = "Lodz", description = ""))
+
+        for (query in listOf("lodz", "Łódź")) {
+            mockMvc
+                .get("/api/materials") {
+                    with(token(userId))
+                    param("query", query)
+                }.andExpect {
+                    status { isOk() }
+                    jsonPath("$.content.length()") { value(2) }
+                    jsonPath("$.page.totalElements") { value(2) }
+                }
+        }
+
+        mockMvc
+            .get("/api/materials") {
+                with(token(userId))
+                param("query", "lodz (a+b)")
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.content.length()") { value(1) }
+                jsonPath("$.content[0].name") { value("Łódź (a+b)") }
+            }
+    }
+
+    @Test
+    fun `should match every Polish letter in paged user scoped material search`() {
+        val userId = UUID.randomUUID()
+        materialRepository.save(createTestMaterial(userId = userId, name = "ZAŻÓŁĆ GĘŚLĄ JAŹŃ", description = ""))
+        materialRepository.save(createTestMaterial(userId = userId, name = "Other", description = "Zazolc gesla jazn"))
+        materialRepository.save(createTestMaterial(userId = UUID.randomUUID(), name = "Zażółć gęślą jaźń", description = ""))
+
+        for (query in listOf("zazolc gesla jazn", "ZAŻÓŁĆ GĘŚLĄ JAŹŃ")) {
+            for (page in 0..1) {
+                mockMvc
+                    .get("/api/materials") {
+                        with(token(userId))
+                        param("query", query)
+                        param("page", page.toString())
+                        param("size", "1")
+                    }.andExpect {
+                        status { isOk() }
+                        jsonPath("$.content.length()") { value(1) }
+                        jsonPath("$.page.totalElements") { value(2) }
+                        jsonPath("$.page.totalPages") { value(2) }
+                    }
+            }
+        }
+    }
+
+    @Test
+    fun `should match accents from other languages in material names and descriptions`() {
+        val userId = UUID.randomUUID()
+        materialRepository.save(createTestMaterial(userId = userId, name = "São Paulo", description = "İstanbul"))
+
+        for (query in listOf("sao", "istanbul")) {
+            mockMvc
+                .get("/api/materials") {
+                    with(token(userId))
+                    param("query", query)
+                }.andExpect {
+                    status { isOk() }
+                    jsonPath("$.content[0].name") { value("São Paulo") }
+                }
+        }
+    }
+
+    @Test
     fun `should handle special characters in search query`() {
         val userId = UUID.randomUUID()
         materialRepository.save(createTestMaterial(userId, name = "Material (Special)"))
