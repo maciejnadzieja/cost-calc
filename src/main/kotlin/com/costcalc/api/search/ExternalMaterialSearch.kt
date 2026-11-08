@@ -21,6 +21,14 @@ data class ExternalMaterialResult(
     val sourceUrl: String,
 )
 
+data class ExternalMaterialDraft(
+    val id: UUID,
+    val name: String,
+    val description: String,
+    val sourceUrl: String,
+    val imageUrl: String?,
+)
+
 @Service
 @EnableConfigurationProperties(ExternalMaterialSearchProperties::class)
 class ExternalMaterialSearch(
@@ -29,8 +37,10 @@ class ExternalMaterialSearch(
     private val mapper: ObjectMapper,
 ) {
     private data class IssuedResult(val category: String, val sourceId: String, val url: URI)
+    private data class DraftSource(val sourceUrl: String, val imageUrl: String?)
 
     private val results = BoundedMaterialEntries<IssuedResult>(Duration.ofMinutes(15), 1_000)
+    private val drafts = BoundedMaterialEntries<DraftSource>(Duration.ofMinutes(30), 500)
     private var lastSearch: Long? = null
 
     fun sources(category: String): List<ExternalMaterialSourceOption> =
@@ -83,7 +93,15 @@ class ExternalMaterialSearch(
         }.take(10).toList()
     }
 
-    internal fun fetchPage(userId: UserId, category: String, resultId: UUID): FetchedMaterialPage {
+    fun draft(userId: UserId, category: String, resultId: UUID): ExternalMaterialDraft {
+        val page = fetchPage(userId, category, resultId)
+        val details = MaterialHtmlExtractor.extract(page)
+        val sourceUrl = page.url.toASCIIString()
+        val id = drafts.issue(userId, DraftSource(sourceUrl, details.imageUrl))
+        return ExternalMaterialDraft(id, details.name, details.description, sourceUrl, details.imageUrl)
+    }
+
+    private fun fetchPage(userId: UserId, category: String, resultId: UUID): FetchedMaterialPage {
         val result = results.find(userId, resultId)?.takeIf { it.category == category }
             ?: fail(ExternalMaterialSearchError.RESULT_EXPIRED)
         val source = enabledSources(category)[result.sourceId] ?: fail(ExternalMaterialSearchError.RESULT_EXPIRED)

@@ -2,8 +2,11 @@ package com.costcalc.api.search
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
+import java.net.InetAddress
 import java.net.URI
+import java.time.Duration
 import java.util.UUID
 
 class ExternalMaterialSearchTest {
@@ -58,4 +61,54 @@ class ExternalMaterialSearchTest {
             "atlas" to ExternalMaterialSource("Atlas", "atlas.example", "/species/[A-Za-z]+[.]htm"),
         ),
     )
+
+    @Test
+    fun draftRejectsOtherUsersAndRedirectsOutsideTheSource() {
+        val calls = mutableListOf<URI>()
+        val search = ExternalMaterialSearch(properties(), ExternalMaterialHttp { uri, headers, _ ->
+            calls += uri
+            if (calls.size == 1) {
+                ExternalHttpResponse(200, "application/json", null,
+                    """{"web":{"results":[{"title":"Plant","url":"https://catalog.example/plants/12,name"}]}}""".toByteArray())
+            } else {
+                assertEquals(null, headers["X-Subscription-Token"])
+                ExternalHttpResponse(302, null, "https://atlas.example/species/Alba.htm", byteArrayOf())
+            }
+        }, ObjectMapper())
+        val owner = UUID.randomUUID()
+        val id = search.search(owner, "plants", "plant", null).single().id
+
+        assertEquals(ExternalMaterialSearchError.RESULT_EXPIRED, assertThrows(ExternalMaterialSearchException::class.java) {
+            search.draft(UUID.randomUUID(), "plants", id)
+        }.error)
+        assertEquals(1, calls.size)
+        assertEquals(ExternalMaterialSearchError.UNSUPPORTED_PAGE, assertThrows(ExternalMaterialSearchException::class.java) {
+            search.draft(owner, "plants", id)
+        }.error)
+        assertEquals(2, calls.size)
+        assertEquals(ExternalMaterialSearchError.SEARCH_BUSY, assertThrows(ExternalMaterialSearchException::class.java) {
+            search.search(owner, "plants", "plant", null)
+        }.error)
+    }
+
+    @Test
+    fun rejectsPrivateAndSpecialDestinationAddresses() {
+        for (ip in listOf("127.0.0.1", "100.64.0.1", "169.254.169.254", "192.168.1.1", "::1", "fd00::1", "2002:7f00:1::")) {
+            assertEquals(false, PublicExternalDnsResolver.isPublic(InetAddress.getByName(ip)), ip)
+        }
+        assertEquals(true, PublicExternalDnsResolver.isPublic(InetAddress.getByName("8.8.8.8")))
+    }
+
+    @Test
+    fun resultEntriesExpireAndStayBounded() {
+        var time = 0L
+        val entries = BoundedMaterialEntries<String>(Duration.ofNanos(100), 1) { time }
+        val owner = UUID.randomUUID()
+        val first = entries.issue(owner, "old")
+        val second = entries.issue(owner, "current")
+        assertEquals(null, entries.find(owner, first))
+        assertEquals("current", entries.find(owner, second))
+        time = 100
+        assertEquals(null, entries.find(owner, second))
+    }
 }

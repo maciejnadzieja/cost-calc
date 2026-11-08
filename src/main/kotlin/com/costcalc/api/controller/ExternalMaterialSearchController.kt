@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.util.UUID
 
 @RestController
 @RequestMapping("/api/materials/external-search/{category}")
@@ -27,6 +28,13 @@ class ExternalMaterialSearchController(private val search: ExternalMaterialSearc
         @Valid @RequestBody request: OnlineMaterialSearchRequest,
         @CurrentUser user: User,
     ) = search.search(user.id, category, request.query, request.sourceIds)
+
+    @PostMapping("/results/{resultId}/draft")
+    fun draft(
+        @PathVariable category: String,
+        @PathVariable resultId: UUID,
+        @CurrentUser user: User,
+    ) = search.draft(user.id, category, resultId)
 }
 
 data class OnlineMaterialSearchRequest(
