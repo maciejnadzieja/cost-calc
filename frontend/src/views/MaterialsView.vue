@@ -26,7 +26,7 @@
       <tbody>
         <tr v-for="material in materials" :key="material.id || material.name">
           <td>{{ material.name }}</td>
-          <td>{{ material.description }}</td>
+          <td class="material-description">{{ material.description }}</td>
           <td>{{ material.price }} / {{ t('units.material.' + material.unit.toLowerCase() + '.symbol') }}</td>
           <td>{{ t('units.material.' + material.unit.toLowerCase() + '.label') }}</td>
           <td>{{ material.category }}</td>
@@ -129,4 +129,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.material-description { white-space: pre-line; overflow-wrap: anywhere; }
 </style>
