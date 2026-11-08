@@ -20,13 +20,15 @@
             v-model="query" 
             @keyup.enter="search"
           >
-          <button class="btn btn-primary" type="button" @click="search">{{ t('common.search') }}</button>
+          <button class="btn btn-primary" type="button" :disabled="loading" @click="search">{{ t('common.search') }}</button>
         </div>
       </div>
     </div>
 
-    <div class="card border-0 shadow-sm overflow-hidden">
-      <div class="table-responsive">
+    <div class="card border-0 shadow-sm overflow-hidden" :aria-busy="loading">
+      <p v-if="loading" class="p-4 mb-0 text-center" role="status"><span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>{{ t('calculations.list.loading') }}</p>
+      <div v-else-if="failed" class="alert alert-danger m-3" role="alert">{{ t('calculations.list.failure') }} <button class="btn btn-outline-danger ms-2" type="button" @click="retry">{{ t('calculations.list.retry') }}</button></div>
+      <div v-else class="table-responsive">
         <table class="table table-hover align-middle mb-0">
           <thead class="bg-light">
             <tr>
@@ -70,14 +72,14 @@
             <tr v-if="calculations.length === 0">
               <td colspan="4" class="text-center py-5 text-muted">
                 <i class="bi bi-inbox fs-1 d-block mb-3"></i>
-                {{ t('common.no_data') }}
+                {{ t('calculations.list.empty') }}
               </td>
             </tr>
           </tbody>
         </table>
       </div>
       
-      <div class="card-footer bg-white border-top-0 py-3" v-if="totalPages > 1">
+      <div class="card-footer bg-white border-top-0 py-3" v-if="!loading && !failed && totalPages > 1">
         <nav aria-label="Page navigation">
           <ul class="pagination justify-content-center mb-0">
             <li class="page-item" :class="{ disabled: currentPage === 0 }">
@@ -116,12 +118,19 @@ const query = ref(route.query.query || '');
 const calculations = ref<Calculation[]>([]);
 const currentPage = ref(parseInt(route.query.page as string) || 0);
 const totalPages = ref(0);
+const loading = ref(false);
+const failed = ref(false);
+const requested = ref({ page: currentPage.value, query: String(query.value) });
 
-const fetchCalculations = async (page = 0) => {
+const fetchCalculations = async (page = 0, queryText = String(query.value)) => {
+  if (loading.value) return;
+  requested.value = { page, query: queryText };
+  loading.value = true;
+  failed.value = false;
   try {
     const response = await apiClient.get('/calculations', {
       params: {
-        query: query.value,
+        query: queryText,
         page: page,
         size: 10,
       },
@@ -130,18 +139,22 @@ const fetchCalculations = async (page = 0) => {
     currentPage.value = response.data.number;
     totalPages.value = response.data.totalPages;
 
-    const queryParams: any = {};
-    if (query.value) {
-      queryParams.query = query.value;
+    const queryParams: { query?: string; page?: number } = {};
+    if (queryText) {
+      queryParams.query = queryText;
     }
     if (currentPage.value > 0) {
       queryParams.page = currentPage.value;
     }
     router.push({ query: queryParams });
-  } catch (error) {
-    console.error(error);
+  } catch {
+    failed.value = true;
+  } finally {
+    loading.value = false;
   }
 };
+
+const retry = () => fetchCalculations(requested.value.page, requested.value.query);
 
 const search = () => {
   fetchCalculations(0);

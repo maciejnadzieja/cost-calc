@@ -161,7 +161,10 @@
     },
     "new": "Nowa usługa",
     "list": {
-      "empty": "Brak usług. Kliknij \"Nowa usługa\", aby utworzyć."
+      "empty": "Brak usług. Kliknij \"Nowa usługa\", aby utworzyć.",
+      "loading": "Ładowanie usług…",
+      "failure": "Nie udało się pobrać usług. Spróbuj ponownie.",
+      "retry": "Spróbuj ponownie"
     },
     "form": {
       "name": "Nazwa usługi",
@@ -188,7 +191,10 @@
     },
     "new": "Nowy materiał",
     "list": {
-      "empty": "Brak materiałów. Kliknij \"Nowy materiał\", aby utworzyć."
+      "empty": "Brak materiałów. Kliknij \"Nowy materiał\", aby utworzyć.",
+      "loading": "Ładowanie materiałów…",
+      "failure": "Nie udało się pobrać materiałów. Spróbuj ponownie.",
+      "retry": "Spróbuj ponownie"
     },
     "form": {
       "name": "Nazwa materiału",
@@ -221,6 +227,9 @@
     "list": {
       "no_calculations": "Brak kalkulacji",
       "empty": "Brak kalkulacji",
+      "loading": "Ładowanie kalkulacji…",
+      "failure": "Nie udało się pobrać kalkulacji. Spróbuj ponownie.",
+      "retry": "Spróbuj ponownie",
       "name": "Nazwa",
       "description": "Opis",
       "currency": "Waluta",
