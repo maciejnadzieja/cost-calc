@@ -5,10 +5,14 @@ import com.costcalc.api.model.Material
 import com.costcalc.api.model.MaterialUnit
 import com.costcalc.api.model.UserId
 import com.costcalc.api.repository.MaterialRepository
+import com.costcalc.api.migration.BackfillSearchFieldsChangeUnit
+import com.mongodb.client.model.Filters
+import com.mongodb.client.model.Updates
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
+import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
@@ -24,6 +28,9 @@ class MaterialRestControllerTest : AbstractIntegrationTest() {
 
     @Autowired
     private lateinit var materialRepository: MaterialRepository
+
+    @Autowired
+    private lateinit var mongoTemplate: MongoTemplate
 
     @BeforeEach
     fun setUp() {
@@ -391,6 +398,54 @@ class MaterialRestControllerTest : AbstractIntegrationTest() {
                 }.andExpect {
                     status { isOk() }
                     jsonPath("$.content[0].name") { value("São Paulo") }
+                }
+        }
+    }
+
+    @Test
+    fun `should backfill search fields for an existing material`() {
+        val userId = UUID.randomUUID()
+        materialRepository.save(createTestMaterial(userId = userId, name = "Łódź", description = "Café"))
+        mongoTemplate.db.getCollection("materials").updateOne(
+            Filters.eq("name", "Łódź"),
+            Updates.combine(Updates.unset("searchName"), Updates.unset("searchDescription")),
+        )
+
+        BackfillSearchFieldsChangeUnit().execute(mongoTemplate)
+
+        for (query in listOf("lodz", "cafe")) {
+            mockMvc
+                .get("/api/materials") {
+                    with(token(userId))
+                    param("query", query)
+                }.andExpect {
+                    status { isOk() }
+                    jsonPath("$.content.length()") { value(1) }
+                }
+        }
+    }
+
+    @Test
+    fun `should refresh material search fields after an edit`() {
+        val userId = UUID.randomUUID()
+        val material = materialRepository.save(createTestMaterial(userId = userId, name = "Łódź", description = ""))
+        mockMvc
+            .put("/api/materials/{id}", material.id) {
+                with(token(userId))
+                contentType = MediaType.APPLICATION_JSON
+                content = updateMaterialJson(name = "Café", description = "Düsseldorf")
+            }.andExpect {
+                status { isOk() }
+            }
+
+        for ((query, expected) in listOf("lodz" to 0, "cafe" to 1, "dusseldorf" to 1)) {
+            mockMvc
+                .get("/api/materials") {
+                    with(token(userId))
+                    param("query", query)
+                }.andExpect {
+                    status { isOk() }
+                    jsonPath("$.content.length()") { value(expected) }
                 }
         }
     }

@@ -5,10 +5,14 @@ import com.costcalc.api.model.Service
 import com.costcalc.api.model.UserId
 import com.costcalc.api.model.WorkUnit
 import com.costcalc.api.repository.ServiceRepository
+import com.costcalc.api.migration.BackfillSearchFieldsChangeUnit
+import com.mongodb.client.model.Filters
+import com.mongodb.client.model.Updates
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
+import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
@@ -24,6 +28,9 @@ class ServiceRestControllerTest : AbstractIntegrationTest() {
 
     @Autowired
     private lateinit var serviceRepository: ServiceRepository
+
+    @Autowired
+    private lateinit var mongoTemplate: MongoTemplate
 
     @BeforeEach
     fun setUp() {
@@ -391,6 +398,54 @@ class ServiceRestControllerTest : AbstractIntegrationTest() {
                 status { isOk() }
                 jsonPath("$.content[0].name") { value("Café Düsseldorf") }
             }
+    }
+
+    @Test
+    fun `should backfill search fields for an existing service`() {
+        val userId = UUID.randomUUID()
+        serviceRepository.save(createTestService(userId = userId, name = "Łódź", description = "Café"))
+        mongoTemplate.db.getCollection("services").updateOne(
+            Filters.eq("name", "Łódź"),
+            Updates.combine(Updates.unset("searchName"), Updates.unset("searchDescription")),
+        )
+
+        BackfillSearchFieldsChangeUnit().execute(mongoTemplate)
+
+        for (query in listOf("lodz", "cafe")) {
+            mockMvc
+                .get("/api/services") {
+                    with(token(userId))
+                    param("query", query)
+                }.andExpect {
+                    status { isOk() }
+                    jsonPath("$.content.length()") { value(1) }
+                }
+        }
+    }
+
+    @Test
+    fun `should refresh service search fields after an edit`() {
+        val userId = UUID.randomUUID()
+        val service = serviceRepository.save(createTestService(userId = userId, name = "Łódź", description = ""))
+        mockMvc
+            .put("/api/services/{id}", service.id) {
+                with(token(userId))
+                contentType = MediaType.APPLICATION_JSON
+                content = updateServiceJson(name = "Café", description = "Düsseldorf")
+            }.andExpect {
+                status { isOk() }
+            }
+
+        for ((query, expected) in listOf("lodz" to 0, "cafe" to 1, "dusseldorf" to 1)) {
+            mockMvc
+                .get("/api/services") {
+                    with(token(userId))
+                    param("query", query)
+                }.andExpect {
+                    status { isOk() }
+                    jsonPath("$.content.length()") { value(expected) }
+                }
+        }
     }
 
     private fun token(

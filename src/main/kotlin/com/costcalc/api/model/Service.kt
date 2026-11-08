@@ -1,7 +1,9 @@
 package com.costcalc.api.model
 
+import com.costcalc.api.search.AccentFolding
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
+import org.springframework.data.mongodb.core.index.Indexed
 import java.math.BigDecimal
 import java.time.Instant
 import java.util.UUID
@@ -16,9 +18,11 @@ data class Service(
     val description: String,
     val price: BigDecimal,
     val workUnit: WorkUnit,
-    val userId: UserId,
+    @Indexed val userId: UserId,
     val createdAt: Instant = Instant.now(),
     val updatedAt: Instant = Instant.now(),
+    val searchName: String = AccentFolding.fold(name),
+    val searchDescription: String = AccentFolding.fold(description),
 ) {
     fun update(
         name: String,
@@ -32,6 +36,8 @@ data class Service(
         return this.copy(
             name = name,
             description = description,
+            searchName = AccentFolding.fold(name),
+            searchDescription = AccentFolding.fold(description),
             price = price,
             workUnit = workUnit,
             updatedAt = Instant.now(),
