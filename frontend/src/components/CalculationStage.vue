@@ -100,11 +100,12 @@
           <table class="table table-sm table-hover align-middle mb-0">
             <thead class="table-light">
               <tr>
-                <th style="width: 40%">{{ t('calculations.form.name') }}</th>
-                <th style="width: 15%">{{ t('calculations.form.quantity') }}</th>
-                <th style="width: 15%">{{ t('calculations.form.unit') }}</th>
-                <th style="width: 20%">{{ t('calculations.form.price') }}</th>
-                <th style="width: 10%"></th>
+                <th style="width: 35%">{{ t('calculations.form.name') }}</th>
+                <th style="width: 12%">{{ t('calculations.form.quantity') }}</th>
+                <th style="width: 12%">{{ t('calculations.form.unit') }}</th>
+                <th style="width: 16%">{{ t('calculations.form.price') }}</th>
+                <th class="text-end" style="width: 20%">{{ t('calculations.form.total') }}</th>
+                <th style="width: 5%"></th>
               </tr>
             </thead>
             <tbody>
@@ -142,6 +143,7 @@
                     v-model="item.unitPrice"
                   />
                 </td>
+                <td class="text-end">{{ formatItemTotal(item) }}</td>
                 <td class="text-end">
                   <button type="button" class="btn btn-link text-danger p-0" @click="removeService(item)">
                     <i class="bi bi-x-lg"></i>
@@ -160,11 +162,12 @@
           <table class="table table-sm table-hover align-middle mb-0">
             <thead class="table-light">
               <tr>
-                <th style="width: 40%">{{ t('calculations.form.name') }}</th>
-                <th style="width: 15%">{{ t('calculations.form.quantity') }}</th>
-                <th style="width: 15%">{{ t('calculations.form.unit') }}</th>
-                <th style="width: 20%">{{ t('calculations.form.price') }}</th>
-                <th style="width: 10%"></th>
+                <th style="width: 35%">{{ t('calculations.form.name') }}</th>
+                <th style="width: 12%">{{ t('calculations.form.quantity') }}</th>
+                <th style="width: 12%">{{ t('calculations.form.unit') }}</th>
+                <th style="width: 16%">{{ t('calculations.form.price') }}</th>
+                <th class="text-end" style="width: 20%">{{ t('calculations.form.total') }}</th>
+                <th style="width: 5%"></th>
               </tr>
             </thead>
             <tbody>
@@ -202,6 +205,7 @@
                     v-model="item.unitPrice"
                   />
                 </td>
+                <td class="text-end">{{ formatItemTotal(item) }}</td>
                 <td class="text-end">
                   <button type="button" class="btn btn-link text-danger p-0" @click="removeMaterial(item)">
                     <i class="bi bi-x-lg"></i>
@@ -229,6 +233,7 @@ const { t } = useI18n()
 const props = defineProps<{ 
   stage: CalculationStage; 
   stageIndex: number;
+  currency: string;
   isExpanded: boolean;
 }>()
 
@@ -261,6 +266,15 @@ const materialUnits = [
   'ROLL',
   'TON'
 ]
+
+const formatItemTotal = (item: CalculationItem) => {
+  if (typeof item.quantity !== 'number' || !Number.isFinite(item.quantity) || item.quantity <= 0 ||
+      typeof item.unitPrice !== 'number' || !Number.isFinite(item.unitPrice) || item.unitPrice <= 0) {
+    return '—'
+  }
+  const total = item.quantity * item.unitPrice
+  return Number.isFinite(total) ? `${total.toFixed(2)} ${props.currency}` : '—'
+}
 
 const getUnitSymbol = (type: 'service' | 'material', unit: string) => {
   if (!unit) return ''

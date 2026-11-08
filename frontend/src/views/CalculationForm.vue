@@ -67,6 +67,7 @@
           :key="`${stageIndex}-${stage.totalAmount}`"
           :stage="stage"
           :stage-index="stageIndex"
+          :currency="calculation.currency"
           :is-expanded="expandedStages.includes(stageIndex)"
           @update:stage="updateStage(stageIndex, $event)"
           @remove-stage="removeStage(stageIndex)"
