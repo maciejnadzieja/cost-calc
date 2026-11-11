@@ -11,4 +11,6 @@ fun Material.toResponse(): MaterialResponse =
         price = this.price,
         unit = this.unit,
         category = this.category,
+        sourceUrl = this.sourceUrl,
+        imageUrl = this.imageUrl,
     )

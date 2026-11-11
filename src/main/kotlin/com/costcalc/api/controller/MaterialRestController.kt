@@ -7,6 +7,7 @@ import com.costcalc.api.mapper.toResponse
 import com.costcalc.api.model.Material
 import com.costcalc.api.model.MaterialUnit
 import com.costcalc.api.model.User
+import com.costcalc.api.search.MaterialSourceLinks
 import com.costcalc.api.service.MaterialService
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.math.BigDecimal
 import java.util.UUID
 
 @RestController
@@ -28,6 +30,7 @@ import java.util.UUID
 @PreAuthorize("isAuthenticated()")
 class MaterialRestController(
     private val materialService: MaterialService,
+    private val sourceLinks: MaterialSourceLinks,
 ) {
     @GetMapping
     fun getMaterials(
@@ -54,7 +57,14 @@ class MaterialRestController(
         @Valid @RequestBody materialRequest: MaterialRequest,
         @CurrentUser user: User,
     ): MaterialResponse {
-        val newMaterial =
+        val sourceUrl = materialRequest.sourceUrl
+        val imageUrl = materialRequest.imageUrl
+        require(sourceUrl != null || imageUrl == null) { "A material image requires a source URL" }
+        if (sourceUrl != null) {
+            sourceLinks.validate(sourceUrl, imageUrl)
+            validateSourcedMaterial(materialRequest)
+        }
+        return materialService.create(
             Material.create(
                 name = materialRequest.name,
                 description = materialRequest.description,
@@ -62,8 +72,21 @@ class MaterialRestController(
                 unit = materialRequest.unit,
                 category = materialRequest.category,
                 userId = user.id,
-            )
-        return materialService.create(newMaterial).toResponse()
+                sourceUrl = sourceUrl,
+                imageUrl = imageUrl,
+            ),
+        ).toResponse()
+    }
+
+    private fun validateSourcedMaterial(materialRequest: MaterialRequest) {
+        require(materialRequest.name.isNotBlank() && materialRequest.name.length <= 100) {
+            "Name must be between 1 and 100 characters"
+        }
+        require(materialRequest.description.length <= 500) { "Description must not exceed 500 characters" }
+        require(materialRequest.price >= BigDecimal("0.01")) { "Price must be at least 0.01" }
+        require(materialRequest.category.isNotBlank() && materialRequest.category.length <= 50) {
+            "Category must be between 1 and 50 characters"
+        }
     }
 
     @PutMapping("/{id}")

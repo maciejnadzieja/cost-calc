@@ -18,4 +18,6 @@ data class MaterialRequest(
     @field:NotBlank(message = "Category is required")
     @field:Size(max = 50, message = "Category must not exceed 50 characters")
     val category: String,
+    val sourceUrl: String? = null,
+    val imageUrl: String? = null,
 )

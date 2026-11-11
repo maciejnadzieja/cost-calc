@@ -1,6 +1,7 @@
 package com.costcalc.api.exception
 
 import com.costcalc.api.dto.ErrorResponse
+import com.costcalc.api.search.ExternalMaterialSearchException
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -13,6 +14,19 @@ import org.springframework.web.context.request.WebRequest
 @ControllerAdvice
 class RestExceptionHandler {
     private val logger = KotlinLogging.logger {}
+
+    @ExceptionHandler(ExternalMaterialSearchException::class)
+    fun handleExternalMaterialSearchException(
+        ex: ExternalMaterialSearchException,
+        request: WebRequest,
+    ): ResponseEntity<ErrorResponse> = ResponseEntity.status(ex.error.status).body(
+        ErrorResponse(
+            status = ex.error.status.value(),
+            error = ex.error.name,
+            message = ex.error.message,
+            path = extractPath(request),
+        ),
+    )
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidationException(
