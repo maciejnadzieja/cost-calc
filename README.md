@@ -149,6 +149,8 @@ The frontend development server will start at `http://localhost:5173`.
 
 The [external search defaults](src/main/resources/external-material-search.properties) configure categories, sources, eligible page paths and the minimum interval between Brave requests. The interval defaults to one second per backend instance. Set a longer interval if required by the provider plan. Result IDs expire and belong to the signed-in user. The shared extractor reads public HTML headings, descriptions and labelled fields. Pages vary in structure and may return partial details. Review the draft, supply the commercial fields and shorten any description over 500 characters before saving. The ordinary create endpoint accepts the optional source link and image URL independently of search. Images load from their source and may become unavailable.
 
+The backend fetches configured HTTPS pages with Spring RestTemplate and the JDK HTTP client. Redirect responses make a page unavailable for import. Requests use standard DNS resolution, a six-second response deadline and bounded bodies.
+
 For local browser authentication, Keycloak is published at `http://localhost:9090`.
 The frontend Keycloak URL and API JWT issuer must use this same external address;
 the issuer must match the `iss` claim in browser-issued tokens. The API container

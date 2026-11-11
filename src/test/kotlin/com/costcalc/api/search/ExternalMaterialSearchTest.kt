@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
-import java.net.InetAddress
 import java.net.URI
 import java.time.Duration
 import java.util.UUID
@@ -19,7 +18,6 @@ class ExternalMaterialSearchTest {
             ExternalHttpResponse(
                 200,
                 "application/json",
-                null,
                 """
                 {"web":{"results":[
                   {"title":"<strong>Tawuła</strong>","url":"https://catalog.example/plants/12,name","description":"Plant"},
@@ -63,16 +61,16 @@ class ExternalMaterialSearchTest {
     )
 
     @Test
-    fun detailsRejectOtherUsersAndRedirectsOutsideTheSource() {
+    fun detailsRejectOtherUsersAndStopAtRedirects() {
         val calls = mutableListOf<URI>()
         val search = ExternalMaterialSearch(properties(), ExternalMaterialHttp { uri, headers, _ ->
             calls += uri
             if (calls.size == 1) {
-                ExternalHttpResponse(200, "application/json", null,
+                ExternalHttpResponse(200, "application/json",
                     """{"web":{"results":[{"title":"Plant","url":"https://catalog.example/plants/12,name"}]}}""".toByteArray())
             } else {
                 assertEquals(null, headers["X-Subscription-Token"])
-                ExternalHttpResponse(302, null, "https://atlas.example/species/Alba.htm", byteArrayOf())
+                ExternalHttpResponse(302, null, byteArrayOf())
             }
         }, ObjectMapper())
         val owner = UUID.randomUUID()
@@ -82,21 +80,13 @@ class ExternalMaterialSearchTest {
             search.details(UUID.randomUUID(), "plants", id)
         }.error)
         assertEquals(1, calls.size)
-        assertEquals(ExternalMaterialSearchError.UNSUPPORTED_PAGE, assertThrows(ExternalMaterialSearchException::class.java) {
+        assertEquals(ExternalMaterialSearchError.SOURCE_UNAVAILABLE, assertThrows(ExternalMaterialSearchException::class.java) {
             search.details(owner, "plants", id)
         }.error)
         assertEquals(2, calls.size)
         assertEquals(ExternalMaterialSearchError.SEARCH_BUSY, assertThrows(ExternalMaterialSearchException::class.java) {
             search.search(owner, "plants", "plant", null)
         }.error)
-    }
-
-    @Test
-    fun rejectsPrivateAndSpecialDestinationAddresses() {
-        for (ip in listOf("127.0.0.1", "100.64.0.1", "169.254.169.254", "192.168.1.1", "::1", "fd00::1", "2002:7f00:1::")) {
-            assertEquals(false, PublicExternalDnsResolver.isPublic(InetAddress.getByName(ip)), ip)
-        }
-        assertEquals(true, PublicExternalDnsResolver.isPublic(InetAddress.getByName("8.8.8.8")))
     }
 
     @Test

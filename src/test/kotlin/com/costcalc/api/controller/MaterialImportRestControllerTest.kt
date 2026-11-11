@@ -148,7 +148,7 @@ class MaterialImportRestControllerTest : AbstractIntegrationTest() {
 
     private fun parse(bytes: ByteArray) = mapper.readTree(bytes)
 
-    private fun response(type: String, body: String) = ExternalHttpResponse(200, type, null, body.toByteArray())
+    private fun response(type: String, body: String) = ExternalHttpResponse(200, type, body.toByteArray())
 
     private val searchPath = "/api/materials/external-search/plants"
 }

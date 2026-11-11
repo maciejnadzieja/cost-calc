@@ -102,27 +102,19 @@ class ExternalMaterialSearch(
         val result = results.find(userId, resultId)?.takeIf { it.category == category }
             ?: fail(ExternalMaterialSearchError.RESULT_EXPIRED)
         val source = enabledSources(category)[result.sourceId] ?: fail(ExternalMaterialSearchError.RESULT_EXPIRED)
-        var url = result.url
-        repeat(3) {
-            if (!source.allowsPage(url)) fail(ExternalMaterialSearchError.UNSUPPORTED_PAGE)
-            val response = try {
-                http.get(url, mapOf("Accept" to "text/html", "User-Agent" to "CostCalcMaterialSearch/1.0"), 1_500_000)
-            } catch (_: IOException) {
-                fail(ExternalMaterialSearchError.SOURCE_UNAVAILABLE)
-            }
-            if (response.status in setOf(301, 302, 303, 307, 308)) {
-                val location = response.location?.let(::parseUri) ?: fail(ExternalMaterialSearchError.UNSUPPORTED_PAGE)
-                url = url.resolve(location)
-            } else {
-                if (response.status != 200) fail(ExternalMaterialSearchError.SOURCE_UNAVAILABLE)
-                val contentType = response.contentType.orEmpty()
-                if (!contentType.substringBefore(';').trim().equals("text/html", ignoreCase = true)) {
-                    fail(ExternalMaterialSearchError.UNSUPPORTED_PAGE)
-                }
-                return FetchedMaterialPage(url, source, contentType, response.body)
-            }
+        val url = result.url
+        if (!source.allowsPage(url)) fail(ExternalMaterialSearchError.UNSUPPORTED_PAGE)
+        val response = try {
+            http.get(url, mapOf("Accept" to "text/html", "User-Agent" to "CostCalcMaterialSearch/1.0"), 1_500_000)
+        } catch (_: IOException) {
+            fail(ExternalMaterialSearchError.SOURCE_UNAVAILABLE)
         }
-        fail(ExternalMaterialSearchError.UNSUPPORTED_PAGE)
+        if (response.status != 200) fail(ExternalMaterialSearchError.SOURCE_UNAVAILABLE)
+        val contentType = response.contentType.orEmpty()
+        if (!contentType.substringBefore(';').trim().equals("text/html", ignoreCase = true)) {
+            fail(ExternalMaterialSearchError.UNSUPPORTED_PAGE)
+        }
+        return FetchedMaterialPage(url, source, contentType, response.body)
     }
 
     private fun enabledSources(category: String): Map<String, ExternalMaterialSource> =
