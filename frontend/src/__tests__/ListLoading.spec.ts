@@ -266,3 +266,99 @@ it('omits long descriptions from the materials list table', async () => {
   expect(wrapper.find('table').text()).not.toContain(description)
   wrapper.unmount()
 })
+
+describe.each(cases)('$name compact pagination', ({ name, component, endpoint, row }) => {
+  const responsePage = name === 'calculations' ? page : catalogPage
+  const numberedLinks = (wrapper: ReturnType<typeof render>) =>
+    wrapper.findAll('nav .page-link').filter(link => /^\d+$/.test(link.text()))
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    route.query = { query: 'applied', page: '499' }
+  })
+
+  it('shows a bounded page window and navigates from the middle of 1,000 pages', async () => {
+    get.mockResolvedValueOnce(responsePage([row], 499, 1000) as never)
+    const wrapper = render(component)
+    await flushPromises()
+
+    expect(numberedLinks(wrapper).map(link => link.text())).toEqual([
+      '1', '498', '499', '500', '501', '502', '1000',
+    ])
+    expect(wrapper.findAll('nav .pagination-ellipsis')).toHaveLength(2)
+    expect(wrapper.findAll('nav .pagination-ellipsis').every(gap => gap.element.tagName === 'SPAN')).toBe(true)
+    expect(wrapper.get('nav [aria-current="page"]').text()).toBe('500')
+
+    get.mockResolvedValueOnce(responsePage([row], 500, 1000) as never)
+    await numberedLinks(wrapper).find(link => link.text() === '501')!.trigger('click')
+    await flushPromises()
+    expect(get).toHaveBeenLastCalledWith(endpoint, { params: { query: 'applied', page: 500, size: 10 } })
+    expect(push).toHaveBeenLastCalledWith({ query: { query: 'applied', page: 500 } })
+    expect(wrapper.get('nav [aria-current="page"]').text()).toBe('501')
+    wrapper.unmount()
+  })
+
+  it.each([
+    { current: 0, total: 1000, labels: ['1', '2', '3', '1000'] },
+    { current: 999, total: 1000, labels: ['1', '998', '999', '1000'] },
+    { current: 2, total: 5, labels: ['1', '2', '3', '4', '5'] },
+  ])('keeps page controls usable at page $current of $total', async ({ current, total, labels }) => {
+    route.query.page = String(current)
+    get.mockResolvedValueOnce(responsePage([row], current, total) as never)
+    const wrapper = render(component)
+    await flushPromises()
+
+    expect(numberedLinks(wrapper).map(link => link.text())).toEqual(labels)
+    expect(wrapper.get('nav [aria-current="page"]').text()).toBe(String(current + 1))
+    if (current === 0 || current === total - 1) {
+      const boundary = wrapper.findAll('nav .page-item').at(current === 0 ? 0 : -1)!
+      expect(boundary.classes()).toContain('disabled')
+      await boundary.get('.page-link').trigger('click')
+      expect(get).toHaveBeenCalledTimes(1)
+    }
+    wrapper.unmount()
+  })
+})
+
+it('keeps the applied filter when calculations paginate after an unsubmitted edit', async () => {
+  vi.clearAllMocks()
+  route.query = { query: 'applied' }
+  get.mockResolvedValueOnce(page([rows.calculations], 0, 3) as never)
+  const wrapper = render(CalculationListView)
+  await flushPromises()
+
+  await wrapper.find('input[type="text"]').setValue('draft')
+  get.mockResolvedValueOnce(page([rows.calculations], 1, 3) as never)
+  await wrapper.findAll('nav .page-link').find(link => link.text() === '2')!.trigger('click')
+  await flushPromises()
+
+  expect(get).toHaveBeenLastCalledWith('/calculations', {
+    params: { query: 'applied', page: 1, size: 10 },
+  })
+  expect(push).toHaveBeenLastCalledWith({ query: { query: 'applied', page: 1 } })
+  wrapper.unmount()
+})
+
+it.each(['duplicate', 'delete'] as const)(
+  'keeps the applied filter when calculations refresh after %s',
+  async action => {
+    vi.clearAllMocks()
+    route.query = { query: 'applied' }
+    vi.stubGlobal('confirm', () => true)
+    get.mockResolvedValueOnce(page([rows.calculations], 1, 3) as never)
+    const wrapper = render(CalculationListView)
+    await flushPromises()
+
+    await wrapper.find('input[type="text"]').setValue('draft')
+    if (action === 'duplicate') post.mockResolvedValueOnce({} as never)
+    else remove.mockResolvedValueOnce({} as never)
+    get.mockResolvedValueOnce(page([rows.calculations], 1, 3) as never)
+    await wrapper.get(`button[title="${en.common[action]}"]`).trigger('click')
+    await flushPromises()
+
+    expect(get).toHaveBeenLastCalledWith('/calculations', {
+      params: { query: 'applied', page: 1, size: 10 },
+    })
+    wrapper.unmount()
+  },
+)
