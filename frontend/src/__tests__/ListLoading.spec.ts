@@ -319,3 +319,46 @@ describe.each(cases)('$name compact pagination', ({ name, component, endpoint, r
     wrapper.unmount()
   })
 })
+
+it('keeps the applied filter when calculations paginate after an unsubmitted edit', async () => {
+  vi.clearAllMocks()
+  route.query = { query: 'applied' }
+  get.mockResolvedValueOnce(page([rows.calculations], 0, 3) as never)
+  const wrapper = render(CalculationListView)
+  await flushPromises()
+
+  await wrapper.find('input[type="text"]').setValue('draft')
+  get.mockResolvedValueOnce(page([rows.calculations], 1, 3) as never)
+  await wrapper.findAll('nav .page-link').find(link => link.text() === '2')!.trigger('click')
+  await flushPromises()
+
+  expect(get).toHaveBeenLastCalledWith('/calculations', {
+    params: { query: 'applied', page: 1, size: 10 },
+  })
+  expect(push).toHaveBeenLastCalledWith({ query: { query: 'applied', page: 1 } })
+  wrapper.unmount()
+})
+
+it.each(['duplicate', 'delete'] as const)(
+  'keeps the applied filter when calculations refresh after %s',
+  async action => {
+    vi.clearAllMocks()
+    route.query = { query: 'applied' }
+    vi.stubGlobal('confirm', () => true)
+    get.mockResolvedValueOnce(page([rows.calculations], 1, 3) as never)
+    const wrapper = render(CalculationListView)
+    await flushPromises()
+
+    await wrapper.find('input[type="text"]').setValue('draft')
+    if (action === 'duplicate') post.mockResolvedValueOnce({} as never)
+    else remove.mockResolvedValueOnce({} as never)
+    get.mockResolvedValueOnce(page([rows.calculations], 1, 3) as never)
+    await wrapper.get(`button[title="${en.common[action]}"]`).trigger('click')
+    await flushPromises()
+
+    expect(get).toHaveBeenLastCalledWith('/calculations', {
+      params: { query: 'applied', page: 1, size: 10 },
+    })
+    wrapper.unmount()
+  },
+)

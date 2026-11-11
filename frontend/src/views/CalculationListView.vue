@@ -84,7 +84,7 @@
           <ul class="pagination flex-wrap justify-content-center mb-0">
             <li class="page-item" :class="{ disabled: currentPage === 0 }">
               <button type="button" class="page-link border-0 rounded-circle mx-1" :disabled="currentPage === 0"
-                :aria-label="t('common.previous')" @click="fetchCalculations(currentPage - 1)">
+                :aria-label="t('common.previous')" @click="fetchCalculations(currentPage - 1, requested.query)">
                 <i class="bi bi-chevron-left"></i>
               </button>
             </li>
@@ -93,11 +93,11 @@
               <span v-if="page === 'ellipsis'" class="page-link border-0 mx-1 pagination-ellipsis" aria-hidden="true">…</span>
               <button v-else type="button" class="page-link border-0 rounded-circle mx-1"
                 :aria-current="currentPage === page - 1 ? 'page' : undefined"
-                @click="fetchCalculations(page - 1)">{{ page }}</button>
+                @click="fetchCalculations(page - 1, requested.query)">{{ page }}</button>
             </li>
             <li class="page-item" :class="{ disabled: currentPage === totalPages - 1 }">
               <button type="button" class="page-link border-0 rounded-circle mx-1" :disabled="currentPage === totalPages - 1"
-                :aria-label="t('common.next')" @click="fetchCalculations(currentPage + 1)">
+                :aria-label="t('common.next')" @click="fetchCalculations(currentPage + 1, requested.query)">
                 <i class="bi bi-chevron-right"></i>
               </button>
             </li>
@@ -171,7 +171,7 @@ const search = () => {
 const duplicateCalculation = async (id: string) => {
   try {
     await apiClient.post(`/calculations/${id}/duplicate`);
-    await fetchCalculations(currentPage.value);
+    await fetchCalculations(currentPage.value, requested.value.query);
   } catch (error) {
     console.error(error);
   }
@@ -181,7 +181,7 @@ const deleteCalculation = async (id: string) => {
   if (confirm(t('calculations.delete.confirm'))) {
     try {
       await apiClient.delete(`/calculations/${id}`);
-      await fetchCalculations(currentPage.value);
+      await fetchCalculations(currentPage.value, requested.value.query);
     } catch (error) {
       console.error(error);
     }
