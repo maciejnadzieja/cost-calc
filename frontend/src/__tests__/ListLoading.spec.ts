@@ -23,6 +23,9 @@ const deferred = () => {
   return { promise, resolve, reject }
 }
 const page = (content: unknown[], number = 0, totalPages = 1) => ({ data: { content, number, totalPages } })
+const catalogPage = (content: unknown[], number = 0, totalPages = 1) => ({
+  data: { content, page: { number, totalPages, size: 10, totalElements: content.length } },
+})
 const rows = {
   services: { id: '1', name: 'Paint walls', description: '', price: 20, workUnit: 'HOUR' },
   materials: { id: '1', name: 'Blue paint', description: '', price: 10, unit: 'LITER', category: 'Paint' },
@@ -42,6 +45,7 @@ const render = (component: typeof ServicesView, locale = 'en') => mount(componen
 })
 
 describe.each(cases)('$name list loading', ({ name, component, endpoint, row, label }) => {
+  const responsePage = name === 'calculations' ? page : catalogPage
   beforeEach(() => {
     vi.clearAllMocks()
     route.query = {}
@@ -56,7 +60,7 @@ describe.each(cases)('$name list loading', ({ name, component, endpoint, row, la
     expect(wrapper.find('[aria-busy="true"]').exists()).toBe(true)
     expect(wrapper.find('[role="status"]').text()).toBe((locale === 'en' ? en : pl)[name].list.loading)
     expect(wrapper.text()).not.toContain((locale === 'en' ? en : pl)[name].list.empty)
-    first.resolve(page([]))
+    first.resolve(responsePage([]))
     await flushPromises()
     expect(wrapper.find('[aria-busy="false"]').exists()).toBe(true)
     expect(wrapper.text()).toContain((locale === 'en' ? en : pl)[name].list.empty)
@@ -76,7 +80,7 @@ describe.each(cases)('$name list loading', ({ name, component, endpoint, row, la
   })
 
   it('hides old rows, guards overlapping requests and retries the failed search/page', async () => {
-    get.mockResolvedValueOnce(page([row], 0, 2) as never)
+    get.mockResolvedValueOnce(responsePage([row], 0, 2) as never)
     const wrapper = render(component)
     await flushPromises()
     expect(wrapper.text()).toContain(label)
@@ -95,7 +99,7 @@ describe.each(cases)('$name list loading', ({ name, component, endpoint, row, la
     get.mockReturnValueOnce(recovered.promise as ReturnType<typeof get>)
     await wrapper.find('[role="alert"] button').trigger('click')
     expect(get).toHaveBeenLastCalledWith(endpoint, { params: { query: 'wanted', page: 0, size: 10 } })
-    recovered.resolve(page([row]))
+    recovered.resolve(responsePage([row]))
     await flushPromises()
     expect(wrapper.text()).toContain(label)
     wrapper.unmount()
@@ -109,7 +113,7 @@ describe.each(cases)('$name list loading', ({ name, component, endpoint, row, la
     expect(get).toHaveBeenLastCalledWith(endpoint, { params: { query: 'quoted', page: 2, size: 10 } })
     failed.reject(new Error('private'))
     await flushPromises()
-    get.mockResolvedValueOnce(page([row], 2, 3) as never)
+    get.mockResolvedValueOnce(responsePage([row], 2, 3) as never)
     await wrapper.find('[role="alert"] button').trigger('click')
     await flushPromises()
     expect(get).toHaveBeenLastCalledWith(endpoint, { params: { query: 'quoted', page: 2, size: 10 } })
@@ -118,14 +122,14 @@ describe.each(cases)('$name list loading', ({ name, component, endpoint, row, la
   })
 
   it('shows loading for pagination and delete refresh', async () => {
-    get.mockResolvedValueOnce(page([row], 0, 2) as never)
+    get.mockResolvedValueOnce(responsePage([row], 0, 2) as never)
     const wrapper = render(component)
     await flushPromises()
     const next = deferred()
     get.mockReturnValueOnce(next.promise as ReturnType<typeof get>)
-    await wrapper.findAll('nav a').at(-1)!.trigger('click')
+    await wrapper.findAll('nav .page-link').at(-1)!.trigger('click')
     expect(wrapper.find('[role="status"]').exists()).toBe(true)
-    next.resolve(page([row], 1, 2))
+    next.resolve(responsePage([row], 1, 2))
     await flushPromises()
     remove.mockResolvedValueOnce({} as never)
     const refresh = deferred()
@@ -135,12 +139,12 @@ describe.each(cases)('$name list loading', ({ name, component, endpoint, row, la
     await flushPromises()
     expect(wrapper.find('[role="status"]').exists()).toBe(true)
     expect(get).toHaveBeenLastCalledWith(endpoint, { params: { query: '', page: 1, size: 10 } })
-    refresh.resolve(page([], 1, 1))
+    refresh.resolve(responsePage([], 1, 1))
     await flushPromises()
     if (name !== 'calculations') {
-      expect(wrapper.find('nav a').exists()).toBe(true)
-      get.mockResolvedValueOnce(page([row], 0, 1) as never)
-      await wrapper.find('nav a').trigger('click')
+      expect(wrapper.find('nav .page-link').exists()).toBe(true)
+      get.mockResolvedValueOnce(responsePage([row], 0, 1) as never)
+      await wrapper.find('nav .page-link').trigger('click')
       await flushPromises()
       expect(get).toHaveBeenLastCalledWith(endpoint, { params: { query: '', page: 0, size: 10 } })
       expect(wrapper.text()).toContain(label)
@@ -149,8 +153,85 @@ describe.each(cases)('$name list loading', ({ name, component, endpoint, row, la
   })
 })
 
+describe.each(cases.filter(({ name }) => name !== 'calculations'))(
+  '$name catalog pagination',
+  ({ component, endpoint, row }) => {
+    beforeEach(() => {
+      vi.resetAllMocks()
+      route.query = { query: 'applied' }
+    })
+
+    it('uses the nested page metadata, selected number and applied filter', async () => {
+      get.mockResolvedValueOnce(catalogPage([row], 0, 2) as never)
+      const wrapper = render(component)
+      const pageLink = (text: string) => wrapper.findAll('nav .page-link').find(link => link.text() === text)!
+      await flushPromises()
+      await wrapper.find('input[type="text"]').setValue('unsubmitted')
+      get.mockResolvedValueOnce(catalogPage([{ ...row, name: 'Page two' }], 1, 2) as never)
+      await pageLink(en.common.next).trigger('click')
+      await flushPromises()
+      expect(get).toHaveBeenLastCalledWith(endpoint, { params: { query: 'applied', page: 1, size: 10 } })
+      expect(wrapper.text()).toContain('Page two')
+      expect(push).toHaveBeenLastCalledWith({ query: { query: 'applied', page: 1 } })
+      expect(pageLink('2').attributes('aria-current')).toBe('page')
+      expect(pageLink(en.common.next).attributes('disabled')).toBeDefined()
+      await pageLink(en.common.next).trigger('click')
+      expect(get).toHaveBeenCalledTimes(2)
+
+      get.mockResolvedValueOnce(catalogPage([row], 0, 2) as never)
+      await pageLink(en.common.previous).trigger('click')
+      await flushPromises()
+      expect(get).toHaveBeenLastCalledWith(endpoint, { params: { query: 'applied', page: 0, size: 10 } })
+      expect(push).toHaveBeenLastCalledWith({ query: { query: 'applied' } })
+      expect(pageLink(en.common.previous).attributes('disabled')).toBeDefined()
+      await pageLink(en.common.previous).trigger('click')
+      expect(get).toHaveBeenCalledTimes(3)
+
+      get.mockRejectedValueOnce(new Error('failed page'))
+      await pageLink('2').trigger('click')
+      await flushPromises()
+      expect(get).toHaveBeenLastCalledWith(endpoint, { params: { query: 'applied', page: 1, size: 10 } })
+      get.mockResolvedValueOnce(catalogPage([row], 1, 2) as never)
+      await wrapper.get('[role="alert"] button').trigger('click')
+      await flushPromises()
+      expect(get).toHaveBeenLastCalledWith(endpoint, { params: { query: 'applied', page: 1, size: 10 } })
+      get.mockResolvedValueOnce(catalogPage([row], 0, 1) as never)
+      await wrapper.find('button.btn-primary').trigger('click')
+      await flushPromises()
+      expect(get).toHaveBeenLastCalledWith(endpoint, { params: { query: 'unsubmitted', page: 0, size: 10 } })
+      wrapper.unmount()
+    })
+
+    it.each(['-1', '1.5', '2147483648', 'NaN'])('opens the first page for invalid URL page %s', async page => {
+      route.query.page = page
+      get.mockResolvedValueOnce(catalogPage([row]) as never)
+      const wrapper = render(component)
+      await flushPromises()
+      expect(get).toHaveBeenLastCalledWith(endpoint, { params: { query: 'applied', page: 0, size: 10 } })
+      expect(push).toHaveBeenLastCalledWith({ query: { query: 'applied' } })
+      wrapper.unmount()
+    })
+
+    it.each([0, 2])('recovers from an empty later page when %s pages remain', async totalPages => {
+      route.query.page = '3'
+      get.mockResolvedValueOnce(catalogPage([], 3, totalPages) as never)
+      const wrapper = render(component)
+      await flushPromises()
+      const target = Math.max(0, totalPages - 1)
+      const links = wrapper.findAll('nav .page-link')
+      expect(links.at(-1)!.attributes('disabled')).toBeDefined()
+      get.mockResolvedValueOnce(catalogPage(totalPages ? [row] : [], target, totalPages) as never)
+      await links[0]!.trigger('click')
+      await flushPromises()
+      expect(get).toHaveBeenLastCalledWith(endpoint, { params: { query: 'applied', page: target, size: 10 } })
+      wrapper.unmount()
+    })
+  },
+)
+
 it('shows loading while refreshing calculations after duplication', async () => {
   vi.clearAllMocks()
+  route.query = {}
   get.mockResolvedValueOnce(page([rows.calculations]) as never)
   const wrapper = render(CalculationListView)
   await flushPromises()
