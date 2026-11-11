@@ -192,6 +192,7 @@
     "new": "Nowy materiał",
     "online": {
       "open": "Znajdź w internecie",
+      "close": "Zamknij wyszukiwanie",
       "plants": "Rośliny",
       "query": "Nazwa rośliny lub fraza",
       "sources": "Źródła",

@@ -25,12 +25,17 @@ const draft = {
 }
 
 function render(locale = 'en') {
-  return mount(MaterialEditView, {
+  const view = mount(MaterialEditView, {
     global: {
       plugins: [createI18n({ legacy: false, locale, messages: { en, pl } })],
       stubs: { RouterLink: { template: '<a><slot /></a>' } },
     },
   })
+  // jsdom does not implement the browser's modal methods.
+  const dialog = view.get<HTMLDialogElement>('#material-online-dialog').element
+  dialog.showModal = () => { dialog.open = true }
+  dialog.close = () => { dialog.open = false }
+  return view
 }
 
 describe('online material creation', () => {
@@ -55,9 +60,10 @@ describe('online material creation', () => {
     await flushPromises()
     expect(post).toHaveBeenCalledWith(searchPath + '/results', {
       query: 'tawuła', sourceIds: ['ekatalog', 'atlas'],
-    })
-    await view.get('#material-online-results button').trigger('click')
+    }, { signal: expect.any(AbortSignal) })
+    await view.get('dialog[open] #material-online-results button').trigger('click')
     await flushPromises()
+    expect(view.find('dialog[open]').exists()).toBe(false)
     expect(view.get<HTMLInputElement>('#name').element.value).toBe('Spiraea alba')
     expect(view.get<HTMLTextAreaElement>('#description').element.value).toBe(draft.description)
     expect(view.get('#material-source a').attributes('href')).toBe(result.sourceUrl)
@@ -110,5 +116,32 @@ describe('online material creation', () => {
     expect(view.get<HTMLInputElement>('#name').element.value).toBe('Mój materiał')
     expect(post).toHaveBeenCalledTimes(2)
     expect(push).not.toHaveBeenCalled()
+  })
+
+  it('dismisses the modal during a fetch without applying a late result', async () => {
+    post.mockResolvedValueOnce({ data: [result] })
+    let complete!: (value: unknown) => void
+    post.mockReturnValueOnce(new Promise(resolve => { complete = resolve }) as ReturnType<typeof post>)
+    const view = render()
+    await flushPromises()
+    await view.get('#name').setValue('Manual material')
+    await view.get('#material-online-toggle').trigger('click')
+    await flushPromises()
+    await view.get('#material-online-query').setValue('tawuła')
+    await view.get('#online-material-search').trigger('submit')
+    await flushPromises()
+    await view.get('dialog[open] #material-online-results button').trigger('click')
+    const signal = post.mock.calls[1]?.[2]?.signal
+    await view.get('dialog[open]').trigger('cancel')
+    expect(signal?.aborted).toBe(true)
+    expect(view.find('dialog[open]').exists()).toBe(false)
+    complete({ data: draft })
+    await flushPromises()
+    expect(view.get<HTMLInputElement>('#name').element.value).toBe('Manual material')
+    expect(view.find('#material-source').exists()).toBe(false)
+
+    await view.get('#material-online-toggle').trigger('click')
+    await view.get('dialog[open] .btn-close').trigger('click')
+    expect(view.find('dialog[open]').exists()).toBe(false)
   })
 })

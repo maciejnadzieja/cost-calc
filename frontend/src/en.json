@@ -117,6 +117,7 @@
     "new": "New Material",
     "online": {
       "open": "Find online",
+      "close": "Close search",
       "plants": "Plants",
       "query": "Plant name or phrase",
       "sources": "Sources",
