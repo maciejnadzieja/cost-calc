@@ -81,19 +81,25 @@
       
       <div class="card-footer bg-white border-top-0 py-3" v-if="!loading && !failed && totalPages > 1">
         <nav aria-label="Page navigation">
-          <ul class="pagination justify-content-center mb-0">
+          <ul class="pagination flex-wrap justify-content-center mb-0">
             <li class="page-item" :class="{ disabled: currentPage === 0 }">
-              <a class="page-link border-0 rounded-circle mx-1" href="#" @click.prevent="fetchCalculations(currentPage - 1)">
+              <button type="button" class="page-link border-0 rounded-circle mx-1" :disabled="currentPage === 0"
+                :aria-label="t('common.previous')" @click="fetchCalculations(currentPage - 1)">
                 <i class="bi bi-chevron-left"></i>
-              </a>
+              </button>
             </li>
-            <li class="page-item" v-for="page in totalPages" :key="page" :class="{ active: currentPage === page - 1 }">
-              <a class="page-link border-0 rounded-circle mx-1" href="#" @click.prevent="fetchCalculations(page - 1)">{{ page }}</a>
+            <li class="page-item" v-for="(page, index) in visiblePages" :key="page === 'ellipsis' ? `gap-${index}` : page"
+              :class="{ active: typeof page === 'number' && currentPage === page - 1 }">
+              <span v-if="page === 'ellipsis'" class="page-link border-0 mx-1 pagination-ellipsis" aria-hidden="true">…</span>
+              <button v-else type="button" class="page-link border-0 rounded-circle mx-1"
+                :aria-current="currentPage === page - 1 ? 'page' : undefined"
+                @click="fetchCalculations(page - 1)">{{ page }}</button>
             </li>
             <li class="page-item" :class="{ disabled: currentPage === totalPages - 1 }">
-              <a class="page-link border-0 rounded-circle mx-1" href="#" @click.prevent="fetchCalculations(currentPage + 1)">
+              <button type="button" class="page-link border-0 rounded-circle mx-1" :disabled="currentPage === totalPages - 1"
+                :aria-label="t('common.next')" @click="fetchCalculations(currentPage + 1)">
                 <i class="bi bi-chevron-right"></i>
-              </a>
+              </button>
             </li>
           </ul>
         </nav>
@@ -103,11 +109,12 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref} from 'vue';
+import {computed, onMounted, ref} from 'vue';
 import apiClient from '@/services/api';
 import {useRoute, useRouter} from "vue-router";
 import type {Calculation} from "@/models/calculation";
 import { useI18n } from 'vue-i18n';
+import { paginationWindow } from '@/models/paginationWindow';
 
 const { t } = useI18n();
 
@@ -118,6 +125,7 @@ const query = ref(route.query.query || '');
 const calculations = ref<Calculation[]>([]);
 const currentPage = ref(parseInt(route.query.page as string) || 0);
 const totalPages = ref(0);
+const visiblePages = computed(() => paginationWindow(currentPage.value, totalPages.value));
 const loading = ref(false);
 const failed = ref(false);
 const requested = ref({ page: currentPage.value, query: String(query.value) });

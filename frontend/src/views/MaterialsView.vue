@@ -37,13 +37,15 @@
       </table>
     </div>
     <nav v-if="!loading && !failed" aria-label="Page navigation" class="mt-3">
-      <ul class="pagination">
+      <ul class="pagination flex-wrap">
         <li class="page-item" :class="{ disabled: currentPage === 0 }">
           <button type="button" class="page-link" :disabled="currentPage === 0"
             @click="goToPage(Math.min(currentPage - 1, Math.max(0, totalPages - 1)))">{{ t('common.previous') }}</button>
         </li>
-        <li class="page-item" v-for="page in totalPages" :key="page" :class="{ active: currentPage === page - 1 }">
-          <button type="button" class="page-link" :aria-current="currentPage === page - 1 ? 'page' : undefined"
+        <li class="page-item" v-for="(page, index) in visiblePages" :key="page === 'ellipsis' ? `gap-${index}` : page"
+          :class="{ active: typeof page === 'number' && currentPage === page - 1 }">
+          <span v-if="page === 'ellipsis'" class="page-link pagination-ellipsis" aria-hidden="true">…</span>
+          <button v-else type="button" class="page-link" :aria-current="currentPage === page - 1 ? 'page' : undefined"
             @click="goToPage(page - 1)">{{ page }}</button>
         </li>
         <li class="page-item" :class="{ disabled: currentPage >= totalPages - 1 }">
@@ -56,12 +58,13 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import apiClient from '@/services/api';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import type { Material } from '@/models/material';
 import { catalogPageFromQuery, type CatalogPage } from '@/models/catalogPage';
+import { paginationWindow } from '@/models/paginationWindow';
 
 const { t } = useI18n();
 
@@ -72,6 +75,7 @@ const query = ref(typeof route.query.query === 'string' ? route.query.query : ''
 const materials = ref<Material[]>([]);
 const currentPage = ref(catalogPageFromQuery(route.query.page));
 const totalPages = ref(0);
+const visiblePages = computed(() => paginationWindow(currentPage.value, totalPages.value));
 const loading = ref(false);
 const failed = ref(false);
 const requested = ref({ page: currentPage.value, query: query.value });
