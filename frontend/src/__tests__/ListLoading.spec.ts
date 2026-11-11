@@ -245,3 +245,24 @@ it('shows loading while refreshing calculations after duplication', async () => 
   await flushPromises()
   wrapper.unmount()
 })
+
+it('omits long descriptions from the materials list table', async () => {
+  vi.clearAllMocks()
+  route.query = {}
+  const description = 'Long material details '.repeat(40)
+  get.mockResolvedValueOnce(catalogPage([{ ...rows.materials, description }]) as never)
+
+  const wrapper = render(MaterialsView)
+  await flushPromises()
+
+  expect(wrapper.findAll('thead th').map(header => header.text())).toEqual([
+    en.materials.form.name,
+    en.materials.price,
+    en.materials.unit,
+    en.materials.category,
+    en.common.actions,
+  ])
+  expect(wrapper.findAll('tbody tr:first-child td')).toHaveLength(5)
+  expect(wrapper.find('table').text()).not.toContain(description)
+  wrapper.unmount()
+})
