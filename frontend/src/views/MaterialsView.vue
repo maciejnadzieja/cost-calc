@@ -16,7 +16,6 @@
       <thead>
         <tr>
           <th>{{ t('materials.form.name') }}</th>
-          <th>{{ t('materials.form.description') }}</th>
           <th>{{ t('materials.price') }}</th>
           <th>{{ t('materials.unit') }}</th>
           <th>{{ t('materials.category') }}</th>
@@ -26,7 +25,6 @@
       <tbody>
         <tr v-for="material in materials" :key="material.id || material.name">
           <td>{{ material.name }}</td>
-          <td class="material-description">{{ material.description }}</td>
           <td>{{ material.price }} / {{ t('units.material.' + material.unit.toLowerCase() + '.symbol') }}</td>
           <td>{{ t('units.material.' + material.unit.toLowerCase() + '.label') }}</td>
           <td>{{ material.category }}</td>
@@ -136,7 +134,3 @@ onMounted(() => {
   fetchMaterials(currentPage.value, query.value);
 });
 </script>
-
-<style scoped>
-.material-description { white-space: pre-line; overflow-wrap: anywhere; }
-</style>
