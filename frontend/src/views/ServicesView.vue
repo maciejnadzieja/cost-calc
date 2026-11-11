@@ -39,13 +39,16 @@
     <nav v-if="!loading && !failed" aria-label="Page navigation" class="mt-3">
       <ul class="pagination">
         <li class="page-item" :class="{ disabled: currentPage === 0 }">
-          <a class="page-link" href="#" @click.prevent="fetchServices(currentPage - 1)">{{ t('common.previous') }}</a>
+          <button type="button" class="page-link" :disabled="currentPage === 0"
+            @click="goToPage(Math.min(currentPage - 1, Math.max(0, totalPages - 1)))">{{ t('common.previous') }}</button>
         </li>
         <li class="page-item" v-for="page in totalPages" :key="page" :class="{ active: currentPage === page - 1 }">
-          <a class="page-link" href="#" @click.prevent="fetchServices(page - 1)">{{ page }}</a>
+          <button type="button" class="page-link" :aria-current="currentPage === page - 1 ? 'page' : undefined"
+            @click="goToPage(page - 1)">{{ page }}</button>
         </li>
-        <li class="page-item" :class="{ disabled: currentPage === totalPages - 1 }">
-          <a class="page-link" href="#" @click.prevent="fetchServices(currentPage + 1)">{{ t('common.next') }}</a>
+        <li class="page-item" :class="{ disabled: currentPage >= totalPages - 1 }">
+          <button type="button" class="page-link" :disabled="currentPage >= totalPages - 1"
+            @click="goToPage(currentPage + 1)">{{ t('common.next') }}</button>
         </li>
       </ul>
     </nav>
@@ -58,27 +61,28 @@ import apiClient from '@/services/api';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import type { Service } from '@/models/service';
+import { catalogPageFromQuery, type CatalogPage } from '@/models/catalogPage';
 
 const { t } = useI18n();
 
 const router = useRouter();
 const route = useRoute();
 
-const query = ref(route.query.query || '');
+const query = ref(typeof route.query.query === 'string' ? route.query.query : '');
 const services = ref<Service[]>([]);
-const currentPage = ref(parseInt(route.query.page as string) || 0);
+const currentPage = ref(catalogPageFromQuery(route.query.page));
 const totalPages = ref(0);
 const loading = ref(false);
 const failed = ref(false);
-const requested = ref({ page: currentPage.value, query: String(query.value) });
+const requested = ref({ page: currentPage.value, query: query.value });
 
-const fetchServices = async (page = 0, queryText = String(query.value)) => {
+const fetchServices = async (page: number, queryText: string) => {
   if (loading.value) return;
   requested.value = { page, query: queryText };
   loading.value = true;
   failed.value = false;
   try {
-    const response = await apiClient.get('/services', {
+    const response = await apiClient.get<CatalogPage<Service>>('/services', {
       params: {
         query: queryText,
         page: page,
@@ -86,8 +90,8 @@ const fetchServices = async (page = 0, queryText = String(query.value)) => {
       },
     });
     services.value = response.data.content;
-    currentPage.value = response.data.number;
-    totalPages.value = response.data.totalPages;
+    currentPage.value = response.data.page.number;
+    totalPages.value = response.data.page.totalPages;
 
     const queryParams: { query?: string; page?: number } = {};
     if (queryText) {
@@ -106,15 +110,20 @@ const fetchServices = async (page = 0, queryText = String(query.value)) => {
 
 const retry = () => fetchServices(requested.value.page, requested.value.query);
 
+const goToPage = (page: number) => {
+  if (!Number.isInteger(page) || page < 0 || page >= Math.max(1, totalPages.value) || page === currentPage.value) return;
+  return fetchServices(page, requested.value.query);
+};
+
 const search = () => {
-  fetchServices(0);
+  fetchServices(0, query.value);
 };
 
 const deleteService = async (id: string) => {
   if (confirm(t('services.delete.confirm'))) {
     try {
       await apiClient.delete(`/services/${id}`);
-      await fetchServices(currentPage.value);
+      await fetchServices(currentPage.value, requested.value.query);
     } catch (error) {
       console.error(error);
     }
@@ -122,7 +131,7 @@ const deleteService = async (id: string) => {
 };
 
 onMounted(() => {
-  fetchServices(currentPage.value);
+  fetchServices(currentPage.value, query.value);
 });
 </script>
 
